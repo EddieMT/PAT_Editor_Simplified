@@ -1,0 +1,141 @@
+﻿<Window x:Class="PAT_Editor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PAT_Editor"
+        mc:Ignorable="d"
+        Title="PAT Editor" Height="800" Width="1000" MinHeight="800" MinWidth="1000"
+        FontFamily="Microsoft YaHei UI Light" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Window.Resources>
+        <Style TargetType="Menu">
+            <Setter Property="FontSize" Value="16"></Setter>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="20"></Setter>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="20"></Setter>
+        </Style>
+        <Style TargetType="TreeView">
+            <Setter Property="FontSize" Value="20"></Setter>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="20"></Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Name="mitNew" Header="New" Click="mitNew_Click"></MenuItem>
+                <MenuItem Name="mitLoad" Header="Load" Click="mitLoad_Click" Visibility="Collapsed"></MenuItem>
+                <MenuItem Name="mitSave" Header="Save" Click="mitSave_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="1" Name="btnConfiguration" Content="Configuration" Click="btnConfiguration_Click"></Button>
+            </Grid>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Bit of Clock"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox Grid.Column="1" Name="txtPosOfClock"
+                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="txtPosOfClock_TextChanged"></TextBox>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Bit of Data"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox Grid.Column="1" Name="txtPosOfData"
+                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="txtPosOfData_TextChanged"></TextBox>
+                </Grid>
+                <Grid Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="User ID"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox Grid.Column="1" Name="txtUserID"
+                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="txtUserID_TextChanged"></TextBox>
+                </Grid>
+                <Grid Grid.Column="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Data of 1C"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox Grid.Column="1" Name="txtDataOf1C"
+                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="txtDataOf1C_TextChanged"></TextBox>
+                </Grid>
+            </Grid>
+            
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*"></ColumnDefinition>
+                    <ColumnDefinition Width="6*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TreeView Grid.Column="0" Name="trv" Margin="20" Width="350" Height="550"
+                          HorizontalAlignment="Left" VerticalAlignment="Top"
+                          HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                          SelectedItemChanged="trv_SelectedItemChanged"/>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"></ColumnDefinition>
+                            <ColumnDefinition Width="6*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Data"
+                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                          HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                        <TextBox Grid.Column="1" Name="txtData" Height="30" Width="180"
+                         HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0"
+                          HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="txtData_TextChanged" />
+                    </Grid>
+                </Grid>
+                      
+                
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

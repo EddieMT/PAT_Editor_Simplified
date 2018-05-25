@@ -1,0 +1,117 @@
+﻿<Window x:Class="PAT_Editor.PATConfiguration"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PAT_Editor"
+        mc:Ignorable="d"
+        Title="PATConfiguration" Height="600" Width="800"
+        FontFamily="Microsoft YaHei UI Light" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="TabControl">
+            <Setter Property="FontSize" Value="16"></Setter>
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="FontSize" Value="20"></Setter>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="20"></Setter>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="20"></Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="1" Margin="10">
+            <TabItem Header="PAT Item">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="200"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <ListBox Grid.Column="0" Name="lstPatItem" Background="#FFE5E5E5"
+                             Height="360" Width="500" Margin="10"
+                             VerticalAlignment="Center" HorizontalAlignment="Center"
+                             VerticalContentAlignment="Center" HorizontalContentAlignment="Left"></ListBox>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBox Grid.Row="0" Name="txtPatItem"
+                                 Height="30" Width="180"
+                                 VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+                        <Button Grid.Row="1" Name="btnPatItemAdd" Content="+" 
+                                Height="30" Width="30"
+                                Click="btnPatItemAdd_Click"></Button>
+                        <Button Grid.Row="2" Name="btnPatItemDel" Content="-"
+                                Height="30" Width="30"
+                                Click="btnPatItemDel_Click"></Button>
+                        <Button Grid.Row="3" Name="btnPatItemUp" Content="↑"
+                                Height="30" Width="30"
+                                Click="btnPatItemUp_Click"></Button>
+                        <Button Grid.Row="4" Name="btnPatItemDown" Content="↓"
+                                Height="30" Width="30"
+                                Click="btnPatItemDown_Click"></Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="REG Item">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="200"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <ListBox Grid.Column="0" Name="lstRegItem" Background="#FFE5E5E5"
+                             Height="360" Width="500" Margin="10"
+                             VerticalAlignment="Center" HorizontalAlignment="Center"
+                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></ListBox>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBox Grid.Row="0" Name="txtRegItem"
+                                 Height="30" Width="180"
+                                 VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+                        <Button Grid.Row="1" Name="btnRegItemAdd" Content="+" 
+                                Height="30" Width="30"
+                                Click="btnRegItemAdd_Click"></Button>
+                        <Button Grid.Row="2" Name="btnRegItemDel" Content="-"
+                                Height="30" Width="30"
+                                Click="btnRegItemDel_Click"></Button>
+                        <Button Grid.Row="3" Name="btnRegItemUp" Content="↑"
+                                Height="30" Width="30"
+                                Click="btnRegItemUp_Click"></Button>
+                        <Button Grid.Row="4" Name="btnRegItemDown" Content="↓"
+                                Height="30" Width="30"
+                                Click="btnRegItemDown_Click"></Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="btnOK" Content="OK" Width="200" Click="btnOK_Click"></Button>
+            <Button Grid.Column="1" Name="btnCancel" Content="Cancel" Width="200" Click="btnCancel_Click"></Button>
+        </Grid>
+    </Grid>
+</Window>
