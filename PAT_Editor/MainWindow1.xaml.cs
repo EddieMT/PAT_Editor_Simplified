@@ -37,6 +37,38 @@ FC       1               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;";
         private const string BUS_PARK = @"FC       1               10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
 FC       1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
 FC       1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;";
+
+        private const string PREFIX_WRITE = @"FC       1   TS1               ";
+        private const string START_SEQUENCE_CONTROL_WRITE = @"FC       1   TS1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               01XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;";
+        private const string BUS_PARK_WRITE = @"FC       1   TS1               10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
+FC       1   TS1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;";
+
+        private const string PREFIX_READ = @"FC       1   TS2               ";
+        private const string START_SEQUENCE_CONTROL_READ = @"FC       1   TS2               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               01XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;";
+        private const string BUS_PARK_READ = @"FC       1   TS2               10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
+FC       1   TS2               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+FC       1   TS2               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;";
         private const int posOfClock = 0;
         private const int posOfData = 1;
         private string userID;
@@ -108,46 +140,56 @@ FC       1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;";
 
         private void writeData(StreamWriter sw, bool isWrite, int data)
         {
-            string line = string.Format("// Register {0} : Data {1} : {2} -----------------------------------------------------------", regID, Convert.ToString(data, 16).PadLeft(2, '0').ToUpper(), isWrite ? "Write" : "Read");
-            sw.WriteLine(line);
-            sw.WriteLine("// SSC: Start Sequence Control");
-            sw.WriteLine(START_SEQUENCE_CONTROL);
-            sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:5] + Reg Addr[4:0])");
-            sw.Write(isWrite ? dictCommandFrame["W"] : dictCommandFrame["R"]);
-            sw.WriteLine("// Data (8 bits + Parity)");
             if (isWrite)
             {
+                string line = string.Format("// Register {0} : Data {1} : {2} -----------------------------------------------------------", regID, Convert.ToString(data, 16).PadLeft(2, '0').ToUpper(), isWrite ? "Write" : "Read");
+                sw.WriteLine(line);
+                sw.WriteLine("// SSC: Start Sequence Control");
+                sw.WriteLine(START_SEQUENCE_CONTROL_WRITE);
+                sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:5] + Reg Addr[4:0])");
+                sw.Write(isWrite ? dictCommandFrame["W"] : dictCommandFrame["R"]);
+                sw.WriteLine("// Data (8 bits + Parity)");
                 string sValue = Convert.ToString(data, 2).PadLeft(8, '0');
                 string sData = string.Empty;
-                sData += PREFIX + BuildData(sValue[0]) + ";// Data D7\n";
-                sData += PREFIX + BuildData(sValue[1]) + ";// Data D6\n";
-                sData += PREFIX + BuildData(sValue[2]) + ";// Data D5\n";
-                sData += PREFIX + BuildData(sValue[3]) + ";// Data D4\n";
-                sData += PREFIX + BuildData(sValue[4]) + ";// Data D3\n";
-                sData += PREFIX + BuildData(sValue[5]) + ";// Data D2\n";
-                sData += PREFIX + BuildData(sValue[6]) + ";// Data D1\n";
-                sData += PREFIX + BuildData(sValue[7]) + ";// Data D0\n";
-                sData += PREFIX + BuildData(GetParityBit(sValue)) + ";// Parity Bit (to make odd sum Data)\n";
+                sData += PREFIX_WRITE + BuildData(sValue[0]) + ";// Data D7\n";
+                sData += PREFIX_WRITE + BuildData(sValue[1]) + ";// Data D6\n";
+                sData += PREFIX_WRITE + BuildData(sValue[2]) + ";// Data D5\n";
+                sData += PREFIX_WRITE + BuildData(sValue[3]) + ";// Data D4\n";
+                sData += PREFIX_WRITE + BuildData(sValue[4]) + ";// Data D3\n";
+                sData += PREFIX_WRITE + BuildData(sValue[5]) + ";// Data D2\n";
+                sData += PREFIX_WRITE + BuildData(sValue[6]) + ";// Data D1\n";
+                sData += PREFIX_WRITE + BuildData(sValue[7]) + ";// Data D0\n";
+                sData += PREFIX_WRITE + BuildData(GetParityBit(sValue)) + ";// Parity Bit (to make odd sum Data)\n";
                 sw.Write(sData);
+                sw.WriteLine("// Bus Park");
+                sw.WriteLine(BUS_PARK_WRITE);
+                sw.WriteLine();
             }
             else
             {
+                string line = string.Format("// Register {0} : Data {1} : {2} -----------------------------------------------------------", regID, Convert.ToString(data, 16).PadLeft(2, '0').ToUpper(), isWrite ? "Write" : "Read");
+                sw.WriteLine(line);
+                sw.WriteLine("// SSC: Start Sequence Control");
+                sw.WriteLine(START_SEQUENCE_CONTROL_READ);
+                sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:5] + Reg Addr[4:0])");
+                sw.Write(isWrite ? dictCommandFrame["W"] : dictCommandFrame["R"]);
+                sw.WriteLine("// Data (8 bits + Parity)");
                 string sValue = Convert.ToString(data, 2).PadLeft(8, '0');
                 string sData = string.Empty;
-                sData += PREFIX + BuildDataHL(sValue[0]) + ";// Data D7\n";
-                sData += PREFIX + BuildDataHL(sValue[1]) + ";// Data D6\n";
-                sData += PREFIX + BuildDataHL(sValue[2]) + ";// Data D5\n";
-                sData += PREFIX + BuildDataHL(sValue[3]) + ";// Data D4\n";
-                sData += PREFIX + BuildDataHL(sValue[4]) + ";// Data D3\n";
-                sData += PREFIX + BuildDataHL(sValue[5]) + ";// Data D2\n";
-                sData += PREFIX + BuildDataHL(sValue[6]) + ";// Data D1\n";
-                sData += PREFIX + BuildDataHL(sValue[7]) + ";// Data D0\n";
-                sData += PREFIX + BuildDataHL(GetParityBit(sValue)) + ";// Parity Bit (to make odd sum Data)\n";
+                sData += PREFIX_READ + BuildDataHL(sValue[0]) + ";// Data D7\n";
+                sData += PREFIX_READ + BuildDataHL(sValue[1]) + ";// Data D6\n";
+                sData += PREFIX_READ + BuildDataHL(sValue[2]) + ";// Data D5\n";
+                sData += PREFIX_READ + BuildDataHL(sValue[3]) + ";// Data D4\n";
+                sData += PREFIX_READ + BuildDataHL(sValue[4]) + ";// Data D3\n";
+                sData += PREFIX_READ + BuildDataHL(sValue[5]) + ";// Data D2\n";
+                sData += PREFIX_READ + BuildDataHL(sValue[6]) + ";// Data D1\n";
+                sData += PREFIX_READ + BuildDataHL(sValue[7]) + ";// Data D0\n";
+                sData += PREFIX_READ + BuildDataHL(GetParityBit(sValue)) + ";// Parity Bit (to make odd sum Data)\n";
                 sw.Write(sData);
+                sw.WriteLine("// Bus Park");
+                sw.WriteLine(BUS_PARK_READ);
+                sw.WriteLine();
             }
-            sw.WriteLine("// Bus Park");
-            sw.WriteLine(BUS_PARK);
-            sw.WriteLine();
         }
 
         private void BuildDictCommandFrame()
@@ -168,27 +210,44 @@ FC       1               0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;";
             iValue = uint.Parse(regID, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
             sValue += Convert.ToString(iValue, 2).PadLeft(5, '0');
 
-            string sCommandFrame = string.Empty;
-            sCommandFrame += PREFIX + BuildData(sValue[0]) + ";// Slave Addr\n";
-            sCommandFrame += PREFIX + BuildData(sValue[1]) + ";// Slave Addr\n";
-            sCommandFrame += PREFIX + BuildData(sValue[2]) + ";// Slave Addr\n";
-            sCommandFrame += PREFIX + BuildData(sValue[3]) + ";// Slave Addr\n";
-            sCommandFrame += PREFIX + BuildData(sValue[4]) + ";// Write Command C7 (010: Write, 011: Read)\n";
-            sCommandFrame += PREFIX + BuildData(sValue[5]) + ";// Write Command C6\n";
-            sCommandFrame += PREFIX + BuildData(sValue[6]) + ";// Write Command C5\n";
-            sCommandFrame += PREFIX + BuildData(sValue[7]) + ";// Reg Address C4\n";
-            sCommandFrame += PREFIX + BuildData(sValue[8]) + ";// Reg Address C3\n";
-            sCommandFrame += PREFIX + BuildData(sValue[9]) + ";// Reg Address C2\n";
-            sCommandFrame += PREFIX + BuildData(sValue[10]) + ";// Reg Address C1\n";
-            sCommandFrame += PREFIX + BuildData(sValue[11]) + ";// Reg Address C0\n";
-            sCommandFrame += PREFIX + BuildData(GetParityBit(sValue)) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+            
             if (v == "011")
             {
-                sCommandFrame += PREFIX + "10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Park Bit\n";
+                string sCommandFrame = string.Empty;
+                sCommandFrame += PREFIX_READ + BuildData(sValue[0]) + ";// Slave Addr\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[1]) + ";// Slave Addr\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[2]) + ";// Slave Addr\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[3]) + ";// Slave Addr\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[4]) + ";// Write Command C7 (010: Write, 011: Read)\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[5]) + ";// Write Command C6\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[6]) + ";// Write Command C5\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[7]) + ";// Reg Address C4\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[8]) + ";// Reg Address C3\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[9]) + ";// Reg Address C2\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[10]) + ";// Reg Address C1\n";
+                sCommandFrame += PREFIX_READ + BuildData(sValue[11]) + ";// Reg Address C0\n";
+                sCommandFrame += PREFIX_READ + BuildData(GetParityBit(sValue)) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                sCommandFrame += PREFIX_READ + "10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Park Bit\n";
                 dictCommandFrame.Add("R", sCommandFrame);
             }
             else if(v == "010")
+            {
+                string sCommandFrame = string.Empty;
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[0]) + ";// Slave Addr\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[1]) + ";// Slave Addr\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[2]) + ";// Slave Addr\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[3]) + ";// Slave Addr\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[4]) + ";// Write Command C7 (010: Write, 011: Read)\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[5]) + ";// Write Command C6\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[6]) + ";// Write Command C5\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[7]) + ";// Reg Address C4\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[8]) + ";// Reg Address C3\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[9]) + ";// Reg Address C2\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[10]) + ";// Reg Address C1\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(sValue[11]) + ";// Reg Address C0\n";
+                sCommandFrame += PREFIX_WRITE + BuildData(GetParityBit(sValue)) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
                 dictCommandFrame.Add("W", sCommandFrame);
+            }
         }
 
         private string BuildData(char c)
