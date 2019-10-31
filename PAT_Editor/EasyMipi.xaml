@@ -1,0 +1,48 @@
+﻿<Window x:Class="PAT_Editor.EasyMipi"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PAT_Editor"
+        mc:Ignorable="d"
+        Height="450" Width="800" WindowStartupLocation="CenterScreen" Icon="Pics/MerlinTest.ico"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+     TextElement.FontWeight="Regular"
+     TextElement.FontSize="16"
+     TextOptions.TextFormattingMode="Ideal"
+     TextOptions.TextRenderingMode="Auto"
+     Background="{DynamicResource MaterialDesignPaper}"
+     FontFamily="{DynamicResource MaterialDesignFont}">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="60"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <materialDesign:Card Grid.Row="0" Padding="35">
+            <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Merlin Test MIPI Tool</TextBlock>
+        </materialDesign:Card>
+        
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Name="txtMipiConfigFilePath" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Path of MIPI Config File"
+                     VerticalAlignment="Center" Margin="30" IsReadOnly="False" />
+            <Button Grid.Column="1" Name="btnBrowse" ToolTip="Browse" 
+                    VerticalAlignment="Center" Margin="30,30,30,30" Click="btnBrowse_Click" Content="{materialDesign:PackIcon DotsHorizontal}">
+            </Button>
+        </Grid>
+
+        <Button Grid.Row="2" Name="btnGenerate" Style="{StaticResource MaterialDesignFloatingActionDarkButton}" ToolTip="Generate" 
+                Width="100" Height="100" Click="btnGenerate_Click" IsEnabled="False">
+            <materialDesign:PackIcon Kind="Play" Height="80" Width="80" />
+        </Button>
+        
+    </Grid>
+</Window>

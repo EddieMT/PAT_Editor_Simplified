@@ -15,7 +15,7 @@ namespace PAT_Editor
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            Application.Current.StartupUri = new Uri("Selector.xaml", UriKind.Relative);//和MainWindwo同一目录
+            Application.Current.StartupUri = new Uri("EasyMipi.xaml", UriKind.Relative);//和MainWindwo同一目录
         }
     }
 }
