@@ -71,6 +71,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DebugMipi.xaml.cs">
+      <DependentUpon>DebugMipi.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EasyMipi.xaml.cs">
       <DependentUpon>EasyMipi.xaml</DependentUpon>
     </Compile>
@@ -81,6 +84,10 @@
     <Compile Include="Selector.xaml.cs">
       <DependentUpon>Selector.xaml</DependentUpon>
     </Compile>
+    <Page Include="DebugMipi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EasyMipi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

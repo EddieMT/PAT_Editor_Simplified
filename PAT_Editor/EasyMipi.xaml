@@ -30,7 +30,7 @@
         </materialDesign:Card>
 
         <TextBlock Grid.Row="1" Margin="35,0,0,0" FontWeight="Bold" TextDecorations="Underline" VerticalAlignment="Center">Generate PAT File</TextBlock>
-        <TextBlock Grid.Row="3" Margin="35,0,0,0" FontWeight="Bold" TextDecorations="Underline" VerticalAlignment="Center">Debug PEZ File</TextBlock>
+        <TextBlock Grid.Row="3" Margin="35,0,0,0" FontWeight="Bold" TextDecorations="Underline" VerticalAlignment="Center">Debug PAT File</TextBlock>
         
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -38,7 +38,7 @@
                 <ColumnDefinition Width="1*"></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Name="txtMipiConfigFilePath" VerticalAlignment="Center" Margin="35,0,35,0" IsReadOnly="False"
+            <TextBox Grid.Column="0" Name="txtMipiConfigFilePath" VerticalAlignment="Center" Margin="35,0,35,0" IsReadOnly="True"
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Path of MIPI Config File" />
             <Button Grid.Column="1" Name="btnBrowse" ToolTip="Browse" Click="btnBrowse_Click" Margin="5">
                 <materialDesign:PackIcon Kind="FileCsv" />
@@ -54,12 +54,12 @@
                 <ColumnDefinition Width="1*"></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Name="txtFilePAT" VerticalAlignment="Center" Margin="35,0,35,0" IsReadOnly="False"
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Path of MIPI PEZ File" />
+            <TextBox Grid.Column="0" Name="txtFilePAT" VerticalAlignment="Center" Margin="35,0,35,0" IsReadOnly="True"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Path of MIPI PAT File" />
             <Button Grid.Column="1" Name="btnBrowsePAT" ToolTip="Browse" Click="btnBrowsePAT_Click" Margin="5">
                 <materialDesign:PackIcon Kind="File" />
             </Button>
-            <Button Grid.Column="2" Name="btnDebugPEZ" ToolTip="Debug" Click="btnDebugPEZ_Click" IsEnabled="False" Margin="5">
+            <Button Grid.Column="2" Name="btnDebugPAT" ToolTip="Debug" Click="btnDebugPAT_Click" IsEnabled="False" Margin="5">
                 <materialDesign:PackIcon Kind="Play" />
             </Button>
         </Grid>

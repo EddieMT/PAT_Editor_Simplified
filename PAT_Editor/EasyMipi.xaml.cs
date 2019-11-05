@@ -100,7 +100,7 @@ namespace PAT_Editor
                 string outputFile = Path.ChangeExtension(txtMipiConfigFilePath.Text, "PAT");
                 if (File.Exists(outputFile))
                 {
-                    if (System.Windows.MessageBox.Show(outputFile + "does exist, do you want to overwrite it?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
+                    if (System.Windows.MessageBox.Show(outputFile + " does exist, do you want to overwrite it?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
                         return;
                 }
 
@@ -109,12 +109,14 @@ namespace PAT_Editor
                 {
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
-                        foreach(var mode in groupbylist)
+                        sw.WriteLine("//MIPI-START");
+                        foreach (var mode in groupbylist)
                         {
                             var list = mode.ToList();
                             string line = string.Format("//{0}:{1}-{2}", mode.Key, list[0].LineStart, list[list.Count - 1].LineEnd);
                             sw.WriteLine(line);
                         }
+                        sw.WriteLine("//MIPI-END");
                         sw.WriteLine();
                     }
                 }
@@ -227,7 +229,9 @@ namespace PAT_Editor
                 }
 
                 btnGenerate.IsEnabled = false;
-                System.Windows.MessageBox.Show("Done!");
+                System.Windows.MessageBox.Show("PAT file has been generated successfully!\nIn case you want to debug it, please generate the PEZ file via OpenATE tool first and then click the DEBUG button.");
+                btnDebugPAT.IsEnabled = true;
+                txtFilePAT.Text = outputFile;
             }
             catch (Exception ex)
             {
@@ -237,12 +241,49 @@ namespace PAT_Editor
 
         private void btnBrowsePAT_Click(object sender, RoutedEventArgs e)
         {
-
+            try
+            {
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Filter = "PAT files|*.pat";
+                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    txtFilePAT.Text = dlg.FileName;
+                }
+                else
+                {
+                    return;
+                }
+                
+                btnDebugPAT.IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
         }
 
-        private void btnDebugPEZ_Click(object sender, RoutedEventArgs e)
+        private void btnDebugPAT_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                string filePAT = txtFilePAT.Text;
+                string filePEZ = Path.ChangeExtension(filePAT, "PEZ");
 
+                if (!File.Exists(filePEZ))
+                {
+                    System.Windows.MessageBox.Show("Underlying PEZ file, " + filePEZ + ", does not exist, please generate it via OpenATE tool first!");
+                    return;
+                }
+
+                List<Mode> availableModes = ParsePAT(filePAT);
+
+                DebugMipi dialog = new DebugMipi(filePEZ, availableModes);
+                dialog.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
         }
 
         #region private methods
@@ -638,6 +679,59 @@ namespace PAT_Editor
             }
 
             return res;
+        }
+
+        private List<Mode> ParsePAT(string filePAT)
+        {
+            try
+            {
+                List<Mode> availableModes = new List<Mode>();
+
+                using (FileStream fs = new FileStream(filePAT, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    using (StreamReader sr = new StreamReader(fs))
+                    {
+                        bool valid = false;
+                        string line = string.Empty;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            if (line == string.Empty)
+                                continue;
+                            else if (line.ToUpper() == "//MIPI-START")
+                                valid = true;
+                            else if (line.ToUpper() == "//MIPI-END")
+                                break;
+                            else
+                            {
+                                if (valid)
+                                {
+                                    string name = line.Split(':')[0].Trim();
+                                    string start = line.Split(':')[1].Trim().Split('-')[0].Trim();
+                                    string end = line.Split(':')[1].Trim().Split('-')[1].Trim();
+                                    int iStart = 0;
+                                    if (!int.TryParse(start, out iStart))
+                                        throw new Exception();
+                                    int iEnd = 0;
+                                    if (!int.TryParse(end, out iEnd))
+                                        throw new Exception();
+                                    Mode mode = new Mode() { Name = name, LineStart = iStart, LineEnd = iEnd };
+                                    availableModes.Add(mode);
+                                }
+                            }
+                        }
+                        sr.Close();
+                    }
+                }
+
+                if (availableModes.Count == 0)
+                    throw new Exception();
+
+                return availableModes;
+            }
+            catch
+            {
+                throw new Exception("Invalid format in " + filePAT + ", please check the header section!");
+            }
         }
 
         #endregion
