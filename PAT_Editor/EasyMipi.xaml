@@ -17,32 +17,52 @@
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="60"></RowDefinition>
         </Grid.RowDefinitions>
 
         <materialDesign:Card Grid.Row="0" Padding="35">
-            <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Merlin Test MIPI Tool</TextBlock>
+            <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Merlin Test MIPI Panel</TextBlock>
         </materialDesign:Card>
+
+        <TextBlock Grid.Row="1" Margin="35,0,0,0" FontWeight="Bold" TextDecorations="Underline" VerticalAlignment="Center">Generate PAT File</TextBlock>
+        <TextBlock Grid.Row="3" Margin="35,0,0,0" FontWeight="Bold" TextDecorations="Underline" VerticalAlignment="Center">Debug PEZ File</TextBlock>
         
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="8*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Name="txtMipiConfigFilePath" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Path of MIPI Config File"
-                     VerticalAlignment="Center" Margin="30" IsReadOnly="False" />
-            <Button Grid.Column="1" Name="btnBrowse" ToolTip="Browse" 
-                    VerticalAlignment="Center" Margin="30,30,30,30" Click="btnBrowse_Click" Content="{materialDesign:PackIcon DotsHorizontal}">
+            <TextBox Grid.Column="0" Name="txtMipiConfigFilePath" VerticalAlignment="Center" Margin="35,0,35,0" IsReadOnly="False"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Path of MIPI Config File" />
+            <Button Grid.Column="1" Name="btnBrowse" ToolTip="Browse" Click="btnBrowse_Click" Margin="5">
+                <materialDesign:PackIcon Kind="FileCsv" />
+            </Button>
+            <Button Grid.Column="2" Name="btnGenerate" ToolTip="Build" Click="btnGenerate_Click" IsEnabled="False" Margin="5">
+                <materialDesign:PackIcon Kind="Build" />
             </Button>
         </Grid>
 
-        <Button Grid.Row="2" Name="btnGenerate" Style="{StaticResource MaterialDesignFloatingActionDarkButton}" ToolTip="Generate" 
-                Width="100" Height="100" Click="btnGenerate_Click" IsEnabled="False">
-            <materialDesign:PackIcon Kind="Play" Height="80" Width="80" />
-        </Button>
-        
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Name="txtFilePAT" VerticalAlignment="Center" Margin="35,0,35,0" IsReadOnly="False"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Path of MIPI PEZ File" />
+            <Button Grid.Column="1" Name="btnBrowsePAT" ToolTip="Browse" Click="btnBrowsePAT_Click" Margin="5">
+                <materialDesign:PackIcon Kind="File" />
+            </Button>
+            <Button Grid.Column="2" Name="btnDebugPEZ" ToolTip="Debug" Click="btnDebugPEZ_Click" IsEnabled="False" Margin="5">
+                <materialDesign:PackIcon Kind="Play" />
+            </Button>
+        </Grid>
+
     </Grid>
 </Window>

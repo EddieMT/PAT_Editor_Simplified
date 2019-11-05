@@ -182,15 +182,30 @@ namespace PAT_Editor
                                             sValue = Convert.ToString(Data, 2).PadLeft(8, '0');
                                             sValue += GetParityBit(sValue);
                                             string sData = string.Empty;
-                                            sData += prefix + BuildData(sValue[0], mode.BitsOfClock, mode.BitsOfData) + ";// Data D7\n";
-                                            sData += prefix + BuildData(sValue[1], mode.BitsOfClock, mode.BitsOfData) + ";// Data D6\n";
-                                            sData += prefix + BuildData(sValue[2], mode.BitsOfClock, mode.BitsOfData) + ";// Data D5\n";
-                                            sData += prefix + BuildData(sValue[3], mode.BitsOfClock, mode.BitsOfData) + ";// Data D4\n";
-                                            sData += prefix + BuildData(sValue[4], mode.BitsOfClock, mode.BitsOfData) + ";// Data D3\n";
-                                            sData += prefix + BuildData(sValue[5], mode.BitsOfClock, mode.BitsOfData) + ";// Data D2\n";
-                                            sData += prefix + BuildData(sValue[6], mode.BitsOfClock, mode.BitsOfData) + ";// Data D1\n";
-                                            sData += prefix + BuildData(sValue[7], mode.BitsOfClock, mode.BitsOfData) + ";// Data D0\n";
-                                            sData += prefix + BuildData(sValue[8], mode.BitsOfClock, mode.BitsOfData) + ";// Parity Bit (to make odd sum Data)\n";
+                                            if (ReadWriteAction.Action == ReadWrite.Write)
+                                            {
+                                                sData += prefix + BuildData(sValue[0], mode.BitsOfClock, mode.BitsOfData) + ";// Data D7\n";
+                                                sData += prefix + BuildData(sValue[1], mode.BitsOfClock, mode.BitsOfData) + ";// Data D6\n";
+                                                sData += prefix + BuildData(sValue[2], mode.BitsOfClock, mode.BitsOfData) + ";// Data D5\n";
+                                                sData += prefix + BuildData(sValue[3], mode.BitsOfClock, mode.BitsOfData) + ";// Data D4\n";
+                                                sData += prefix + BuildData(sValue[4], mode.BitsOfClock, mode.BitsOfData) + ";// Data D3\n";
+                                                sData += prefix + BuildData(sValue[5], mode.BitsOfClock, mode.BitsOfData) + ";// Data D2\n";
+                                                sData += prefix + BuildData(sValue[6], mode.BitsOfClock, mode.BitsOfData) + ";// Data D1\n";
+                                                sData += prefix + BuildData(sValue[7], mode.BitsOfClock, mode.BitsOfData) + ";// Data D0\n";
+                                                sData += prefix + BuildData(sValue[8], mode.BitsOfClock, mode.BitsOfData) + ";// Parity Bit (to make odd sum Data)\n";
+                                            }
+                                            else
+                                            {
+                                                sData += prefix + BuildDataHL(sValue[0], mode.BitsOfClock, mode.BitsOfData) + ";// Data D7\n";
+                                                sData += prefix + BuildDataHL(sValue[1], mode.BitsOfClock, mode.BitsOfData) + ";// Data D6\n";
+                                                sData += prefix + BuildDataHL(sValue[2], mode.BitsOfClock, mode.BitsOfData) + ";// Data D5\n";
+                                                sData += prefix + BuildDataHL(sValue[3], mode.BitsOfClock, mode.BitsOfData) + ";// Data D4\n";
+                                                sData += prefix + BuildDataHL(sValue[4], mode.BitsOfClock, mode.BitsOfData) + ";// Data D3\n";
+                                                sData += prefix + BuildDataHL(sValue[5], mode.BitsOfClock, mode.BitsOfData) + ";// Data D2\n";
+                                                sData += prefix + BuildDataHL(sValue[6], mode.BitsOfClock, mode.BitsOfData) + ";// Data D1\n";
+                                                sData += prefix + BuildDataHL(sValue[7], mode.BitsOfClock, mode.BitsOfData) + ";// Data D0\n";
+                                                sData += prefix + BuildDataHL(sValue[8], mode.BitsOfClock, mode.BitsOfData) + ";// Parity Bit (to make odd sum Data)\n";
+                                            }
                                             sw.Write(sData);
                                             #endregion
                                             #region Bus Park
@@ -218,6 +233,16 @@ namespace PAT_Editor
             {
                 System.Windows.MessageBox.Show(ex.Message);
             }
+        }
+
+        private void btnBrowsePAT_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnDebugPEZ_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         #region private methods
@@ -589,6 +614,30 @@ namespace PAT_Editor
                 return '1';
             else
                 return '0';
+        }
+
+        private string BuildDataHL(char data, List<uint> bitsOfClock, List<uint> bitsofData)
+        {
+            string res = string.Empty;
+
+            for (uint i = 1; i <= 32; i++)
+            {
+                if (bitsOfClock.Contains(i))
+                {
+                    res += "1";
+                    continue;
+                }
+
+                if (bitsofData.Contains(i))
+                {
+                    res += (data == '0' ? "L" : "H");
+                    continue;
+                }
+
+                res += 'X';
+            }
+
+            return res;
         }
 
         #endregion

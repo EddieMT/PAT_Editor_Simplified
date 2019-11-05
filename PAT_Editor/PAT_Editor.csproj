@@ -146,5 +146,8 @@
   <ItemGroup>
     <Resource Include="MerlinTest.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Installer\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
