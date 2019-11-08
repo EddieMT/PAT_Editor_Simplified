@@ -5,9 +5,86 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAT_Editor"
         mc:Ignorable="d"
-        Height="450" Width="800"
+        Height="600" Width="800" WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded" Closing="Window_Closing">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        
+         <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="150"></RowDefinition>
+            </Grid.RowDefinitions> 
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="200"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0" Header="Basic Settings" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition Height="40"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="bdno:"></TextBlock>
+                        <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                            <TextBox Name="txtbdno" Text="1" Width="100" IsReadOnly="True"></TextBox>
+                            <CheckBox Name="chkbdno" Margin="8" Checked="chkbdno_Checked" Unchecked="chkbdno_Unchecked"></CheckBox>
+                        </StackPanel>
+
+
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Name="btnSave" Content="Save Settings" Click="btnSave_Click" Width="160" Margin="5"></Button>
+                        <Button Grid.Column="1" Name="btnLoad" Content="Load OpenATE" Click="btnLoad_Click" Width="160" Margin="5"></Button>
+                        <Button Grid.Column="2" Name="btnUnload" Content="Unload OpenATE" Click="btnUnload_Click" Width="160" Margin="5" IsEnabled="False"></Button>
+                    </Grid>
+                </Grid>
+                
+            </GroupBox>
+            <GroupBox Grid.Column="1" Header="Debug" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <ListView Grid.Row="0" Name="lvMode" DisplayMemberPath="Name"></ListView>
+                    <Button Grid.Row="1" Name="btnDebug" Content="Debug" Click="btnDebug_Click" Width="160" Margin="5" IsEnabled="False"></Button>
+                </Grid>
+            </GroupBox>
+            <GroupBox  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="Message" Margin="5">
+                <ScrollViewer Name="scvMessage">
+                    <ScrollViewer.Content>
+                        <TextBlock Name="txtMessage" TextWrapping="Wrap"/>
+                    </ScrollViewer.Content>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
     </Grid>
 </Window>

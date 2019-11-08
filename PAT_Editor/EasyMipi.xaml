@@ -43,7 +43,7 @@
             <Button Grid.Column="1" Name="btnBrowse" ToolTip="Browse" Click="btnBrowse_Click" Margin="5">
                 <materialDesign:PackIcon Kind="FileCsv" />
             </Button>
-            <Button Grid.Column="2" Name="btnGenerate" ToolTip="Build" Click="btnGenerate_Click" IsEnabled="False" Margin="5">
+            <Button Grid.Column="2" Name="btnGenerate" ToolTip="Build" Click="btnGenerate_Click" Margin="5">
                 <materialDesign:PackIcon Kind="Build" />
             </Button>
         </Grid>
@@ -59,7 +59,7 @@
             <Button Grid.Column="1" Name="btnBrowsePAT" ToolTip="Browse" Click="btnBrowsePAT_Click" Margin="5">
                 <materialDesign:PackIcon Kind="File" />
             </Button>
-            <Button Grid.Column="2" Name="btnDebugPAT" ToolTip="Debug" Click="btnDebugPAT_Click" IsEnabled="False" Margin="5">
+            <Button Grid.Column="2" Name="btnDebugPAT" ToolTip="Debug" Click="btnDebugPAT_Click" Margin="5">
                 <materialDesign:PackIcon Kind="Play" />
             </Button>
         </Grid>
