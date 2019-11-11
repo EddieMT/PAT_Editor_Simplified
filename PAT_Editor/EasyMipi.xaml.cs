@@ -92,6 +92,8 @@ namespace PAT_Editor
                     throw new Exception("Cannot find any MIPI setting!");
                 string mipiChannel = "//MIPI-CHANNEL:";
                 Dictionary<uint, uint> channelCombos = new Dictionary<uint, uint>();
+                string mipiTS = "//MIPI-TS:";
+                List<int> tsCombos = new List<int>();
                 foreach (var mode in modes)
                 {
                     foreach(var channelgroup in mode.ChannelGroups)
@@ -115,8 +117,17 @@ namespace PAT_Editor
                             }
                         }
                     }
+
+                    foreach(var action in mode.ReadWriteActions)
+                    {
+                        if (!tsCombos.Contains(action.TSID))
+                        {
+                            tsCombos.Add(action.TSID);
+                        }
+                    }
                 }
-                foreach(var channelcombo in channelCombos)
+                mipiTS += string.Join(",", tsCombos);
+                foreach (var channelcombo in channelCombos)
                 {
                     mipiChannel += string.Format("{0},{1}|", channelcombo.Key, channelcombo.Value);
                 }
@@ -127,6 +138,7 @@ namespace PAT_Editor
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
                         sw.WriteLine(mipiChannel.Substring(0, mipiChannel.Length - 1));
+                        sw.WriteLine(mipiTS);
                         sw.WriteLine("//MIPI-START");
                         foreach (var mode in groupbylist)
                         {
@@ -155,8 +167,8 @@ namespace PAT_Editor
                                         foreach (var ReadWriteAction in mode.ReadWriteActions)
                                         {
                                             string sValue = string.Empty;
-                                            string prefix = "FC       1   TSX              ";
-                                            prefix = prefix.Replace("TSX", ReadWriteAction.TSX);
+                                            string prefix = "FC       1   TSID              ";
+                                            prefix = prefix.Replace("ID", ReadWriteAction.TSID.ToString());
                                             sw.WriteLine(string.Format("// Register {0} : Data {1} -----------------------------------------------------------", RegID.ToString("X"), Data.ToString("X")));
                                             #region Start Sequence Control
                                             sw.WriteLine("// SSC: Start Sequence Control");
@@ -195,6 +207,8 @@ namespace PAT_Editor
                                             sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// Reg Address C1\n";
                                             sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// Reg Address C0\n";
                                             sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                                            if (ReadWriteAction.Action == ReadWrite.Read)
+                                                sCF += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
                                             sw.Write(sCF);
                                             #endregion
                                             #region Data
@@ -242,10 +256,6 @@ namespace PAT_Editor
 
         private void btnBrowsePAT_Click(object sender, RoutedEventArgs e)
         {
-            Tuple<List<Mode>, List<ChannelGroup>> pat = ParsePAT(@"C:\Users\28902\Desktop\mipi\PAT_editor.PAT");
-            DebugMipi bbb = new DebugMipi("", pat.Item1, pat.Item2);
-            bbb.ShowDialog();
-            return;
             try
             {
                 OpenFileDialog dlg = new OpenFileDialog();
@@ -270,16 +280,16 @@ namespace PAT_Editor
 
                 string filePAT = txtFilePAT.Text;
                 string filePEZ = Path.ChangeExtension(filePAT, "PEZ");
-
+#if REALHW
                 if (!File.Exists(filePEZ))
                 {
                     System.Windows.MessageBox.Show("Underlying PEZ file, " + filePEZ + ", does not exist, please generate it via OpenATE tool first!");
                     return;
                 }
+#endif
 
-                Tuple<List<Mode>, List<ChannelGroup>> pat = ParsePAT(filePAT);
-
-                DebugMipi dialog = new DebugMipi(filePEZ, pat.Item1, pat.Item2);
+                Tuple<List<Mode>, List<ChannelGroup>, List<TimingSet>> pat = ParsePAT(filePAT);
+                DebugMipi dialog = new DebugMipi(filePEZ, pat.Item1, pat.Item2, pat.Item3);
                 dialog.ShowDialog();
             }
             catch (Exception ex)
@@ -288,7 +298,7 @@ namespace PAT_Editor
             }
         }
 
-        #region private methods
+#region private methods
 
         private List<ChannelGroup> ParseChannelGroups(string ChnsOfClock, string ChnsOfData)
         {
@@ -553,7 +563,10 @@ namespace PAT_Editor
                         action.Action = ReadWrite.Read;
                     else
                         throw new Exception("Invalid W/R - " + ReadWriteActions + "!");
-                    action.TSX = "TS" + ReadWriteActions.Substring(1);
+                    if (uint.TryParse(ReadWriteActions.Substring(1), out value))
+                        action.TSID = (int)value;
+                    else
+                        throw new Exception("Invalid TS - " + ReadWriteActions + "!");
                     return new List<ReadWriteAction>() { action };
                 }
                 else
@@ -574,7 +587,10 @@ namespace PAT_Editor
                         action1.Action = ReadWrite.Read;
                     else
                         throw new Exception("Invalid W/R - " + actions[0] + "!");
-                    action1.TSX = "TS" + actions[0].Substring(1);
+                    if (uint.TryParse(actions[0].Substring(1), out value))
+                        action1.TSID = (int)value;
+                    else
+                        throw new Exception("Invalid TS - " + actions[0] + "!");
                 }
                 else
                 {
@@ -590,7 +606,10 @@ namespace PAT_Editor
                         action2.Action = ReadWrite.Read;
                     else
                         throw new Exception("Invalid W/R - " + actions[1] + "!");
-                    action2.TSX = "TS" + actions[1].Substring(1);
+                    if (uint.TryParse(actions[1].Substring(1), out value))
+                        action2.TSID = (int)value;
+                    else
+                        throw new Exception("Invalid TS - " + actions[1] + "!");
                 }
                 else
                 {
@@ -644,12 +663,13 @@ namespace PAT_Editor
                 return '0';
         }
 
-        private Tuple<List<Mode>, List<ChannelGroup>> ParsePAT(string filePAT)
+        private Tuple<List<Mode>, List<ChannelGroup>, List<TimingSet>> ParsePAT(string filePAT)
         {
             try
             {
                 List<Mode> availableModes = new List<Mode>();
                 List<ChannelGroup> availableChannelGroups = new List<ChannelGroup>();
+                List<TimingSet> availableTimingSets = new List<TimingSet>();
 
                 using (FileStream fs = new FileStream(filePAT, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
@@ -679,6 +699,19 @@ namespace PAT_Editor
                                     cg.Clock.ID = iClock;
                                     cg.Data.ID = iData;
                                     availableChannelGroups.Add(cg);
+                                }
+                            }
+                            else if (line.ToUpper().Trim().StartsWith("//MIPI-TS"))
+                            {
+                                line = line.Split(':')[1].Trim();
+                                string[] timingSets = line.Split(',');
+                                foreach (var timingset in timingSets)
+                                {
+                                    int id = 0;
+                                    if (!int.TryParse(timingset, out id))
+                                        throw new Exception();
+                                    TimingSet ts = new TimingSet() { ID = id };
+                                    availableTimingSets.Add(ts);
                                 }
                             }
                             else if (line.ToUpper().Trim().StartsWith("//MIPI-START"))
@@ -714,7 +747,10 @@ namespace PAT_Editor
                 if (availableChannelGroups.Count == 0)
                     throw new Exception();
 
-                return Tuple.Create(availableModes, availableChannelGroups);
+                if (availableTimingSets.Count == 0)
+                    throw new Exception();
+
+                return Tuple.Create(availableModes, availableChannelGroups, availableTimingSets);
             }
             catch
             {
@@ -722,7 +758,7 @@ namespace PAT_Editor
             }
         }
 
-        #endregion
+#endregion
     }
 
     public class Mode
@@ -742,7 +778,7 @@ namespace PAT_Editor
     public class ReadWriteAction
     {
         public ReadWrite Action { get; set; }
-        public string TSX { get; set; }
+        public int TSID { get; set; }
     }
 
     public enum ReadWrite
@@ -772,5 +808,11 @@ namespace PAT_Editor
     {
         Pattern,
         Drive
+    }
+
+    public class TimingSet
+    {
+        public int ID { get; set; }
+        public int data { get; set; }
     }
 }
