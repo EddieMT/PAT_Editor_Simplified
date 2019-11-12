@@ -5,18 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAT_Editor"
         mc:Ignorable="d"
-        Height="600" Width="1100" WindowStartupLocation="CenterScreen"
-        Loaded="Window_Loaded" Closing="Window_Closing">
+        Height="700" Width="1100" WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded" Closing="Window_Closing"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+     TextElement.FontWeight="Regular"
+     TextElement.FontSize="16"
+     TextOptions.TextFormattingMode="Ideal"
+     TextOptions.TextRenderingMode="Auto"
+     Background="{DynamicResource MaterialDesignPaper}"
+     FontFamily="{DynamicResource MaterialDesignFont}">
     <Window.Resources>
         <ResourceDictionary>
             <Style TargetType="TextBlock">
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
                 <Setter Property="HorizontalAlignment" Value="Center"></Setter>
-                <Setter Property="FontSize" Value="14"></Setter>
             </Style>
             <Style TargetType="TextBox">
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                <Setter Property="FontSize" Value="14"></Setter>
             </Style>
         </ResourceDictionary>
     </Window.Resources>
@@ -24,7 +30,7 @@
          <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
-                <RowDefinition Height="150"></RowDefinition>
+                <RowDefinition Height="250"></RowDefinition>
             </Grid.RowDefinitions> 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
@@ -89,12 +95,36 @@
                     <Button Grid.Row="2" Name="btnDebug" Content="Debug" Click="btnDebug_Click" Width="160" Margin="5"></Button>
                 </Grid>
             </GroupBox>
-            <GroupBox  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="Message" Margin="5">
+            <GroupBox  Grid.Row="1" Grid.Column="0" Header="Message" Margin="5">
                 <ScrollViewer Name="scvMessage">
                     <ScrollViewer.Content>
                         <TextBlock Name="txtMessage" TextWrapping="Wrap"/>
                     </ScrollViewer.Content>
                 </ScrollViewer>
+            </GroupBox>
+            <GroupBox  Grid.Row="1" Grid.Column="1" Header="Status" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="150"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0" Style="{StaticResource MaterialDesignIconButton}" Width="150" Height="150"
+                            Background="LightGray">
+                    </Button>
+                    
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Pass"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="0"></TextBlock>
+                        <TextBlock Grid.Column="2" Text="Fail"></TextBlock>
+                        <TextBlock Grid.Column="3" Text="0"></TextBlock>
+                    </Grid>
+                </Grid>
             </GroupBox>
         </Grid>
     </Grid>
