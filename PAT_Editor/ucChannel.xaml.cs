@@ -20,7 +20,7 @@ namespace PAT_Editor
     /// </summary>
     public partial class ucChannel : UserControl
     {
-        public uint ID { get; set; }
+        public int ID { get; set; }
         List<int> listDrive = new List<int>() { 0, 1 };
         public ucChannel()
         {
@@ -50,7 +50,7 @@ namespace PAT_Editor
                     if (cg.Clock.ID == iValue || cg.Data.ID == iValue)
                         throw new Exception("Channel No. of VIO should not be same as clock's and data's!");
                     else
-                        cg.VIO.ID = (uint)iValue;
+                        cg.VIO.ID = iValue;
                 }
                 else
                     throw new Exception("Channel No. of VIO should be within 1 - 32!");

@@ -91,7 +91,7 @@ namespace PAT_Editor
                 if (modes.Count == 0)
                     throw new Exception("Cannot find any MIPI setting!");
                 string mipiChannel = "//MIPI-CHANNEL:";
-                Dictionary<uint, uint> channelCombos = new Dictionary<uint, uint>();
+                Dictionary<int, int> channelCombos = new Dictionary<int, int>();
                 string mipiTS = "//MIPI-TS:";
                 List<int> tsCombos = new List<int>();
                 foreach (var mode in modes)
@@ -307,12 +307,12 @@ namespace PAT_Editor
             string[] dataChannels = ChnsOfData.Split(',');
             if (clockChannels.Length > 0 && dataChannels.Length > 0 && clockChannels.Length == dataChannels.Length)
             {
-                uint channel = 0;
+                int channel = 0;
                 for (int i = 0; i < clockChannels.Length; i++)
                 {
                     ChannelGroup value = new ChannelGroup();
 
-                    if (uint.TryParse(clockChannels[i], out channel))
+                    if (int.TryParse(clockChannels[i], out channel))
                     {
                         if (channel >= 1 && channel <= 32)
                         {
@@ -326,7 +326,7 @@ namespace PAT_Editor
                         throw new Exception(ChnsOfClock + " should be unsigned integer!");
                     }
 
-                    if (uint.TryParse(dataChannels[i], out channel))
+                    if (int.TryParse(dataChannels[i], out channel))
                     {
                         if (channel >= 1 && channel <= 32)
                         {
@@ -687,13 +687,13 @@ namespace PAT_Editor
                                 string[] channelGroups = line.Split('|');
                                 foreach(var channelgroup in channelGroups)
                                 {
-                                    uint iClock = 0;
-                                    uint iData = 0;
+                                    int iClock = 0;
+                                    int iData = 0;
                                     string sClock = channelgroup.Split(',')[0];
                                     string sData = channelgroup.Split(',')[1];
-                                    if (!uint.TryParse(sClock, out iClock))
+                                    if (!int.TryParse(sClock, out iClock))
                                         throw new Exception("Invalid channel in " + line);
-                                    if (!uint.TryParse(sData, out iData))
+                                    if (!int.TryParse(sData, out iData))
                                         throw new Exception("Invalid channel in " + line);
                                     ChannelGroup cg = new ChannelGroup();
                                     cg.Clock.ID = iClock;
@@ -796,7 +796,7 @@ namespace PAT_Editor
 
     public class Channel
     {
-        public uint ID { get; set; }
+        public int ID { get; set; }
         public DrivePattern DrivePattern { get; set; }
         public double Vil { get; set; }
         public double Vih { get; set; }

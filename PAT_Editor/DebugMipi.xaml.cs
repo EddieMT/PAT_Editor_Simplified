@@ -67,7 +67,7 @@ namespace PAT_Editor
                 int data = 0;
                 foreach (var channelgroup in channelGroups)
                 {
-                    int offset = (int)channelgroup.Clock.ID - 1;
+                    int offset = channelgroup.Clock.ID - 1;
                     data = (data | (1 << offset));
                 }
                 Digital.set_rz(1, 1, data);
@@ -106,71 +106,53 @@ namespace PAT_Editor
                 GetTimingSets();
                 GetChannelGroups();
 #if REALHW
-                Digital.set_addif(1, pezMAX);
-                int TSW = 10;
-                int TSR = 70;
-                int TS3 = 200;
-                Digital.set_tp(1, 1, TSW);
-                Digital.set_tp(1, 2, TSR);
-                Digital.set_tp(1, 3, TS3);
+                if (tgbIgnoreError.IsChecked == true)
+                    Digital.set_addif(1, pezMAX);
+                else
+                    Digital.set_addif(1, 0);
 
-                int edge1 = 1 * TSW / 10;
-                int edge2 = 9 * TSW / 10;
-                int edge3 = 6 * TSW / 10;
-                int edgeStrobe = 9 * TSW / 10;
-                Digital.set_tstart(1, 1, 1, edge1);
-                Digital.set_tstop(1, 1, 1, edge3);
-                Digital.set_tstart(1, 2, 1, edge1);
-                Digital.set_tstop(1, 2, 1, edge2);
-                Digital.set_tstrob(1, 2, 1, edgeStrobe);
-                Digital.set_tstart(1, 3, 1, edge1);
-                Digital.set_tstop(1, 3, 1, edge2);
+                foreach(var ts in timingSets)
+                {
+                    Digital.set_tp(1, ts.ID, ts.data);
+                }
+                
+                foreach(var cg in channelGroups)
+                {
+                    foreach (var ts in timingSets)
+                    {
+                        int start = (ts.data * cg.Clock.Start) / 100;
+                        int stop = (ts.data * cg.Clock.Stop) / 100;
+                        Digital.set_tstart(1, cg.Clock.ID, ts.ID, start);
+                        Digital.set_tstop(1, cg.Clock.ID, ts.ID, stop);
 
-                edge1 = 1 * TSR / 10;
-                edge2 = 9 * TSR / 10;
-                edge3 = 6 * TSR / 10;
-                edgeStrobe = 9 * TSR / 10;
-                Digital.set_tstart(1, 1, 2, edge1);
-                Digital.set_tstop(1, 1, 2, edge3);
-                Digital.set_tstart(1, 2, 2, edge1);
-                Digital.set_tstop(1, 2, 2, edge2);
-                Digital.set_tstrob(1, 2, 2, edgeStrobe);
-                Digital.set_tstart(1, 3, 2, edge1);
-                Digital.set_tstop(1, 3, 2, edge2);
+                        start = (ts.data * cg.Data.Start) / 100;
+                        stop = (ts.data * cg.Data.Stop) / 100;
+                        int strob = (ts.data * cg.Data.Strob) / 100;
+                        Digital.set_tstart(1, cg.Data.ID, ts.ID, start);
+                        Digital.set_tstop(1, cg.Data.ID, ts.ID, stop);
+                        Digital.set_tstrob(1, cg.Data.ID, ts.ID, strob);
 
-                edge1 = 1 * TS3 / 10;
-                edge2 = 9 * TS3 / 10;
-                edge3 = 6 * TS3 / 10;
-                edgeStrobe = 9 * TS3 / 10;
-                Digital.set_tstart(1, 1, 3, edge1);
-                Digital.set_tstop(1, 1, 3, edge3);
-                Digital.set_tstart(1, 2, 3, edge1);
-                Digital.set_tstop(1, 2, 3, edge2);
-                Digital.set_tstrob(1, 2, 3, edgeStrobe);
-                Digital.set_tstart(1, 3, 3, edge1);
-                Digital.set_tstop(1, 3, 3, edge2);
+                        start = (ts.data * cg.VIO.Start) / 100;
+                        stop = (ts.data * cg.VIO.Stop) / 100;
+                        Digital.set_tstart(1, cg.VIO.ID, ts.ID, start);
+                        Digital.set_tstop(1, cg.VIO.ID, ts.ID, stop);
+                    }
 
-                //SCLK
-                Digital.set_vil(1, 1, 0.0);
-                Digital.set_vih(1, 1, 1.8);
+                    Digital.set_vil(1, cg.Clock.ID, cg.Clock.Vil);
+                    Digital.set_vih(1, cg.Clock.ID, cg.Clock.Vih);
+                    Digital.set_vol(1, cg.Clock.ID, cg.Clock.Vol);
+                    Digital.set_voh(1, cg.Clock.ID, cg.Clock.Voh);
+                    Digital.set_vil(1, cg.Data.ID, cg.Data.Vil);
+                    Digital.set_vih(1, cg.Data.ID, cg.Data.Vih);
+                    Digital.set_vol(1, cg.Data.ID, cg.Data.Vol);
+                    Digital.set_voh(1, cg.Data.ID, cg.Data.Voh);
+                    Digital.set_vil(1, cg.VIO.ID, cg.VIO.Vil);
+                    Digital.set_vih(1, cg.VIO.ID, cg.VIO.Vih);
 
-                Digital.set_vol(1, 1, 0.36);
-                Digital.set_voh(1, 1, 1.44);
-
-                //SDATA
-                Digital.set_vil(1, 2, 0.0);
-                Digital.set_vih(1, 2, 1.8);
-
-                Digital.set_vol(1, 2, 0.36);
-                Digital.set_voh(1, 2, 1.44);
-
-                //VIO
-                Digital.set_vil(1, 3, 0.0);
-                Digital.set_vih(1, 3, 1.8);
-
-                Digital.cpu_df(1, 1, 0, 0); // reset CLK to run pattern
-                Digital.cpu_df(1, 2, 0, 0); // reset DATA to run pattern
-                Digital.cpu_df(1, 3, 0, 0); // reset VIO to run pattern
+                    Digital.cpu_df(1, cg.Clock.ID, 0, 0);
+                    Digital.cpu_df(1, cg.Data.ID, 0, 0);
+                    Digital.cpu_df(1, cg.VIO.ID, (cg.VIO.DrivePattern == DrivePattern.Pattern ? 0 : 1), (cg.VIO.DrivePattern == DrivePattern.Pattern ? 0 : cg.VIO.VIO_HL));
+                }
 #endif
 
                 btnDebug.IsEnabled = true;
@@ -186,8 +168,35 @@ namespace PAT_Editor
         {
             try
             {
+                uint loopCount = 0;
+                if (!uint.TryParse(txtLoopCount.Text.Trim(), out loopCount))
+                {
+                    MessageBox.Show("Loop count should be integer!");
+                    return;
+                }
+
+                if (lvMode.SelectedItems.Count > 1)
+                {
+                    MessageBox.Show("Multi-select is not supportted!");
+                    return;
+                }
+                else if (lvMode.SelectedItems.Count == 0)
+                {
+                    MessageBox.Show("Please select one to debug!");
+                    return;
+                }
+                else
+                {
+                    var mode = (Mode)lvMode.SelectedValue;
+                    int status = RunDigitalPattern(1, mode.LineStart, mode.LineEnd);
+                    if (status == 1)
+                        MessageBox.Show("Pass!");
+                    else
+                        MessageBox.Show("Fail!");
 #if REALHW
+                    
 #endif
+                }
             }
             catch (Exception ex)
             {
@@ -252,6 +261,27 @@ namespace PAT_Editor
                     }
                 }
             }
+        }
+
+        private int RunDigitalPattern(int bdn, int lbeg, int lend)
+        {
+            int rst = 0;
+
+            Digital.set_checkmode(bdn, 0);
+            Digital.set_addbeg(bdn, lbeg);
+            Digital.set_addend(bdn, lend);
+            Digital.cycle(bdn, 0);
+            Digital.fstart(bdn, 1);
+
+            // Wait for sequencer to stop
+            while (Digital.check_tprun(bdn) != 0) Util.WaitTime(1e-6);
+
+            rst = Digital.check_tpass(bdn); // Return 1 is pass, else fail
+            Digital.fstart(bdn, 0);
+
+            //mts3_msg("FCCNT = %d", pe32_rd_fccnt(1));
+
+            return rst;
         }
         #endregion
     }
