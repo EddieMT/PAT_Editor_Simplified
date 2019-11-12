@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="PAT_Editor.ucChannel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PAT_Editor"
+             mc:Ignorable="d" 
+             d:DesignHeight="160" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+                <Setter Property="FontSize" Value="14"></Setter>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                <Setter Property="FontSize" Value="14"></Setter>
+                <Setter Property="Width" Value="50"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border BorderThickness="2" BorderBrush="Purple" CornerRadius="5">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="channel"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="vil(v)"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="3" Text="vih(v)"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="4" Text="vol(v)"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="5" Text="voh(v)"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="6" Text="start(%)"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="7" Text="stop(%)"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="8" Text="strob(%)"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="9" Text="mode"></TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Clock"></TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Data"></TextBlock>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="VIO"></TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="1" Name="lblClockID"></TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="1" Name="lblDataID"></TextBlock>
+            <TextBox Grid.Row="3" Grid.Column="1" Name="txtVioID"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="2" Name="txtClockVil" Text="0"></TextBox>
+            <TextBox Grid.Row="2" Grid.Column="2" Name="txtDataVil" Text="0"></TextBox>
+            <TextBox Grid.Row="3" Grid.Column="2" Name="txtVioVil" Text="0"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="3" Name="txtClockVih" Text="1.8"></TextBox>
+            <TextBox Grid.Row="2" Grid.Column="3" Name="txtDataVih" Text="1.8"></TextBox>
+            <TextBox Grid.Row="3" Grid.Column="3" Name="txtVioVih" Text="1.8"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="4" Name="txtClockVol" Text="0.3"></TextBox>
+            <TextBox Grid.Row="2" Grid.Column="4" Name="txtDataVol" Text="0.3"></TextBox>
+            <TextBox Grid.Row="3" Grid.Column="4" Name="txtVioVol" Text="0.3"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="5" Name="txtClockVoh" Text="1.5"></TextBox>
+            <TextBox Grid.Row="2" Grid.Column="5" Name="txtDataVoh" Text="1.5"></TextBox>
+            <TextBox Grid.Row="3" Grid.Column="5" Name="txtVioVoh" Text="1.5"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="6" Name="txtClockStart" Text="10"></TextBox>
+            <TextBox Grid.Row="2" Grid.Column="6" Name="txtDataStart" Text="10"></TextBox>
+            <TextBox Grid.Row="3" Grid.Column="6" Name="txtVioStart" Text="10"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="7" Name="txtClockStop" Text="60"></TextBox>
+            <TextBox Grid.Row="2" Grid.Column="7" Name="txtDataStop" Text="90"></TextBox>
+            <TextBox Grid.Row="3" Grid.Column="7" Name="txtVioStop" Text="90"></TextBox>
+            <TextBox Grid.Row="2" Grid.Column="8" Name="txtDataStrob" Text="90"></TextBox>
+            <TextBlock Grid.Row="1" Grid.Column="9" Text="Pattern"></TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="9" Text="Pattern"></TextBlock>
+            <StackPanel Grid.Row="3" Grid.Column="9" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <RadioButton Name="rdbPattern" Content="Pattern   " FontSize="14" VerticalContentAlignment="Center" Checked="Pattern_Checked"></RadioButton>
+                <RadioButton Content="Drive   " FontSize="14" VerticalContentAlignment="Center" Checked="Drive_Checked"></RadioButton>
+                <ComboBox Name="cboDrive" Width="50" HorizontalContentAlignment="Center"></ComboBox>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

@@ -12,7 +12,7 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Name="lblTS" Text="TS" VerticalAlignment="Bottom" HorizontalAlignment="Center"></TextBlock>
-        <TextBox Grid.Row="1" Name="txtTS" Width="50" VerticalAlignment="Top" ToolTip="Unit is 5ns!"
+        <TextBox Grid.Row="1" Name="txtTS" Width="50" VerticalAlignment="Top" ToolTip="1/(5ns * X) MHz"
                  HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="5"></TextBox>
     </Grid>
 </UserControl>

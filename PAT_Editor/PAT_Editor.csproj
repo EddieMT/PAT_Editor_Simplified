@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -88,6 +88,9 @@
     <Compile Include="Selector.xaml.cs">
       <DependentUpon>Selector.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ucChannel.xaml.cs">
+      <DependentUpon>ucChannel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ucTS.xaml.cs">
       <DependentUpon>ucTS.xaml</DependentUpon>
     </Compile>
@@ -120,6 +123,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Selector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ucChannel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

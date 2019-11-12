@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAT_Editor"
         mc:Ignorable="d"
-        Height="600" Width="800" WindowStartupLocation="CenterScreen"
+        Height="600" Width="1100" WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded" Closing="Window_Closing">
     <Window.Resources>
         <ResourceDictionary>
@@ -38,21 +38,26 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="40"></RowDefinition>
                             <RowDefinition Height="80"></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <TextBlock Text="Ignore Error" Margin="10,0,10,0"></TextBlock>
-                            <ToggleButton Name="tgbIgnoreError" IsChecked="True"></ToggleButton>
-                        </StackPanel>
-                        
-                        <ScrollViewer Grid.Row="1" Name="scvTS" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
-                            <ScrollViewer.Content>
-                                <StackPanel Name="stpTS" Orientation="Horizontal"></StackPanel>
-                            </ScrollViewer.Content>
-                        </ScrollViewer>
-
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Ignore Error"></TextBlock>
+                            <ToggleButton Grid.Column="1" Name="tgbIgnoreError" IsChecked="True" HorizontalAlignment="Left" Margin="1,0,0,0"></ToggleButton>
+                            <TextBlock Grid.Column="2" Text="Timing Set"></TextBlock>
+                            <ScrollViewer Grid.Column="3" Name="scvTS" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                                <ScrollViewer.Content>
+                                    <StackPanel Name="stpTS" Orientation="Horizontal"></StackPanel>
+                                </ScrollViewer.Content>
+                            </ScrollViewer>
+                        </Grid>
+                        <TabControl Grid.Row="1" Name="tabChannel" />
                     </Grid>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -78,7 +83,7 @@
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Loop Count:"></TextBlock>
+                        <TextBlock Grid.Column="0" Text="Loop Count"></TextBlock>
                         <TextBox Grid.Column="1" Name="txtLoopCount" Text="1" Margin="10"></TextBox>
                     </Grid>
                     <Button Grid.Row="2" Name="btnDebug" Content="Debug" Click="btnDebug_Click" Width="160" Margin="5"></Button>

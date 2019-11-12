@@ -20,19 +20,26 @@ namespace PAT_Editor
     /// </summary>
     public partial class ucTS : UserControl
     {
+        public int ID { get; set; }
+
         public ucTS()
         {
             InitializeComponent();
         }
 
-        public void SetLabel(int num)
+        public void Set(int num)
         {
+            ID = num;
             lblTS.Text += num.ToString();
         }
 
-        public string GetSetting()
+        public void SetObj(TimingSet ts)
         {
-            return txtTS.Text.Trim();
+            int value = 0;
+            if (int.TryParse(txtTS.Text.Trim(), out value))
+                ts.data = value;
+            else
+                throw new Exception(lblTS.Text + " should be integer!");
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using MT.TesterDriver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 
 namespace PAT_Editor
@@ -16,6 +18,7 @@ namespace PAT_Editor
         private List<ChannelGroup> channelGroups;
         private List<TimingSet> timingSets;
         private pe32h Digital;
+        private int pezMAX;
 
         public DebugMipi(string filePEZ, List<Mode> modes, List<ChannelGroup> channelGroups, List<TimingSet> timingSets)
         {
@@ -35,8 +38,18 @@ namespace PAT_Editor
                 foreach (var timingset in timingSets)
                 {
                     ucTS uc = new ucTS();
-                    uc.SetLabel(timingset.ID);
+                    uc.Set(timingset.ID);
                     stpTS.Children.Add(uc);
+                }
+
+                for (int i = 0; i < channelGroups.Count; i++)
+                {
+                    TabItem tabItem = new TabItem();
+                    tabItem.Header = "Group" + (i + 1);
+                    ucChannel uc = new ucChannel();
+                    uc.Set(channelGroups[i]);
+                    tabItem.Content = uc;
+                    tabChannel.Items.Add(tabItem);
                 }
 
 #if REALHW
@@ -45,7 +58,8 @@ namespace PAT_Editor
                 {
                     //
                 }
-                if (Digital.lmload(1, 1, 0, filePEZ) < 0)
+                pezMAX = Digital.lmload(1, 1, 0, filePEZ);
+                if (pezMAX < 0)
                 {
                     //
                 }
@@ -59,9 +73,14 @@ namespace PAT_Editor
                 Digital.set_rz(1, 1, data);
                 Digital.set_ro(1, 1, 0);
 #endif
+
+                btnSet.IsEnabled = true;
+                btnDebug.IsEnabled = false;
             }
             catch (Exception ex)
             {
+                btnSet.IsEnabled = false;
+                btnDebug.IsEnabled = false;
                 MessageBox.Show(ex.Message);
             }
         }
@@ -84,8 +103,10 @@ namespace PAT_Editor
         {
             try
             {
+                GetTimingSets();
+                GetChannelGroups();
 #if REALHW
-                Digital.set_addif(1, 0);
+                Digital.set_addif(1, pezMAX);
                 int TSW = 10;
                 int TSR = 70;
                 int TS3 = 200;
@@ -151,17 +172,27 @@ namespace PAT_Editor
                 Digital.cpu_df(1, 2, 0, 0); // reset DATA to run pattern
                 Digital.cpu_df(1, 3, 0, 0); // reset VIO to run pattern
 #endif
+
+                btnDebug.IsEnabled = true;
             }
             catch (Exception ex)
             {
+                btnDebug.IsEnabled = false;
                 MessageBox.Show(ex.Message);
             }
         }
 
         private void btnDebug_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
 #if REALHW
 #endif
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -179,8 +210,49 @@ namespace PAT_Editor
             txtMessage.Inlines.Add(new LineBreak());
             scvMessage.ScrollToEnd();
         }
-#endregion
 
-        
+        private void GetTimingSets()
+        {
+            foreach(var child in stpTS.Children)
+            {
+                if (child is ucTS)
+                {
+                    ucTS uc = child as ucTS;
+                    TimingSet ts = timingSets.First(x => x.ID == uc.ID);
+                    uc.SetObj(ts);
+                }
+            }
+        }
+
+        private void GetChannelGroups()
+        {
+            foreach (var item in tabChannel.Items)
+            {
+                if (item is TabItem)
+                {
+                    TabItem ti = item as TabItem;
+                    if (ti.Content is ucChannel)
+                    {
+                        ucChannel uc = ti.Content as ucChannel;
+                        ChannelGroup cg = channelGroups.First(x => x.Clock.ID == uc.ID);
+                        uc.SetObj(cg);
+                    }
+                }
+            }
+
+            for (int i = 0; i< channelGroups.Count; i++)
+            {
+                for (int j = i + 1; j < channelGroups.Count; j++)
+                {
+                    var cgi = channelGroups[i];
+                    var cgj = channelGroups[j];
+                    if (cgi.VIO.ID == cgj.Clock.ID || cgi.VIO.ID == cgj.Data.ID || cgi.VIO.ID == cgj.VIO.ID)
+                    {
+                        throw new Exception("VIO has duplicated channel no. - " + cgi.VIO.ID + "!");
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

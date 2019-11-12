@@ -692,9 +692,9 @@ namespace PAT_Editor
                                     string sClock = channelgroup.Split(',')[0];
                                     string sData = channelgroup.Split(',')[1];
                                     if (!uint.TryParse(sClock, out iClock))
-                                        throw new Exception();
+                                        throw new Exception("Invalid channel in " + line);
                                     if (!uint.TryParse(sData, out iData))
-                                        throw new Exception();
+                                        throw new Exception("Invalid channel in " + line);
                                     ChannelGroup cg = new ChannelGroup();
                                     cg.Clock.ID = iClock;
                                     cg.Data.ID = iData;
@@ -709,7 +709,7 @@ namespace PAT_Editor
                                 {
                                     int id = 0;
                                     if (!int.TryParse(timingset, out id))
-                                        throw new Exception();
+                                        throw new Exception("Invalid timing set in " + line);
                                     TimingSet ts = new TimingSet() { ID = id };
                                     availableTimingSets.Add(ts);
                                 }
@@ -728,10 +728,10 @@ namespace PAT_Editor
                                     string end = line.Split(':')[1].Trim().Split('-')[1].Trim();
                                     int iStart = 0;
                                     if (!int.TryParse(start, out iStart))
-                                        throw new Exception();
+                                        throw new Exception("Invalid line in " + line);
                                     int iEnd = 0;
                                     if (!int.TryParse(end, out iEnd))
-                                        throw new Exception();
+                                        throw new Exception("Invalid line in " + line);
                                     Mode mode = new Mode() { Name = name, LineStart = iStart, LineEnd = iEnd };
                                     availableModes.Add(mode);
                                 }
@@ -742,19 +742,19 @@ namespace PAT_Editor
                 }
 
                 if (availableModes.Count == 0)
-                    throw new Exception();
+                    throw new Exception("No available mode detected!");
 
                 if (availableChannelGroups.Count == 0)
-                    throw new Exception();
+                    throw new Exception("No available channel detected!");
 
                 if (availableTimingSets.Count == 0)
-                    throw new Exception();
+                    throw new Exception("No available timing set detected!");
 
                 return Tuple.Create(availableModes, availableChannelGroups, availableTimingSets);
             }
-            catch
+            catch(Exception ex)
             {
-                throw new Exception("Invalid format in " + filePAT + ", please check the header section!");
+                throw new Exception("Invalid format in " + filePAT + ", please check the header section!\n\n" + ex.Message);
             }
         }
 
@@ -799,9 +799,13 @@ namespace PAT_Editor
         public uint ID { get; set; }
         public DrivePattern DrivePattern { get; set; }
         public double Vil { get; set; }
-        public double ViH { get; set; }
+        public double Vih { get; set; }
         public double Vol { get; set; }
         public double Voh { get; set; }
+        public int Start { get; set; }
+        public int Stop { get; set; }
+        public int Strob { get; set; }
+        public int VIO_HL { get; set; }
     }
 
     public enum DrivePattern
