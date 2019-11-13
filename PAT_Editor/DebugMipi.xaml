@@ -55,7 +55,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="Ignore Error"></TextBlock>
-                            <ToggleButton Grid.Column="1" Name="tgbIgnoreError" IsChecked="True" HorizontalAlignment="Left" Margin="1,0,0,0"></ToggleButton>
+                            <ToggleButton Grid.Column="1" Name="tgbIgnoreError" IsChecked="True" HorizontalAlignment="Left" Margin="1,0,0,0" Checked="tgbIgnoreError_Checked" Unchecked="tgbIgnoreError_Unchecked"></ToggleButton>
                             <TextBlock Grid.Column="2" Text="Timing Set"></TextBlock>
                             <ScrollViewer Grid.Column="3" Name="scvTS" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
                                 <ScrollViewer.Content>
@@ -98,7 +98,7 @@
             <GroupBox  Grid.Row="1" Grid.Column="0" Header="Message" Margin="5">
                 <ScrollViewer Name="scvMessage">
                     <ScrollViewer.Content>
-                        <TextBlock Name="txtMessage" TextWrapping="Wrap"/>
+                        <TextBlock Name="txtMessage" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                     </ScrollViewer.Content>
                 </ScrollViewer>
             </GroupBox>
@@ -109,7 +109,7 @@
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
                     <Button Grid.Row="0" Style="{StaticResource MaterialDesignIconButton}" Width="150" Height="150"
-                            Background="LightGray">
+                            Background="LightGray" Name="btnStatus">
                     </Button>
                     
                     <Grid Grid.Row="1">
@@ -120,9 +120,9 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="Pass"></TextBlock>
-                        <TextBlock Grid.Column="1" Text="0"></TextBlock>
+                        <TextBlock Grid.Column="1" Name="lblPass" Text="N/A"></TextBlock>
                         <TextBlock Grid.Column="2" Text="Fail"></TextBlock>
-                        <TextBlock Grid.Column="3" Text="0"></TextBlock>
+                        <TextBlock Grid.Column="3" Name="lblFail" Text="N/A"></TextBlock>
                     </Grid>
                 </Grid>
             </GroupBox>
