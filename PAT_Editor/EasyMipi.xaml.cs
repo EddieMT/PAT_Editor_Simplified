@@ -75,7 +75,8 @@ namespace PAT_Editor
                             mode.ReadWriteActions = ParseReadWriteActions(row[6].ToString());
                             startlinenumber = endlinenumber + 1;
                             mode.LineStart = startlinenumber;
-                            endlinenumber = (36 * mode.ReadWriteActions.Count * mode.Datas.Count * mode.RegIDs.Count * mode.UserIDs.Count) + startlinenumber - 1;
+                            endlinenumber = (36 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * mode.Datas.Count * mode.RegIDs.Count * mode.UserIDs.Count
+                                + 37 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * mode.Datas.Count * mode.RegIDs.Count * mode.UserIDs.Count) + startlinenumber - 1;
                             mode.LineEnd = endlinenumber;
                             if (modes.Count > 0)
                             {

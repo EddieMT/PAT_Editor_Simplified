@@ -91,9 +91,9 @@ namespace PAT_Editor
                     data = (data | (1 << offset));
                 }
                 Digital.set_rz(1, 1, data);
-                LogMessage(string.Format("Digital.set_rz(1, 1, {0});", Convert.ToString(data, 2).PadLeft(32)));
+                LogMessage(string.Format("Digital.set_rz(1, 1, {0});", Convert.ToString(data, 2).PadLeft(32, '0')));
                 Digital.set_ro(1, 1, 0);
-                LogMessage(string.Format("Digital.set_ro(1, 1, {0});", Convert.ToString(0, 2).PadLeft(32)));
+                LogMessage(string.Format("Digital.set_ro(1, 1, {0});", Convert.ToString(0, 2).PadLeft(32, '0')));
 #endif
 
                 btnSet.IsEnabled = true;
