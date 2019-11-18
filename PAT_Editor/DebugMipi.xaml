@@ -83,7 +83,7 @@
                         <RowDefinition Height="40"></RowDefinition>
                         <RowDefinition Height="40"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <ListView Grid.Row="0" Name="lvMode" DisplayMemberPath="Name"></ListView>
+                    <ListView Grid.Row="0" Name="lvMode" DisplayMemberPath="Name" SelectionMode="Single"></ListView>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>

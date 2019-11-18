@@ -229,12 +229,7 @@ namespace PAT_Editor
                         return;
                     }
 
-                    if (lvMode.SelectedItems.Count > 1)
-                    {
-                        MessageBox.Show("Multi-select is not supportted!");
-                        return;
-                    }
-                    else if (lvMode.SelectedItems.Count == 0)
+                    if (lvMode.SelectedItems.Count == 0)
                     {
                         MessageBox.Show("Please select one to debug!");
                         return;
