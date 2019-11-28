@@ -234,7 +234,7 @@ namespace PAT_Editor
                                             string sBP = string.Empty;
                                             sBP += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Bus Park (Drive 0 then Tri-State at CLK falling)\n";
                                             sBP += prefix + BuildData(sValue[1], mode.ChannelGroups, '0') + ";//\n";
-                                            sBP += prefix + BuildData(sValue[2], mode.ChannelGroups, '0') + ";//\n";
+                                            sBP += prefix + BuildData(sValue[2], mode.ChannelGroups, 'X') + ";//\n";
                                             sw.Write(sBP);
                                             #endregion
                                             sw.WriteLine();
