@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -246,7 +247,19 @@ namespace PAT_Editor
                     }
                 }
 
-                System.Windows.MessageBox.Show("PAT file has been generated successfully!\n\nIn case debug is required, please generate the PEZ file via OpenATE tool first and then click the DEBUG button.");
+                String pe32exe = String.Format("{0}\\PECOMPILER\\pe32.exe", Environment.CurrentDirectory);
+                string filePEZ = Path.ChangeExtension(outputFile, "PEZ");
+                using (Process process = new Process())
+                {
+                    process.StartInfo.FileName = pe32exe;
+                    process.StartInfo.Arguments = string.Format(" \"{0}\" \"{1}\"", outputFile, filePEZ);
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    process.Start();
+                    process.WaitForExit();
+                    process.Close();
+                }
+
+                System.Windows.MessageBox.Show("Both PAT & PEZ file have been generated successfully!\n\nYou can click the DEBUG button to test them in panel.");
                 txtFilePAT.Text = outputFile;
             }
             catch (Exception ex)

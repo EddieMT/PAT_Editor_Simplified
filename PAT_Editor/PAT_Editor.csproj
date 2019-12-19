@@ -174,5 +174,16 @@
   <ItemGroup>
     <Folder Include="Installer\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="PECOMPILER\libglib-2.0-0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PECOMPILER\mingwm10.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PECOMPILER\pe32.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
