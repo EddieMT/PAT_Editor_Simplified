@@ -51,7 +51,7 @@ namespace PAT_Editor
                     if (System.Windows.MessageBox.Show(outputFile + " does exist, do you want to overwrite it?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
                         return;
                 }
-
+                
                 List<Mode> modes = new List<Mode>();
                 int startlinenumber = 0;
                 int endlinenumber = -1;
@@ -64,10 +64,16 @@ namespace PAT_Editor
                         var sheet = result.Tables[0];
                         foreach (DataRow row in sheet.Rows)
                         {
+                            //if (row.ItemArray.All(x => x.ToString() == "") || (row.ItemArray.Where(x => x.ToString() == "").Count() + row.ItemArray.Count(x => x.ToString().Contains(" ") == true) == 7))
+                              if (row.ItemArray.All(x => x.ToString() == ""))
+                                {
+                                    continue;
+                                    //throw new Exception("Config file exist null row or null value, please check the config file! ");
+                                }
                             if (row[0].ToString().ToUpper() == "PATITEM")
                                 continue;
-
-                            Mode mode = new Mode();
+                            
+                                Mode mode = new Mode();
                             mode.Name = row[0].ToString();
                             mode.ChannelGroups = ParseChannelGroups(row[1].ToString(), row[2].ToString());
                             mode.UserIDs = ParseUserIDs(row[3].ToString());
@@ -76,8 +82,15 @@ namespace PAT_Editor
                             mode.ReadWriteActions = ParseReadWriteActions(row[6].ToString());
                             startlinenumber = endlinenumber + 1;
                             mode.LineStart = startlinenumber;
-                            endlinenumber = (36 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * mode.Datas.Count * mode.RegIDs.Count * mode.UserIDs.Count
-                                + 37 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * mode.Datas.Count * mode.RegIDs.Count * mode.UserIDs.Count) + startlinenumber - 1;
+                            endlinenumber = (36 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * mode.Datas.Where(x => x / 256 < 1).Count() * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count
+                            + 37 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * mode.Datas.Where(x => x / 256 < 1).Count() * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count)
+                            + ((36 + 9) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * mode.Datas.Where(x => x / 256 < 1).Count() * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
+                            + (36 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
+                            + (36 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count
+                            + (37 + 9) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * mode.Datas.Where(x => x / 256 < 1).Count() * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
+                            + (37 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
+                            + (37 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count)
+                            + startlinenumber - 1;
                             mode.LineEnd = endlinenumber;
                             if (modes.Count > 0)
                             {
@@ -166,6 +179,18 @@ namespace PAT_Editor
                                 {
                                     foreach (var Data in mode.Datas)
                                     {
+                                        List<uint> dataArr = new List<uint>();
+                                        if (Data <= 0xFF)
+                                        {
+                                            dataArr.Add(Data);
+                                        }
+                                        else
+                                        {
+                                            uint dataFir = Data >> 8 & 0xFF;  
+                                            uint dataSec = Data & 0xFF;
+                                            dataArr.Add(dataFir);
+                                            dataArr.Add(dataSec);
+                                        }
                                         foreach (var ReadWriteAction in mode.ReadWriteActions)
                                         {
                                             string sValue = string.Empty;
@@ -191,43 +216,98 @@ namespace PAT_Editor
                                             #endregion
                                             #region Command Frame
                                             sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:5] + Reg Addr[4:0])");
-                                            sValue = Convert.ToString(UserID, 2).PadLeft(4, '0');
-                                            sValue += ReadWriteAction.Action == ReadWrite.Write ? "010" : "011";
-                                            sValue += Convert.ToString(RegID, 2).PadLeft(5, '0');
-                                            sValue += GetParityBit(sValue);
-                                            string sCF = string.Empty;
-                                            sCF += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Slave Addr\n";
-                                            sCF += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Slave Addr\n";
-                                            sCF += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Slave Addr\n";
-                                            sCF += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Slave Addr\n";
-                                            sCF += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Write Command C7 (010: Write, 011: Read)\n";
-                                            sCF += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Write Command C6\n";
-                                            sCF += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Write Command C5\n";
-                                            sCF += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Reg Address C4\n";
-                                            sCF += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// Reg Address C3\n";
-                                            sCF += prefix + BuildData(sValue[9], mode.ChannelGroups) + ";// Reg Address C2\n";
-                                            sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// Reg Address C1\n";
-                                            sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// Reg Address C0\n";
-                                            sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
-                                            if (ReadWriteAction.Action == ReadWrite.Read)
-                                                sCF += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
-                                            sw.Write(sCF);
+                                            if (RegID <= 0x1F && Data<=0xFF)
+                                            {
+                                                sValue = Convert.ToString(UserID, 2).PadLeft(4, '0');
+                                                sValue += ReadWriteAction.Action == ReadWrite.Write ? "010" : "011";
+                                                sValue += Convert.ToString(RegID, 2).PadLeft(5, '0');
+                                                sValue += GetParityBit(sValue);
+                                                string sCF = string.Empty;
+                                                sCF += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Write Command C7 (010: Write, 011: Read)\n";
+                                                sCF += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Write Command C6\n";
+                                                sCF += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Write Command C5\n";
+                                                sCF += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Reg Address C4\n";
+                                                sCF += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// Reg Address C3\n";
+                                                sCF += prefix + BuildData(sValue[9], mode.ChannelGroups) + ";// Reg Address C2\n";
+                                                sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// Reg Address C1\n";
+                                                sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// Reg Address C0\n";
+                                                sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                                                if (ReadWriteAction.Action == ReadWrite.Read)
+                                                    sCF += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
+                                                sw.Write(sCF);
+                                            }
+                                            else
+                                            {
+                                                sValue = Convert.ToString(UserID, 2).PadLeft(4, '0');
+                                                sValue += ReadWriteAction.Action == ReadWrite.Write ? "0000" : "0010";
+                                                if (dataArr.Count() == 1)
+                                                    sValue += "0000";
+                                                else if(dataArr.Count()==2)
+                                                {
+                                                    sValue += "0001";
+                                                }
+                                                
+                                                sValue += GetParityBit(sValue);
+
+                                                string sCF = string.Empty;
+                                                sCF += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Write Command C7 (0000: Write, 0010: Read)\n";
+                                                sCF += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Write Command C6\n";
+                                                sCF += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Write Command C5\n";
+                                                sCF += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Write Command C4\n";
+                                                sCF += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// BC3\n";
+                                                sCF += prefix + BuildData(sValue[9], mode.ChannelGroups) + ";// BC2\n";
+                                                sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// BC1\n";
+                                                sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// BC0\n";
+                                                sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                                                if (ReadWriteAction.Action == ReadWrite.Read)
+                                                    sCF += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
+                                                sw.Write(sCF);
+                                                #region Address
+                                                sw.WriteLine("// Address (8 bits + Parity)");
+                                                
+                                                sValue = Convert.ToString(RegID, 2).PadLeft(8, '0');
+                                                sValue += GetParityBit(sValue);
+                                                string sAddr = string.Empty;
+                                                sAddr += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Reg Address A7\n";
+                                                sAddr += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Reg Address A6\n";
+                                                sAddr += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Reg Address A5\n";
+                                                sAddr += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Reg Address A4\n";
+                                                sAddr += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Reg Address A3\n";
+                                                sAddr += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Reg Address A2\n";
+                                                sAddr += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Reg Address A1\n";
+                                                sAddr += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Reg Address A0\n";
+                                                sAddr += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                                                sw.Write(sAddr);
+                                                #endregion
+                                            }
                                             #endregion
                                             #region Data
-                                            sw.WriteLine("// Data (8 bits + Parity)");
-                                            sValue = Convert.ToString(Data, 2).PadLeft(8, '0');
-                                            sValue += GetParityBit(sValue);
-                                            string sData = string.Empty;
-                                            sData += prefix + BuildData(sValue[0], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D7\n";
-                                            sData += prefix + BuildData(sValue[1], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D6\n";
-                                            sData += prefix + BuildData(sValue[2], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D5\n";
-                                            sData += prefix + BuildData(sValue[3], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D4\n";
-                                            sData += prefix + BuildData(sValue[4], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D3\n";
-                                            sData += prefix + BuildData(sValue[5], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D2\n";
-                                            sData += prefix + BuildData(sValue[6], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D1\n";
-                                            sData += prefix + BuildData(sValue[7], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D0\n";
-                                            sData += prefix + BuildData(sValue[8], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
-                                            sw.Write(sData);
+                                            //if dataArr is 16bits, it will write dataArr's high 8bits and low 8bits in sequence
+                                            for (int i = 0; i < dataArr.Count; i++)
+                                            {
+                                                sw.WriteLine("// Data (8 bits + Parity)");
+                                                sValue = Convert.ToString(dataArr[i], 2).PadLeft(8, '0');
+                                                sValue += GetParityBit(sValue);
+                                                string sData = string.Empty;
+                                                sData += prefix + BuildData(sValue[0], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D7\n";
+                                                sData += prefix + BuildData(sValue[1], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D6\n";
+                                                sData += prefix + BuildData(sValue[2], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D5\n";
+                                                sData += prefix + BuildData(sValue[3], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D4\n";
+                                                sData += prefix + BuildData(sValue[4], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D3\n";
+                                                sData += prefix + BuildData(sValue[5], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D2\n";
+                                                sData += prefix + BuildData(sValue[6], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D1\n";
+                                                sData += prefix + BuildData(sValue[7], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D0\n";
+                                                sData += prefix + BuildData(sValue[8], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
+                                                sw.Write(sData);
+                                            }
                                             #endregion
                                             #region Bus Park
                                             sw.WriteLine("// Bus Park");
@@ -439,9 +519,9 @@ namespace PAT_Editor
                 uint value = 0;
                 if (uint.TryParse(RegIDs, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
                 {
-                    if (value > 0x1F)
+                    if (value > 0xFF)
                     {
-                        throw new Exception("Range 0 ~ 1F!");
+                        throw new Exception("Range 0 ~ FF!");
                     }
                     else
                     {
@@ -458,9 +538,9 @@ namespace PAT_Editor
                 uint valueStart = 0;
                 if (uint.TryParse(regIDs[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out valueStart))
                 {
-                    if (valueStart > 0x1F)
+                    if (valueStart > 0xFF)
                     {
-                        throw new Exception("Range 0 ~ 1F!");
+                        throw new Exception("Range 0 ~ FF!");
                     }
                 }
                 else
@@ -471,9 +551,9 @@ namespace PAT_Editor
                 uint valueEnd = 0;
                 if (uint.TryParse(regIDs[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out valueEnd))
                 {
-                    if (valueEnd > 0x1F)
+                    if (valueEnd > 0xFF)
                     {
-                        throw new Exception("Range 0 ~ 1F!");
+                        throw new Exception("Range 0 ~ FF!");
                     }
                 }
                 else
@@ -505,9 +585,9 @@ namespace PAT_Editor
                 uint value = 0;
                 if (uint.TryParse(Datas, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
                 {
-                    if (value > 0xFF)
+                    if (value > 0xFFFF)
                     {
-                        throw new Exception("Range 0 ~ FF!");
+                        throw new Exception("Range 0 ~ FFFF!");
                     }
                     else
                     {
@@ -524,22 +604,22 @@ namespace PAT_Editor
                 uint valueStart = 0;
                 if (uint.TryParse(datas[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out valueStart))
                 {
-                    if (valueStart > 0xFF)
+                    if (valueStart > 0xFFFF)
                     {
-                        throw new Exception("Range 0 ~ FF!");
+                        throw new Exception("Range 0 ~ FFFF!");
                     }
                 }
                 else
-                {
-                    throw new Exception("Unsigned integer!");
-                }
+                        {
+                            throw new Exception("Unsigned integer!");
+                        }
 
                 uint valueEnd = 0;
                 if (uint.TryParse(datas[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out valueEnd))
                 {
-                    if (valueEnd > 0xFF)
+                    if (valueEnd > 0xFFFF)
                     {
-                        throw new Exception("Range 0 ~ FF!");
+                        throw new Exception("Range 0 ~ FFFF!");
                     }
                 }
                 else
@@ -556,13 +636,13 @@ namespace PAT_Editor
                 }
                 return values;
             }
-            else
-            {
-                throw new Exception("Invalid Data - " + Datas + "!");
+                else
+                {
+                    throw new Exception("Invalid Data - " + Datas + "!");
+                }
             }
-        }
 
-        private List<ReadWriteAction> ParseReadWriteActions(string ReadWriteActions)
+            private List<ReadWriteAction> ParseReadWriteActions(string ReadWriteActions)
         {
             string[] actions = ReadWriteActions.Split('-');
             if (actions.Length == 1)
@@ -788,7 +868,7 @@ namespace PAT_Editor
         public int LineStart { get; set; }
         public int LineEnd { get; set; }
     }
-
+    
     public class ReadWriteAction
     {
         public ReadWrite Action { get; set; }
