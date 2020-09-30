@@ -62,14 +62,24 @@ namespace PAT_Editor
                         // The result of each spreadsheet is in result.Tables
                         var result = reader.AsDataSet();
                         var sheet = result.Tables[0];
+                        int validLine = 0;
+                        bool existNullLine = false;
                         foreach (DataRow row in sheet.Rows)
                         {
                             //if (row.ItemArray.All(x => x.ToString() == "") || (row.ItemArray.Where(x => x.ToString() == "").Count() + row.ItemArray.Count(x => x.ToString().Contains(" ") == true) == 7))
-                              if (row.ItemArray.All(x => x.ToString() == ""))
-                                {
-                                    continue;
-                                    //throw new Exception("Config file exist null row or null value, please check the config file! ");
+                            if (row.ItemArray.All(x => x.ToString() != ""))
+                            {
+                                if (existNullLine)
+                                { 
+                                    throw new Exception(string.Format("Current Line - {0} is blank, please check the config file! ", validLine + 1)); 
                                 }
+                                validLine++;
+                            }
+                            else
+                            {
+                                existNullLine = true;
+                                continue;
+                            }
                             if (row[0].ToString().ToUpper() == "PATITEM")
                                 continue;
                             
