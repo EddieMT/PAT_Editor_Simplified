@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "MIPI Tool"
-#define MyAppVersion "0.0.0.5"
+#define MyAppVersion "1.0.0.0"
 #define MyAppPublisher "Merlin Test, Ltd."
 #define MyAppURL "http://www.merlintest.com/"
 #define MyAppExeName "PAT_Editor.exe"
@@ -54,6 +54,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "..\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\MerlinTest.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\Release\PECOMPILER\*"; DestDir: "{app}\PECOMPILER"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\MerlinTest.ico"
