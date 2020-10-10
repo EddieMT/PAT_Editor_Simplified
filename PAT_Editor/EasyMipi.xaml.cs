@@ -277,8 +277,6 @@ namespace PAT_Editor
                                                 sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// BC1\n";
                                                 sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// BC0\n";
                                                 sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
-                                                if (ReadWriteAction.Action == ReadWrite.Read)
-                                                    sCF += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
                                                 sw.Write(sCF);
                                                 #region Address
                                                 sw.WriteLine("// Address (8 bits + Parity)");
@@ -295,6 +293,8 @@ namespace PAT_Editor
                                                 sAddr += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Reg Address A1\n";
                                                 sAddr += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Reg Address A0\n";
                                                 sAddr += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                                                if (ReadWriteAction.Action == ReadWrite.Read)
+                                                    sAddr += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
                                                 sw.Write(sAddr);
                                                 #endregion
                                             }
