@@ -26,7 +26,7 @@ namespace PAT_Editor
             try
             {
                 OpenFileDialog dlg = new OpenFileDialog();
-                dlg.Filter = "CSV files|*.csv";
+                dlg.Filter = "MIPI配置文件|*.csv;*.xlsx";
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     txtMipiConfigFilePath.Text = dlg.FileName;
@@ -51,306 +51,18 @@ namespace PAT_Editor
                     if (System.Windows.MessageBox.Show(outputFile + " does exist, do you want to overwrite it?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
                         return;
                 }
-                
-                List<Mode> modes = new List<Mode>();
-                int startlinenumber = 0;
-                int endlinenumber = -1;
-                using (var stream = File.Open(txtMipiConfigFilePath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    using (var reader = ExcelReaderFactory.CreateCsvReader(stream))
-                    {
-                        // The result of each spreadsheet is in result.Tables
-                        var result = reader.AsDataSet();
-                        var sheet = result.Tables[0];
-                        int validLine = 0;
-                        bool existNullLine = false;
-                        foreach (DataRow row in sheet.Rows)
-                        {
-                            //if (row.ItemArray.All(x => x.ToString() == "") || (row.ItemArray.Where(x => x.ToString() == "").Count() + row.ItemArray.Count(x => x.ToString().Contains(" ") == true) == 7))
-                            if (row.ItemArray.All(x => x.ToString() != ""))
-                            {
-                                if (existNullLine)
-                                { 
-                                    throw new Exception(string.Format("Current Line - {0} is blank, please check the config file! ", validLine + 1)); 
-                                }
-                                validLine++;
-                            }
-                            else
-                            {
-                                existNullLine = true;
-                                continue;
-                            }
-                            if (row[0].ToString().ToUpper() == "PATITEM")
-                                continue;
-                            
-                                Mode mode = new Mode();
-                            mode.Name = row[0].ToString();
-                            mode.ChannelGroups = ParseChannelGroups(row[1].ToString(), row[2].ToString());
-                            mode.UserIDs = ParseUserIDs(row[3].ToString());
-                            mode.RegIDs = ParseRegIDs(row[4].ToString());
-                            mode.Datas = ParseDatas(row[5].ToString());
-                            mode.ReadWriteActions = ParseReadWriteActions(row[6].ToString());
-                            startlinenumber = endlinenumber + 1;
-                            mode.LineStart = startlinenumber;
-                            endlinenumber = (36 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * mode.Datas.Where(x => x / 256 < 1).Count() * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count
-                            + 37 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * mode.Datas.Where(x => x / 256 < 1).Count() * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count)
-                            + ((36 + 9) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * mode.Datas.Where(x => x / 256 < 1).Count() * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
-                            + (36 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
-                            + (36 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count
-                            + (37 + 9) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * mode.Datas.Where(x => x / 256 < 1).Count() * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
-                            + (37 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
-                            + (37 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count)
-                            + startlinenumber - 1;
-                            mode.LineEnd = endlinenumber;
-                            if (modes.Count > 0)
-                            {
-                                if (modes.Any(x => x.Name == mode.Name) && modes[modes.Count - 1].Name != mode.Name)
-                                {
-                                    throw new Exception(mode.Name + " should be set together!");
-                                }
-                            }
-                            modes.Add(mode);
-                        }
-                    }
-                }
-                if (modes.Count == 0)
-                    throw new Exception("Cannot find any MIPI setting!");
-                string mipiChannel = "//MIPI-CHANNEL:";
-                Dictionary<int, int> channelCombos = new Dictionary<int, int>();
-                string mipiTS = "//MIPI-TS:";
-                List<int> tsCombos = new List<int>();
-                foreach (var mode in modes)
-                {
-                    foreach(var channelgroup in mode.ChannelGroups)
-                    {
-                        if (channelCombos.ContainsKey(channelgroup.Clock.ID))
-                        {
-                            if (channelCombos[channelgroup.Clock.ID] != channelgroup.Data.ID)
-                            {
-                                throw new Exception(string.Format("[Clock,Data] has confilct between [{0},{1}] and [{0},{2}]!", channelgroup.Clock.ID, channelCombos[channelgroup.Clock.ID], channelgroup.Data.ID));
-                            }
-                        }
-                        else
-                        {
-                            if (channelCombos.ContainsValue(channelgroup.Data.ID))
-                            {
-                                throw new Exception(string.Format("[Clock,Data] has confilct between [{0},{1}] and [{2},{1}]!", channelgroup.Clock.ID, channelgroup.Data.ID, channelCombos.First(x => x.Value == channelgroup.Data.ID).Key));
-                            }
-                            else
-                            {
-                                channelCombos.Add(channelgroup.Clock.ID, channelgroup.Data.ID);
-                            }
-                        }
-                    }
 
-                    foreach(var action in mode.ReadWriteActions)
-                    {
-                        if (!tsCombos.Contains(action.TSID))
-                        {
-                            tsCombos.Add(action.TSID);
-                        }
-                    }
-                }
-                mipiTS += string.Join(",", tsCombos);
-                foreach (var channelcombo in channelCombos)
+                string fileExtension = Path.GetExtension(outputFile);
+                if (fileExtension.ToLower() == ".xlsx")
                 {
-                    mipiChannel += string.Format("{0},{1}|", channelcombo.Key, channelcombo.Value);
+                    GeneratePATbyXLSX(outputFile);
+                }
+                else
+                {
+                    GeneratePATbyCSV(outputFile);
                 }
 
-                var groupbylist = modes.GroupBy(x => x.Name);
-                using (FileStream fs = new FileStream(outputFile, FileMode.Create, FileAccess.Write))
-                {
-                    using (StreamWriter sw = new StreamWriter(fs))
-                    {
-                        sw.WriteLine(mipiChannel.Substring(0, mipiChannel.Length - 1));
-                        sw.WriteLine(mipiTS);
-                        sw.WriteLine("//MIPI-START");
-                        foreach (var mode in groupbylist)
-                        {
-                            var list = mode.ToList();
-                            string line = string.Format("//{0}:{1}-{2}", mode.Key, list[0].LineStart, list[list.Count - 1].LineEnd);
-                            sw.WriteLine(line);
-                        }
-                        sw.WriteLine("//MIPI-END");
-                        sw.WriteLine();
-                    }
-                }
-
-                using (FileStream fs = new FileStream(outputFile, FileMode.Append, FileAccess.Write))
-                {
-                    using (StreamWriter sw = new StreamWriter(fs))
-                    {
-                        foreach (var mode in modes)
-                        {
-                            sw.WriteLine(string.Format("//--------------------------------------------{0}-----------------------------------------------------------", mode.Name));
-                            foreach (var UserID in mode.UserIDs)
-                            {
-                                foreach (var RegID in mode.RegIDs)
-                                {
-                                    foreach (var Data in mode.Datas)
-                                    {
-                                        List<uint> dataArr = new List<uint>();
-                                        if (Data <= 0xFF)
-                                        {
-                                            dataArr.Add(Data);
-                                        }
-                                        else
-                                        {
-                                            uint dataFir = Data >> 8 & 0xFF;  
-                                            uint dataSec = Data & 0xFF;
-                                            dataArr.Add(dataFir);
-                                            dataArr.Add(dataSec);
-                                        }
-                                        foreach (var ReadWriteAction in mode.ReadWriteActions)
-                                        {
-                                            string sValue = string.Empty;
-                                            string prefix = "FC       1   TSID              ";
-                                            prefix = prefix.Replace("ID", ReadWriteAction.TSID.ToString());
-                                            sw.WriteLine(string.Format("// Register {0} : Data {1} -----------------------------------------------------------", RegID.ToString("X"), Data.ToString("X")));
-                                            #region Start Sequence Control
-                                            sw.WriteLine("// SSC: Start Sequence Control");
-                                            sValue = "XXX00000010";
-                                            string sSSC = string.Empty;
-                                            sSSC += prefix + BuildData(sValue[0], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[1], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[2], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[3], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[4], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[5], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[6], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[7], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[8], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[9], mode.ChannelGroups, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[10], mode.ChannelGroups, '0') + ";\n";
-                                            sw.Write(sSSC);
-                                            #endregion
-                                            #region Command Frame
-                                            sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:5] + Reg Addr[4:0])");
-                                            if (RegID <= 0x1F && Data<=0xFF)
-                                            {
-                                                sValue = Convert.ToString(UserID, 2).PadLeft(4, '0');
-                                                sValue += ReadWriteAction.Action == ReadWrite.Write ? "010" : "011";
-                                                sValue += Convert.ToString(RegID, 2).PadLeft(5, '0');
-                                                sValue += GetParityBit(sValue);
-                                                string sCF = string.Empty;
-                                                sCF += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Write Command C7 (010: Write, 011: Read)\n";
-                                                sCF += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Write Command C6\n";
-                                                sCF += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Write Command C5\n";
-                                                sCF += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Reg Address C4\n";
-                                                sCF += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// Reg Address C3\n";
-                                                sCF += prefix + BuildData(sValue[9], mode.ChannelGroups) + ";// Reg Address C2\n";
-                                                sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// Reg Address C1\n";
-                                                sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// Reg Address C0\n";
-                                                sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
-                                                if (ReadWriteAction.Action == ReadWrite.Read)
-                                                    sCF += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
-                                                sw.Write(sCF);
-                                            }
-                                            else
-                                            {
-                                                sValue = Convert.ToString(UserID, 2).PadLeft(4, '0');
-                                                sValue += ReadWriteAction.Action == ReadWrite.Write ? "0000" : "0010";
-                                                if (dataArr.Count() == 1)
-                                                    sValue += "0000";
-                                                else if(dataArr.Count()==2)
-                                                {
-                                                    sValue += "0001";
-                                                }
-                                                
-                                                sValue += GetParityBit(sValue);
-
-                                                string sCF = string.Empty;
-                                                sCF += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Write Command C7 (0000: Write, 0010: Read)\n";
-                                                sCF += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Write Command C6\n";
-                                                sCF += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Write Command C5\n";
-                                                sCF += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Write Command C4\n";
-                                                sCF += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// BC3\n";
-                                                sCF += prefix + BuildData(sValue[9], mode.ChannelGroups) + ";// BC2\n";
-                                                sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// BC1\n";
-                                                sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// BC0\n";
-                                                sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
-                                                sw.Write(sCF);
-                                                #region Address
-                                                sw.WriteLine("// Address (8 bits + Parity)");
-                                                
-                                                sValue = Convert.ToString(RegID, 2).PadLeft(8, '0');
-                                                sValue += GetParityBit(sValue);
-                                                string sAddr = string.Empty;
-                                                sAddr += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Reg Address A7\n";
-                                                sAddr += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Reg Address A6\n";
-                                                sAddr += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Reg Address A5\n";
-                                                sAddr += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Reg Address A4\n";
-                                                sAddr += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Reg Address A3\n";
-                                                sAddr += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Reg Address A2\n";
-                                                sAddr += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Reg Address A1\n";
-                                                sAddr += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Reg Address A0\n";
-                                                sAddr += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
-                                                if (ReadWriteAction.Action == ReadWrite.Read)
-                                                    sAddr += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
-                                                sw.Write(sAddr);
-                                                #endregion
-                                            }
-                                            #endregion
-                                            #region Data
-                                            //if dataArr is 16bits, it will write dataArr's high 8bits and low 8bits in sequence
-                                            for (int i = 0; i < dataArr.Count; i++)
-                                            {
-                                                sw.WriteLine("// Data (8 bits + Parity)");
-                                                sValue = Convert.ToString(dataArr[i], 2).PadLeft(8, '0');
-                                                sValue += GetParityBit(sValue);
-                                                string sData = string.Empty;
-                                                sData += prefix + BuildData(sValue[0], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D7\n";
-                                                sData += prefix + BuildData(sValue[1], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D6\n";
-                                                sData += prefix + BuildData(sValue[2], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D5\n";
-                                                sData += prefix + BuildData(sValue[3], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D4\n";
-                                                sData += prefix + BuildData(sValue[4], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D3\n";
-                                                sData += prefix + BuildData(sValue[5], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D2\n";
-                                                sData += prefix + BuildData(sValue[6], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D1\n";
-                                                sData += prefix + BuildData(sValue[7], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D0\n";
-                                                sData += prefix + BuildData(sValue[8], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
-                                                sw.Write(sData);
-                                            }
-                                            #endregion
-                                            #region Bus Park
-                                            sw.WriteLine("// Bus Park");
-                                            sValue = "0XX";
-                                            string sBP = string.Empty;
-                                            sBP += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Bus Park (Drive 0 then Tri-State at CLK falling)\n";
-                                            sBP += prefix + BuildData(sValue[1], mode.ChannelGroups, '0') + ";//\n";
-                                            sBP += prefix + BuildData(sValue[2], mode.ChannelGroups, 'X') + ";//\n";
-                                            sw.Write(sBP);
-                                            #endregion
-                                            sw.WriteLine();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                String pe32exe = String.Format("{0}\\PECOMPILER\\pe32.exe", Environment.CurrentDirectory);
-                string filePEZ = Path.ChangeExtension(outputFile, "PEZ");
-                using (Process process = new Process())
-                {
-                    process.StartInfo.FileName = pe32exe;
-                    process.StartInfo.Arguments = string.Format(" \"{0}\" \"{1}\"", outputFile, filePEZ);
-                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    process.Start();
-                    process.WaitForExit();
-                    process.Close();
-                }
-
-                System.Windows.MessageBox.Show("Both PAT & PEZ file have been generated successfully!\n\nYou can click the DEBUG button to test them in panel.");
-                txtFilePAT.Text = outputFile;
+                GeneratePEZ(outputFile);
             }
             catch (Exception ex)
             {
@@ -402,7 +114,318 @@ namespace PAT_Editor
             }
         }
 
-#region private methods
+        #region private methods
+
+        private void GeneratePATbyCSV(string filePAT)
+        {
+            List<Mode> modes = new List<Mode>();
+            int startlinenumber = 0;
+            int endlinenumber = -1;
+            using (var stream = File.Open(txtMipiConfigFilePath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (var reader = ExcelReaderFactory.CreateCsvReader(stream))
+                {
+                    // The result of each spreadsheet is in result.Tables
+                    var result = reader.AsDataSet();
+                    var sheet = result.Tables[0];
+                    int validLine = 0;
+                    bool existNullLine = false;
+                    foreach (DataRow row in sheet.Rows)
+                    {
+                        //if (row.ItemArray.All(x => x.ToString() == "") || (row.ItemArray.Where(x => x.ToString() == "").Count() + row.ItemArray.Count(x => x.ToString().Contains(" ") == true) == 7))
+                        if (row.ItemArray.All(x => x.ToString() != ""))
+                        {
+                            if (existNullLine)
+                            {
+                                throw new Exception(string.Format("Current Line - {0} is blank, please check the config file! ", validLine + 1));
+                            }
+                            validLine++;
+                        }
+                        else
+                        {
+                            existNullLine = true;
+                            continue;
+                        }
+                        if (row[0].ToString().ToUpper() == "PATITEM")
+                            continue;
+
+                        Mode mode = new Mode();
+                        mode.Name = row[0].ToString();
+                        mode.ChannelGroups = ParseChannelGroups(row[1].ToString(), row[2].ToString());
+                        mode.UserIDs = ParseUserIDs(row[3].ToString());
+                        mode.RegIDs = ParseRegIDs(row[4].ToString());
+                        mode.Datas = ParseDatas(row[5].ToString());
+                        mode.ReadWriteActions = ParseReadWriteActions(row[6].ToString());
+                        startlinenumber = endlinenumber + 1;
+                        mode.LineStart = startlinenumber;
+                        endlinenumber = (36 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * mode.Datas.Where(x => x / 256 < 1).Count() * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count
+                        + 37 * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * mode.Datas.Where(x => x / 256 < 1).Count() * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count)
+                        + ((36 + 9) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * mode.Datas.Where(x => x / 256 < 1).Count() * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
+                        + (36 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
+                        + (36 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Write) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count
+                        + (37 + 9) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * mode.Datas.Where(x => x / 256 < 1).Count() * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
+                        + (37 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * (mode.RegIDs.Count - mode.RegIDs.Where(x => x <= 0x1f).Count()) * mode.UserIDs.Count
+                        + (37 + 18) * mode.ReadWriteActions.Count(x => x.Action == ReadWrite.Read) * (mode.Datas.Count - mode.Datas.Where(x => x / 256 < 1).Count()) * mode.RegIDs.Where(x => x <= 0x1f).Count() * mode.UserIDs.Count)
+                        + startlinenumber - 1;
+                        mode.LineEnd = endlinenumber;
+                        if (modes.Count > 0)
+                        {
+                            if (modes.Any(x => x.Name == mode.Name) && modes[modes.Count - 1].Name != mode.Name)
+                            {
+                                throw new Exception(mode.Name + " should be set together!");
+                            }
+                        }
+                        modes.Add(mode);
+                    }
+                }
+            }
+            if (modes.Count == 0)
+                throw new Exception("Cannot find any MIPI setting!");
+            string mipiChannel = "//MIPI-CHANNEL:";
+            Dictionary<int, int> channelCombos = new Dictionary<int, int>();
+            string mipiTS = "//MIPI-TS:";
+            List<int> tsCombos = new List<int>();
+            foreach (var mode in modes)
+            {
+                foreach (var channelgroup in mode.ChannelGroups)
+                {
+                    if (channelCombos.ContainsKey(channelgroup.Clock.ID))
+                    {
+                        if (channelCombos[channelgroup.Clock.ID] != channelgroup.Data.ID)
+                        {
+                            throw new Exception(string.Format("[Clock,Data] has confilct between [{0},{1}] and [{0},{2}]!", channelgroup.Clock.ID, channelCombos[channelgroup.Clock.ID], channelgroup.Data.ID));
+                        }
+                    }
+                    else
+                    {
+                        if (channelCombos.ContainsValue(channelgroup.Data.ID))
+                        {
+                            throw new Exception(string.Format("[Clock,Data] has confilct between [{0},{1}] and [{2},{1}]!", channelgroup.Clock.ID, channelgroup.Data.ID, channelCombos.First(x => x.Value == channelgroup.Data.ID).Key));
+                        }
+                        else
+                        {
+                            channelCombos.Add(channelgroup.Clock.ID, channelgroup.Data.ID);
+                        }
+                    }
+                }
+
+                foreach (var action in mode.ReadWriteActions)
+                {
+                    if (!tsCombos.Contains(action.TSID))
+                    {
+                        tsCombos.Add(action.TSID);
+                    }
+                }
+            }
+            mipiTS += string.Join(",", tsCombos);
+            foreach (var channelcombo in channelCombos)
+            {
+                mipiChannel += string.Format("{0},{1}|", channelcombo.Key, channelcombo.Value);
+            }
+
+            var groupbylist = modes.GroupBy(x => x.Name);
+            using (FileStream fs = new FileStream(filePAT, FileMode.Create, FileAccess.Write))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    sw.WriteLine(mipiChannel.Substring(0, mipiChannel.Length - 1));
+                    sw.WriteLine(mipiTS);
+                    sw.WriteLine("//MIPI-START");
+                    foreach (var mode in groupbylist)
+                    {
+                        var list = mode.ToList();
+                        string line = string.Format("//{0}:{1}-{2}", mode.Key, list[0].LineStart, list[list.Count - 1].LineEnd);
+                        sw.WriteLine(line);
+                    }
+                    sw.WriteLine("//MIPI-END");
+                    sw.WriteLine();
+                }
+            }
+
+            using (FileStream fs = new FileStream(filePAT, FileMode.Append, FileAccess.Write))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    foreach (var mode in modes)
+                    {
+                        sw.WriteLine(string.Format("//--------------------------------------------{0}-----------------------------------------------------------", mode.Name));
+                        foreach (var UserID in mode.UserIDs)
+                        {
+                            foreach (var RegID in mode.RegIDs)
+                            {
+                                foreach (var Data in mode.Datas)
+                                {
+                                    List<uint> dataArr = new List<uint>();
+                                    if (Data <= 0xFF)
+                                    {
+                                        dataArr.Add(Data);
+                                    }
+                                    else
+                                    {
+                                        uint dataFir = Data >> 8 & 0xFF;
+                                        uint dataSec = Data & 0xFF;
+                                        dataArr.Add(dataFir);
+                                        dataArr.Add(dataSec);
+                                    }
+                                    foreach (var ReadWriteAction in mode.ReadWriteActions)
+                                    {
+                                        string sValue = string.Empty;
+                                        string prefix = "FC       1   TSID              ";
+                                        prefix = prefix.Replace("ID", ReadWriteAction.TSID.ToString());
+                                        sw.WriteLine(string.Format("// Register {0} : Data {1} -----------------------------------------------------------", RegID.ToString("X"), Data.ToString("X")));
+                                        #region Start Sequence Control
+                                        sw.WriteLine("// SSC: Start Sequence Control");
+                                        sValue = "XXX00000010";
+                                        string sSSC = string.Empty;
+                                        sSSC += prefix + BuildData(sValue[0], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[1], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[2], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[3], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[4], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[5], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[6], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[7], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[8], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[9], mode.ChannelGroups, '0') + ";\n";
+                                        sSSC += prefix + BuildData(sValue[10], mode.ChannelGroups, '0') + ";\n";
+                                        sw.Write(sSSC);
+                                        #endregion
+                                        #region Command Frame
+                                        sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:5] + Reg Addr[4:0])");
+                                        if (RegID <= 0x1F && Data <= 0xFF)
+                                        {
+                                            sValue = Convert.ToString(UserID, 2).PadLeft(4, '0');
+                                            sValue += ReadWriteAction.Action == ReadWrite.Write ? "010" : "011";
+                                            sValue += Convert.ToString(RegID, 2).PadLeft(5, '0');
+                                            sValue += GetParityBit(sValue);
+                                            string sCF = string.Empty;
+                                            sCF += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Slave Addr\n";
+                                            sCF += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Slave Addr\n";
+                                            sCF += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Slave Addr\n";
+                                            sCF += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Slave Addr\n";
+                                            sCF += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Write Command C7 (010: Write, 011: Read)\n";
+                                            sCF += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Write Command C6\n";
+                                            sCF += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Write Command C5\n";
+                                            sCF += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Reg Address C4\n";
+                                            sCF += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// Reg Address C3\n";
+                                            sCF += prefix + BuildData(sValue[9], mode.ChannelGroups) + ";// Reg Address C2\n";
+                                            sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// Reg Address C1\n";
+                                            sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// Reg Address C0\n";
+                                            sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                                            if (ReadWriteAction.Action == ReadWrite.Read)
+                                                sCF += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
+                                            sw.Write(sCF);
+                                        }
+                                        else
+                                        {
+                                            sValue = Convert.ToString(UserID, 2).PadLeft(4, '0');
+                                            sValue += ReadWriteAction.Action == ReadWrite.Write ? "0000" : "0010";
+                                            if (dataArr.Count() == 1)
+                                                sValue += "0000";
+                                            else if (dataArr.Count() == 2)
+                                            {
+                                                sValue += "0001";
+                                            }
+
+                                            sValue += GetParityBit(sValue);
+
+                                            string sCF = string.Empty;
+                                            sCF += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Slave Addr\n";
+                                            sCF += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Slave Addr\n";
+                                            sCF += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Slave Addr\n";
+                                            sCF += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Slave Addr\n";
+                                            sCF += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Write Command C7 (0000: Write, 0010: Read)\n";
+                                            sCF += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Write Command C6\n";
+                                            sCF += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Write Command C5\n";
+                                            sCF += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Write Command C4\n";
+                                            sCF += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// BC3\n";
+                                            sCF += prefix + BuildData(sValue[9], mode.ChannelGroups) + ";// BC2\n";
+                                            sCF += prefix + BuildData(sValue[10], mode.ChannelGroups) + ";// BC1\n";
+                                            sCF += prefix + BuildData(sValue[11], mode.ChannelGroups) + ";// BC0\n";
+                                            sCF += prefix + BuildData(sValue[12], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                                            sw.Write(sCF);
+                                            #region Address
+                                            sw.WriteLine("// Address (8 bits + Parity)");
+
+                                            sValue = Convert.ToString(RegID, 2).PadLeft(8, '0');
+                                            sValue += GetParityBit(sValue);
+                                            string sAddr = string.Empty;
+                                            sAddr += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Reg Address A7\n";
+                                            sAddr += prefix + BuildData(sValue[1], mode.ChannelGroups) + ";// Reg Address A6\n";
+                                            sAddr += prefix + BuildData(sValue[2], mode.ChannelGroups) + ";// Reg Address A5\n";
+                                            sAddr += prefix + BuildData(sValue[3], mode.ChannelGroups) + ";// Reg Address A4\n";
+                                            sAddr += prefix + BuildData(sValue[4], mode.ChannelGroups) + ";// Reg Address A3\n";
+                                            sAddr += prefix + BuildData(sValue[5], mode.ChannelGroups) + ";// Reg Address A2\n";
+                                            sAddr += prefix + BuildData(sValue[6], mode.ChannelGroups) + ";// Reg Address A1\n";
+                                            sAddr += prefix + BuildData(sValue[7], mode.ChannelGroups) + ";// Reg Address A0\n";
+                                            sAddr += prefix + BuildData(sValue[8], mode.ChannelGroups) + ";// Parity Bit (to make odd sum Cmd + Addr)\n";
+                                            if (ReadWriteAction.Action == ReadWrite.Read)
+                                                sAddr += prefix + BuildData('0', mode.ChannelGroups) + ";// Park Bit\n";
+                                            sw.Write(sAddr);
+                                            #endregion
+                                        }
+                                        #endregion
+                                        #region Data
+                                        //if dataArr is 16bits, it will write dataArr's high 8bits and low 8bits in sequence
+                                        for (int i = 0; i < dataArr.Count; i++)
+                                        {
+                                            sw.WriteLine("// Data (8 bits + Parity)");
+                                            sValue = Convert.ToString(dataArr[i], 2).PadLeft(8, '0');
+                                            sValue += GetParityBit(sValue);
+                                            string sData = string.Empty;
+                                            sData += prefix + BuildData(sValue[0], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D7\n";
+                                            sData += prefix + BuildData(sValue[1], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D6\n";
+                                            sData += prefix + BuildData(sValue[2], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D5\n";
+                                            sData += prefix + BuildData(sValue[3], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D4\n";
+                                            sData += prefix + BuildData(sValue[4], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D3\n";
+                                            sData += prefix + BuildData(sValue[5], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D2\n";
+                                            sData += prefix + BuildData(sValue[6], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D1\n";
+                                            sData += prefix + BuildData(sValue[7], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Data D0\n";
+                                            sData += prefix + BuildData(sValue[8], mode.ChannelGroups, isRead: (ReadWriteAction.Action == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
+                                            sw.Write(sData);
+                                        }
+                                        #endregion
+                                        #region Bus Park
+                                        sw.WriteLine("// Bus Park");
+                                        sValue = "0XX";
+                                        string sBP = string.Empty;
+                                        sBP += prefix + BuildData(sValue[0], mode.ChannelGroups) + ";// Bus Park (Drive 0 then Tri-State at CLK falling)\n";
+                                        sBP += prefix + BuildData(sValue[1], mode.ChannelGroups, '0') + ";//\n";
+                                        sBP += prefix + BuildData(sValue[2], mode.ChannelGroups, 'X') + ";//\n";
+                                        sw.Write(sBP);
+                                        #endregion
+                                        sw.WriteLine();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void GeneratePATbyXLSX(string filePAT)
+        {
+
+        }
+
+        private void GeneratePEZ(string filePAT)
+        {
+            String pe32exe = String.Format("{0}\\PECOMPILER\\pe32.exe", Environment.CurrentDirectory);
+            string filePEZ = Path.ChangeExtension(filePAT, "PEZ");
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = pe32exe;
+                process.StartInfo.Arguments = string.Format(" \"{0}\" \"{1}\"", filePAT, filePEZ);
+                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                process.Start();
+                process.WaitForExit();
+                process.Close();
+            }
+
+            System.Windows.MessageBox.Show("Both PAT & PEZ file have been generated successfully!\n\nYou can click the DEBUG button to test them in panel.");
+            txtFilePAT.Text = filePAT;
+        }
 
         private List<ChannelGroup> ParseChannelGroups(string ChnsOfClock, string ChnsOfData)
         {
@@ -652,7 +675,7 @@ namespace PAT_Editor
                 }
             }
 
-            private List<ReadWriteAction> ParseReadWriteActions(string ReadWriteActions)
+        private List<ReadWriteAction> ParseReadWriteActions(string ReadWriteActions)
         {
             string[] actions = ReadWriteActions.Split('-');
             if (actions.Length == 1)
@@ -862,7 +885,7 @@ namespace PAT_Editor
             }
         }
 
-#endregion
+        #endregion
     }
 
     public class Mode
