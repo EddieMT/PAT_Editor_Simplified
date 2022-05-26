@@ -1,4 +1,6 @@
 ﻿using ExcelDataReader;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -52,8 +54,8 @@ namespace PAT_Editor
                         return;
                 }
 
-                string fileExtension = Path.GetExtension(outputFile);
-                if (fileExtension.ToLower() == ".xlsx")
+                string fileExtension = Path.GetExtension(txtMipiConfigFilePath.Text).ToUpper();
+                if (fileExtension == ".XLSX")
                 {
                     GeneratePATbyXLSX(outputFile);
                 }
@@ -63,6 +65,10 @@ namespace PAT_Editor
                 }
 
                 GeneratePEZ(outputFile);
+            }
+            catch (IOException ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
             }
             catch (Exception ex)
             {
@@ -114,7 +120,442 @@ namespace PAT_Editor
             }
         }
 
-        #region private methods
+        #region private methods for version3
+
+        private void GeneratePATbyXLSX(string filePAT)
+        {
+            using (FileStream fs = new FileStream(txtMipiConfigFilePath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                List<Pin> pinMaps = new List<Pin>();
+                IWorkbook workbook = new XSSFWorkbook(fs);
+
+                ISheet sheetBasic = workbook.GetSheet("基础配置");
+                if (sheetBasic == null)
+                {
+                    throw new Exception("未检测到基础配置，请检查MIPI配置文件！");
+                }
+                else
+                {
+                    LoadBasicInfo(sheetBasic);
+                }
+
+                ISheet sheetMIPI = workbook.GetSheet("MIPI配置");
+                if (sheetMIPI == null)
+                {
+                    throw new Exception("未检测到MIPI配置，请检查MIPI配置文件！");
+                }
+                else
+                {
+
+                }
+            }
+        }
+
+        private void LoadBasicInfo(ISheet ws)
+        {
+            int rowCount = ws.LastRowNum; //得到行数 
+            BasicMipiSettings basicMipiSettings = new BasicMipiSettings();
+
+            int rowTS1 = 1;
+            int rowTS2 = 2;
+            int rowTS3 = 3;
+            int rowTS4 = 4;
+            int rowPinMapBegin = 6;
+            int rowModeBegin = 0;
+            for (int i = 1; i <= rowCount; i++)
+            {
+                string key = GetCellValue(ws, i - 1, 0).Trim().ToUpper();
+                if (i <= rowTS4)
+                {
+                    string sSpeedRate = GetCellValue(ws, i - 1, 1);
+                    uint speedRate = 0;
+                    if (i == rowTS1)
+                    {
+                        if (key == "TS1")
+                        {
+                            if (uint.TryParse(sSpeedRate, out speedRate))
+                            {
+                                basicMipiSettings.TimeSettings.Add("TS1", new TimeSetting("TS1", speedRate));
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("TS1检测到非法的mipi速率{0}MHz，请填入1，2，4，5，8，10，20，25，40，50里的数！", sSpeedRate));
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("基础配置模板疑似被篡改，第1行第A列应为TS1！");
+                        }
+                    }
+                    else if (i == rowTS2)
+                    {
+                        if (key == "TS2")
+                        {
+                            if (uint.TryParse(sSpeedRate, out speedRate))
+                            {
+                                basicMipiSettings.TimeSettings.Add("TS2", new TimeSetting("TS2", speedRate));
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("TS2检测到非法的mipi速率{0}MHz，请填入1，2，4，5，8，10，20，25，40，50里的数！", sSpeedRate));
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("基础配置模板疑似被篡改，第2行第A列应为TS2！");
+                        }
+                    }
+                    else if (i == rowTS3)
+                    {
+                        if (key == "TS3")
+                        {
+                            if (uint.TryParse(sSpeedRate, out speedRate))
+                            {
+                                basicMipiSettings.TimeSettings.Add("TS3", new TimeSetting("TS3", speedRate));
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("TS3检测到非法的mipi速率{0}MHz，请填入1，2，4，5，8，10，20，25，40，50里的数！", sSpeedRate));
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("基础配置模板疑似被篡改，第3行第A列应为TS3！");
+                        }
+                    }
+                    else
+                    {
+                        if (key == "TS4")
+                        {
+                            if (uint.TryParse(sSpeedRate, out speedRate))
+                            {
+                                basicMipiSettings.TimeSettings.Add("TS4", new TimeSetting("TS4", speedRate));
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("TS4检测到非法的mipi速率{0}MHz，请填入1，2，4，5，8，10，20，25，40，50里的数！", sSpeedRate));
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("基础配置模板疑似被篡改，第4行第A列应为TS4！");
+                        }
+                    }
+                }
+                else
+                {
+                    if (i == rowPinMapBegin)
+                    {
+                        if (key == "PIN")
+                        {
+                            key = GetCellValue(ws, i - 1, 1).Trim().ToUpper();
+                            if (key != "SITE1")
+                                throw new Exception("基础配置模板疑似被篡改，第6行第A列应为Site1！");
+                            key = GetCellValue(ws, i - 1, 2).Trim().ToUpper();
+                            if (key != "SITE2")
+                                throw new Exception("基础配置模板疑似被篡改，第6行第B列应为Site2！");
+                            key = GetCellValue(ws, i - 1, 3).Trim().ToUpper();
+                            if (key != "SITE3")
+                                throw new Exception("基础配置模板疑似被篡改，第6行第C列应为Site3！");
+                            key = GetCellValue(ws, i - 1, 4).Trim().ToUpper();
+                            if (key != "SITE4")
+                                throw new Exception("基础配置模板疑似被篡改，第6行第D列应为Site4！");
+                            key = GetCellValue(ws, i - 1, 5).Trim().ToUpper();
+                            if (key != "TSW")
+                                throw new Exception("基础配置模板疑似被篡改，第6行第E列应为TSW！");
+                            key = GetCellValue(ws, i - 1, 6).Trim().ToUpper();
+                            if (key != "TSR")
+                                throw new Exception("基础配置模板疑似被篡改，第6行第F列应为TSR！");
+                        }
+                        else
+                        {
+                            throw new Exception("基础配置模板疑似被篡改，第6行第A列应为Pin！");
+                        }
+                    }
+
+                    if (key == "MODE")
+                    {
+                        rowModeBegin = i;
+                    }
+                }
+            }
+
+            int colPin = 0;
+            int colSite1 = 1;
+            int colSite2 = 2;
+            int colSite3 = 3;
+            int colSite4 = 4;
+            int colTSW = 5;
+            int colTSR = 6;
+            int rowPinMapEnd = (rowModeBegin != 0) ? rowModeBegin : rowCount;
+            for (int i = rowPinMapBegin; i < rowPinMapEnd - 1; i++)
+            {
+                Pin pin = new Pin();
+
+                //colPin
+                string cellValue = GetCellValue(ws, i, colPin).Trim().ToUpper();
+                if (string.IsNullOrEmpty(cellValue))
+                    continue;
+                else
+                    pin.PinName = cellValue;
+                //colSite1
+                uint channel = 0;
+                cellValue = GetCellValue(ws, i, colSite1).Trim().ToUpper();
+                if (string.IsNullOrEmpty(cellValue))
+                    pin.Site1 = uint.MaxValue;
+                else
+                {
+                    if (!uint.TryParse(cellValue, out channel))
+                        throw new Exception(string.Format("{0}的Site1检测到非法的资源配置{1}，请填入1-7，9-15，17-23，25-27里的数！", pin.PinName, cellValue));
+                    else
+                    {
+                        if (channel > 0 && channel < 28 && channel != 8 && channel != 16 && channel != 24)
+                            pin.Site1 = channel;
+                        else
+                            throw new Exception(string.Format("{0}的Site1检测到非法的资源配置{1}，请填入1-7，9-15，17-23，25-27里的数！", pin.PinName, cellValue));
+                    }
+                }
+                //colSite2
+                cellValue = GetCellValue(ws, i, colSite2).Trim().ToUpper();
+                if (string.IsNullOrEmpty(cellValue))
+                    pin.Site2 = uint.MaxValue;
+                else
+                {
+                    if (!uint.TryParse(cellValue, out channel))
+                        throw new Exception(string.Format("{0}的Site2检测到非法的资源配置{1}，请填入1-7，9-15，17-23，25-27里的数！", pin.PinName, cellValue));
+                    else
+                    {
+                        if (channel > 0 && channel < 28 && channel != 8 && channel != 16 && channel != 24)
+                            pin.Site2 = channel;
+                        else
+                            throw new Exception(string.Format("{0}的Site2检测到非法的资源配置{1}，请填入1-7，9-15，17-23，25-27里的数！", pin.PinName, cellValue));
+                    }
+                }
+                //colSite3
+                cellValue = GetCellValue(ws, i, colSite3).Trim().ToUpper();
+                if (string.IsNullOrEmpty(cellValue))
+                    pin.Site3 = uint.MaxValue;
+                else
+                {
+                    if (!uint.TryParse(cellValue, out channel))
+                        throw new Exception(string.Format("{0}的Site3检测到非法的资源配置{1}，请填入1-7，9-15，17-23，25-27里的数！", pin.PinName, cellValue));
+                    else
+                    {
+                        if (channel > 0 && channel < 28 && channel != 8 && channel != 16 && channel != 24)
+                            pin.Site3 = channel;
+                        else
+                            throw new Exception(string.Format("{0}的Site3检测到非法的资源配置{1}，请填入1-7，9-15，17-23，25-27里的数！", pin.PinName, cellValue));
+                    }
+                }
+                //colSite4
+                cellValue = GetCellValue(ws, i, colSite4).Trim().ToUpper();
+                if (string.IsNullOrEmpty(cellValue))
+                    pin.Site4 = uint.MaxValue;
+                else
+                {
+                    if (!uint.TryParse(cellValue, out channel))
+                        throw new Exception(string.Format("{0}的Site4检测到非法的资源配置{1}，请填入1-7，9-15，17-23，25-27里的数！", pin.PinName, cellValue));
+                    else
+                    {
+                        if (channel > 0 && channel < 28 && channel != 8 && channel != 16 && channel != 24)
+                            pin.Site4 = channel;
+                        else
+                            throw new Exception(string.Format("{0}的Site4检测到非法的资源配置{1}，请填入1-7，9-15，17-23，25-27里的数！", pin.PinName, cellValue));
+                    }
+                }
+                //colTSW
+                cellValue = GetCellValue(ws, i, colTSW).Trim().ToUpper();
+                if (cellValue == "TS1")
+                    pin.TSW = basicMipiSettings.TimeSettings["TS1"];
+                else if (cellValue == "TS2")
+                    pin.TSW = basicMipiSettings.TimeSettings["TS2"];
+                else if (cellValue == "TS3")
+                    pin.TSW = basicMipiSettings.TimeSettings["TS3"];
+                else if (cellValue == "TS4")
+                    pin.TSW = basicMipiSettings.TimeSettings["TS4"];
+                else
+                    throw new Exception(string.Format("{0}的TSW检测到非法的TS配置{1}，请填入TS1,TS2,TS3或TS4！", pin.PinName, cellValue));
+                //colTSR
+                cellValue = GetCellValue(ws, i, colTSR).Trim().ToUpper();
+                if (cellValue == "TS1")
+                    pin.TSR = basicMipiSettings.TimeSettings["TS1"];
+                else if (cellValue == "TS2")
+                    pin.TSR = basicMipiSettings.TimeSettings["TS2"];
+                else if (cellValue == "TS3")
+                    pin.TSR = basicMipiSettings.TimeSettings["TS3"];
+                else if (cellValue == "TS4")
+                    pin.TSR = basicMipiSettings.TimeSettings["TS4"];
+                else
+                    throw new Exception(string.Format("{0}的TSR检测到非法的TS配置{1}，请填入TS1,TS2,TS3或TS4！", pin.PinName, cellValue));
+
+                if (basicMipiSettings.PinMap.ContainsKey(pin.PinName))
+                    throw new Exception(string.Format("Pin - {0}已存在，请确认！", pin.PinName));
+                else
+                    basicMipiSettings.PinMap.Add(pin.PinName, pin);
+            }
+            var pinMapKeys = basicMipiSettings.PinMap.Keys.ToList();
+            for (int i = 0; i < basicMipiSettings.PinMap.Count; i++)
+            {
+                for (int j = i + 1; j < basicMipiSettings.PinMap.Count; j++)
+                {
+                    
+                    var iPin = basicMipiSettings.PinMap[pinMapKeys[i]];
+                    var jPin = basicMipiSettings.PinMap[pinMapKeys[j]];
+                    if (iPin.Site1 != uint.MaxValue)
+                    {
+                        if (iPin.Site1 == jPin.Site1)
+                            throw new Exception(string.Format("检测到{0}的Site1与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site1 == jPin.Site2)
+                            throw new Exception(string.Format("检测到{0}的Site1与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site1 == jPin.Site3)
+                            throw new Exception(string.Format("检测到{0}的Site1与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site1 == jPin.Site4)
+                            throw new Exception(string.Format("检测到{0}的Site1与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                    }
+                    if (iPin.Site2 != uint.MaxValue)
+                    {
+                        if (iPin.Site2 == jPin.Site1)
+                            throw new Exception(string.Format("检测到{0}的Site2与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site2 == jPin.Site2)
+                            throw new Exception(string.Format("检测到{0}的Site2与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site2 == jPin.Site3)
+                            throw new Exception(string.Format("检测到{0}的Site2与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site2 == jPin.Site4)
+                            throw new Exception(string.Format("检测到{0}的Site2与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                    }
+                    if (iPin.Site3 != uint.MaxValue)
+                    {
+                        if (iPin.Site3 == jPin.Site1)
+                            throw new Exception(string.Format("检测到{0}的Site3与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site3 == jPin.Site2)
+                            throw new Exception(string.Format("检测到{0}的Site3与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site3 == jPin.Site3)
+                            throw new Exception(string.Format("检测到{0}的Site3与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site3 == jPin.Site4)
+                            throw new Exception(string.Format("检测到{0}的Site3与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                    }
+                    if (iPin.Site4 != uint.MaxValue)
+                    {
+                        if (iPin.Site4 == jPin.Site1)
+                            throw new Exception(string.Format("检测到{0}的Site4与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site4 == jPin.Site2)
+                            throw new Exception(string.Format("检测到{0}的Site4与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site4 == jPin.Site3)
+                            throw new Exception(string.Format("检测到{0}的Site4与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                        if (iPin.Site4 == jPin.Site4)
+                            throw new Exception(string.Format("检测到{0}的Site4与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+                    }
+                }
+            }
+
+            if (rowModeBegin != 0)
+            {
+                int colCount = ws.GetRow(rowModeBegin - 1).LastCellNum;//得到列数
+                List<string> pins = new List<string>();
+                for (int i = 1; i < colCount; i++)
+                {
+                    string cellValue = GetCellValue(ws, rowModeBegin - 1, i).Trim().ToUpper();
+                    if (i == colCount - 1)
+                    {
+                        if (cellValue != "TSW")
+                            throw new Exception("基础配置模板疑似被篡改，Mode行最后一列应为TSW！");
+                    }
+                    else
+                    {
+                        if (basicMipiSettings.PinMap.ContainsKey(cellValue))
+                        {
+                            if (!pins.Contains(cellValue))
+                                pins.Add(cellValue);
+                            else
+                                throw new Exception(string.Format("Mode行中出现重复的{0}，请确认！", cellValue));
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("Mode行中的{0}未在PinMap中定义，请确认！", cellValue));
+                        }
+                    }
+                }
+                for (int i = rowModeBegin; i < rowCount; i++)
+                {
+                    DeviceMode deviceMode = new DeviceMode();
+
+                    for (int j = 0; j < colCount; j++)
+                    {
+                        string cellValue = GetCellValue(ws, i, j).Trim().ToUpper();
+                        if (j == 0)
+                        {
+                            deviceMode.DeviceModeName = cellValue;
+                        }
+                        else if (j == colCount - 1)
+                        {
+                            if (cellValue == "TS1")
+                                deviceMode.TSW = basicMipiSettings.TimeSettings["TS1"];
+                            else if (cellValue == "TS2")
+                                deviceMode.TSW = basicMipiSettings.TimeSettings["TS2"];
+                            else if (cellValue == "TS3")
+                                deviceMode.TSW = basicMipiSettings.TimeSettings["TS3"];
+                            else if (cellValue == "TS4")
+                                deviceMode.TSW = basicMipiSettings.TimeSettings["TS4"];
+                            else
+                                throw new Exception(string.Format("{0}的TSW检测到非法的TS配置{1}，请填入TS1,TS2,TS3或TS4！", deviceMode.DeviceModeName, cellValue));
+                        }
+                        else
+                        {
+                            if (cellValue == "1" || cellValue == "0" || cellValue == "X")
+                                deviceMode.TruthValues.Add(basicMipiSettings.PinMap[pins[j - 1]], cellValue);
+                            else
+                                throw new Exception(string.Format("{0}的{1}检测到非法的输入{2}，请填入0,1或X！", deviceMode.DeviceModeName, pins[j - 1], cellValue));
+                        }
+                    }
+
+                    deviceMode.Command = string.Empty.PadRight(32, 'X');
+                    foreach (var truthValue in deviceMode.TruthValues)
+                    {
+                        if (truthValue.Key.Site1 != uint.MaxValue)
+                        {
+                            deviceMode.Command.Remove((int)truthValue.Key.Site1 - 1, 1);
+                            deviceMode.Command.Insert((int)truthValue.Key.Site1 - 1, truthValue.Value);
+                        }
+                        if (truthValue.Key.Site2 != uint.MaxValue)
+                        {
+                            deviceMode.Command.Remove((int)truthValue.Key.Site2 - 1, 1);
+                            deviceMode.Command.Insert((int)truthValue.Key.Site2 - 1, truthValue.Value);
+                        }
+                        if (truthValue.Key.Site3 != uint.MaxValue)
+                        {
+                            deviceMode.Command.Remove((int)truthValue.Key.Site3 - 1, 1);
+                            deviceMode.Command.Insert((int)truthValue.Key.Site3 - 1, truthValue.Value);
+                        }
+                        if (truthValue.Key.Site4 != uint.MaxValue)
+                        {
+                            deviceMode.Command.Remove((int)truthValue.Key.Site4 - 1, 1);
+                            deviceMode.Command.Insert((int)truthValue.Key.Site4 - 1, truthValue.Value);
+                        }
+                    }
+
+                    if (basicMipiSettings.TruthTable.ContainsKey(deviceMode.DeviceModeName))
+                        throw new Exception(string.Format("Mode - {0}已存在，请确认！", deviceMode.DeviceModeName));
+                    else
+                        basicMipiSettings.TruthTable.Add(deviceMode.DeviceModeName, deviceMode);
+                }
+            }
+        }
+
+        private string GetCellValue(ISheet ws, int rowIndex, int colIndex)
+        {
+            IRow row = ws.GetRow(rowIndex);
+            if (row == null)
+                return "";
+            ICell cell = row.GetCell(colIndex);
+            if (cell == null)
+                return "";
+            else
+                return ws.GetRow(rowIndex).GetCell(colIndex).ToString();
+        }
+
+        #endregion
+
+        #region private methods for version2
 
         private void GeneratePATbyCSV(string filePAT)
         {
@@ -402,11 +843,6 @@ namespace PAT_Editor
                     }
                 }
             }
-        }
-
-        private void GeneratePATbyXLSX(string filePAT)
-        {
-
         }
 
         private void GeneratePEZ(string filePAT)
@@ -886,64 +1322,5 @@ namespace PAT_Editor
         }
 
         #endregion
-    }
-
-    public class Mode
-    {
-        public string Name { get; set; }
-        public List<uint> BitsOfClock { get; set; } = new List<uint>();
-        public List<uint> BitsOfData { get; set; } = new List<uint>();
-        public List<ChannelGroup> ChannelGroups { get; set; } = new List<ChannelGroup>();
-        public List<uint> UserIDs { get; set; } = new List<uint>();
-        public List<uint> RegIDs { get; set; } = new List<uint>();
-        public List<uint> Datas { get; set; } = new List<uint>();
-        public List<ReadWriteAction> ReadWriteActions { get; set; } = new List<ReadWriteAction>();
-        public int LineStart { get; set; }
-        public int LineEnd { get; set; }
-    }
-    
-    public class ReadWriteAction
-    {
-        public ReadWrite Action { get; set; }
-        public int TSID { get; set; }
-    }
-
-    public enum ReadWrite
-    {
-        Read,
-        Write
-    }
-
-    public class ChannelGroup
-    {
-        public Channel Clock { get; set; } = new Channel();
-        public Channel Data { get; set; } = new Channel();
-        public Channel VIO { get; set; } = new Channel();
-    }
-
-    public class Channel
-    {
-        public int ID { get; set; }
-        public DrivePattern DrivePattern { get; set; }
-        public double Vil { get; set; }
-        public double Vih { get; set; }
-        public double Vol { get; set; }
-        public double Voh { get; set; }
-        public int Start { get; set; }
-        public int Stop { get; set; }
-        public int Strob { get; set; }
-        public int VIO_HL { get; set; }
-    }
-
-    public enum DrivePattern
-    {
-        Pattern,
-        Drive
-    }
-
-    public class TimingSet
-    {
-        public int ID { get; set; }
-        public int data { get; set; }
     }
 }
