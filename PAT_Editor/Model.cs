@@ -10,14 +10,15 @@ namespace PAT_Editor
 
     public class BasicMipiSettings
     {
-        public Dictionary<string, TimeSetting> TimeSettings { get; set; } = new Dictionary<string, TimeSetting>();
+        public Dictionary<string, TimeSet> TimeSets { get; set; } = new Dictionary<string, TimeSet>();
         public Dictionary<string, Pin> PinMap { get; set; } = new Dictionary<string, Pin>();
         public Dictionary<string, DeviceMode> TruthTable { get; set; } = new Dictionary<string, DeviceMode>();
+        public Dictionary<string, string> ChannelPairs { get; set; } = new Dictionary<string, string>();
     }
 
-    public class TimeSetting
+    public class TimeSet
     {
-        public TimeSetting(string Name, uint SpeedRate)
+        public TimeSet(string Name, uint SpeedRate)
         {
             TSName = Name;
             SpeedRateByMHz = SpeedRate;
@@ -45,8 +46,8 @@ namespace PAT_Editor
         public uint Site2 { get; set; }
         public uint Site3 { get; set; }
         public uint Site4 { get; set; }
-        public TimeSetting TSW { get; set; }
-        public TimeSetting TSR { get; set; }
+        public TimeSet TSW { get; set; }
+        public TimeSet TSR { get; set; }
     }
 
     public class DeviceMode
@@ -54,7 +55,43 @@ namespace PAT_Editor
         public string DeviceModeName { get; set; }
         public Dictionary<Pin, string> TruthValues { get; set; } = new Dictionary<Pin, string>();
         public string Command { get; set; }
-        public TimeSetting TSW { get; set; }
+        public TimeSet TSW { get; set; }
+    }
+
+    public class MipiModeSettings
+    {
+        public Dictionary<string, MipiMode> MipiModes { get; set; } = new Dictionary<string, MipiMode>();
+    }
+
+    public class MipiMode
+    {
+        public string MipiModeName { get; set; }
+        public MipiModeType MipiModeType { get; set; }
+        public Dictionary<string, MipiGroup> MipiGroups { get; set; } = new Dictionary<string, MipiGroup>();
+    }
+
+    public enum MipiModeType
+    {
+        Pattern,
+        DutyCycle,
+        DeviceMode
+    }
+
+    public class MipiStep
+    {
+        public Pin CLK { get; set; }
+        public Pin DATA { get; set; }
+        public List<string> Codes { get; set; } = new List<string>();
+    }
+
+    public class MipiGroup
+    {
+        public string MipiGroupName { get; set; }
+        public List<MipiStep> MipiSteps { get; set; } = new List<MipiStep>();
+        public uint ElapsedMicroseconds { get; set; }
+        public uint LineStart { get; set; }
+        public uint LineEnd { get; set; }
+        public uint LineCount { get; set; }
     }
 
     #endregion
