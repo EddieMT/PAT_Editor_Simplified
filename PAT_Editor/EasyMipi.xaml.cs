@@ -128,6 +128,7 @@ namespace PAT_Editor
             using (FileStream fs = new FileStream(txtMipiConfigFilePath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 BasicMipiSettings basicMipiSettings;
+                MipiModeSettings mipiModeSettings;
                 IWorkbook workbook = new XSSFWorkbook(fs);
 
                 ISheet sheetBasic = workbook.GetSheet("基础配置");
@@ -150,12 +151,18 @@ namespace PAT_Editor
                     string cellValue = GetCellValue(sheetMIPI, 0, 0);
                     if (string.Compare(cellValue, "PRODUCT", true) == 0)
                     {
-                        LoadMipiInfoVC(sheetMIPI);
+                        mipiModeSettings = LoadMipiInfoVC(sheetMIPI, basicMipiSettings);
                     }
                     else
                     {
-                        LoadMipiInfo(sheetMIPI, basicMipiSettings);
+                        mipiModeSettings = LoadMipiInfo(sheetMIPI, basicMipiSettings);
                     }
+                }
+
+                ISheet sheetTruth = workbook.GetSheet("Sheet2");
+                if (sheetTruth != null)
+                {
+                    LoadTruthInfo(sheetTruth, basicMipiSettings);
                 }
             }
         }
@@ -524,23 +531,23 @@ namespace PAT_Editor
                     {
                         if (truthValue.Key.Site1 != uint.MaxValue)
                         {
-                            deviceMode.Command.Remove((int)truthValue.Key.Site1 - 1, 1);
-                            deviceMode.Command.Insert((int)truthValue.Key.Site1 - 1, truthValue.Value);
+                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site1 - 1, 1);
+                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site1 - 1, truthValue.Value);
                         }
                         if (truthValue.Key.Site2 != uint.MaxValue)
                         {
-                            deviceMode.Command.Remove((int)truthValue.Key.Site2 - 1, 1);
-                            deviceMode.Command.Insert((int)truthValue.Key.Site2 - 1, truthValue.Value);
+                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site2 - 1, 1);
+                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site2 - 1, truthValue.Value);
                         }
                         if (truthValue.Key.Site3 != uint.MaxValue)
                         {
-                            deviceMode.Command.Remove((int)truthValue.Key.Site3 - 1, 1);
-                            deviceMode.Command.Insert((int)truthValue.Key.Site3 - 1, truthValue.Value);
+                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site3 - 1, 1);
+                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site3 - 1, truthValue.Value);
                         }
                         if (truthValue.Key.Site4 != uint.MaxValue)
                         {
-                            deviceMode.Command.Remove((int)truthValue.Key.Site4 - 1, 1);
-                            deviceMode.Command.Insert((int)truthValue.Key.Site4 - 1, truthValue.Value);
+                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site4 - 1, 1);
+                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site4 - 1, truthValue.Value);
                         }
                     }
 
@@ -564,54 +571,133 @@ namespace PAT_Editor
             int colData = 4;  // Data的位置
             MipiModeSettings mipiModeSettings = new MipiModeSettings();
 
-            List<CellRangeAddress> cellMipiModes = ws.MergedRegions.Where(x => x.FirstColumn == colMipiMode).ToList();
-            foreach(var cellMipiMode in cellMipiModes)
+            for (int rowIndex = 1; rowIndex <= rowCount;)
             {
-                int cellMipiModeFirstRow = cellMipiMode.FirstRow;
-                int cellMipiModeLastRow = cellMipiMode.LastRow;
-                string sMipiMode = GetCellValue(ws, cellMipiModeFirstRow, colMipiMode);
-                if (string.IsNullOrEmpty(sMipiMode))
-                    throw new Exception(string.Format("MIPI配置中，检测到为空的Mipi Mode，请确认!"));
-                MipiMode mipiMode = new MipiMode();
-                mipiMode.MipiModeName = sMipiMode;
-
-                List<CellRangeAddress> cellMipiGroups = ws.MergedRegions.Where(x => x.FirstColumn == colMipiGroup).ToList();
-                foreach(var cellMipiGroup in cellMipiGroups)
+                List<CellRangeAddress> cellMipiModes = ws.MergedRegions.Where(x => x.FirstColumn == colMipiMode).ToList();
+                if (cellMipiModes.Any(x => x.FirstRow == rowIndex))
                 {
-                    int cellMipiGroupFirstRow = cellMipiGroup.FirstRow;
-                    int cellMipiGroupLastRow = cellMipiGroup.LastRow;
-                    if (cellMipiGroupFirstRow > cellMipiModeLastRow)
-                        break;
-                    if (cellMipiGroupFirstRow >= cellMipiModeFirstRow && cellMipiGroupFirstRow <= cellMipiModeLastRow
-                        && cellMipiGroupLastRow >= cellMipiModeFirstRow && cellMipiGroupLastRow <= cellMipiModeLastRow)
+                    var cellMipiMode = cellMipiModes.First(x => x.FirstRow == rowIndex);
+                    int cellMipiModeFirstRow = cellMipiMode.FirstRow;
+                    int cellMipiModeLastRow = cellMipiMode.LastRow;
+                    string sMipiMode = GetCellValue(ws, cellMipiModeFirstRow, colMipiMode);
+                    if (string.IsNullOrEmpty(sMipiMode))
+                        throw new Exception(string.Format("MIPI配置中，检测到为空的Mipi Mode，请确认!"));
+                    MipiMode mipiMode = new MipiMode();
+                    mipiMode.MipiModeName = sMipiMode;
+
+                    for (rowIndex = cellMipiModeFirstRow; rowIndex <= cellMipiModeLastRow;)
                     {
-                        string sMipiGroup = GetCellValue(ws, cellMipiGroupFirstRow, colMipiGroup);
-                        if (string.IsNullOrEmpty(sMipiGroup))
-                            sMipiGroup = mipiMode.MipiModeName;
-                        MipiGroup mipiGroup = new MipiGroup();
-                        if (sMipiGroup.IndexOf("(") == -1)
+                        List<CellRangeAddress> cellMipiGroups = ws.MergedRegions.Where(x => x.FirstColumn == colMipiGroup).ToList();
+                        if (cellMipiGroups.Any(x=>x.FirstRow == rowIndex))
                         {
-                            mipiGroup.MipiGroupName = sMipiGroup;
-                            mipiGroup.ElapsedMicroseconds = 0;
+                            var cellMipiGroup = cellMipiGroups.First(x => x.FirstRow == rowIndex);
+                            int cellMipiGroupFirstRow = cellMipiGroup.FirstRow;
+                            int cellMipiGroupLastRow = cellMipiGroup.LastRow;
+                            if (cellMipiGroupFirstRow > cellMipiModeLastRow)
+                                break;
+                            if (cellMipiGroupFirstRow >= cellMipiModeFirstRow && cellMipiGroupFirstRow <= cellMipiModeLastRow
+                                && cellMipiGroupLastRow >= cellMipiModeFirstRow && cellMipiGroupLastRow <= cellMipiModeLastRow)
+                            {
+                                string sMipiGroup = GetCellValue(ws, cellMipiGroupFirstRow, colMipiGroup);
+                                if (string.IsNullOrEmpty(sMipiGroup))
+                                    sMipiGroup = mipiMode.MipiModeName;
+                                MipiGroup mipiGroup = new MipiGroup();
+                                if (sMipiGroup.IndexOf("(") == -1)
+                                {
+                                    mipiGroup.MipiGroupName = sMipiGroup;
+                                    mipiGroup.ElapsedMicroseconds = 0;
+                                }
+                                else
+                                {
+                                    mipiGroup.MipiGroupName = sMipiGroup.Substring(0, sMipiGroup.IndexOf("("));
+                                    string sElapsedMicroseconds = sMipiGroup.Substring(sMipiGroup.IndexOf("(") + 1, sMipiGroup.LastIndexOf(")") - sMipiGroup.IndexOf("(") - 1);
+                                    uint iElapsedMicroseconds = 0;
+                                    if (!uint.TryParse(sElapsedMicroseconds, out iElapsedMicroseconds))
+                                    {
+                                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的时间参数，请确认必须为整型!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                                    }
+                                    mipiGroup.ElapsedMicroseconds = iElapsedMicroseconds;
+                                }
+
+                                for (rowIndex = cellMipiGroupFirstRow; rowIndex <= cellMipiGroupLastRow; rowIndex++)
+                                {
+                                    string sCodes = GetCellValue(ws, rowIndex, colCode);
+                                    string sCLK = GetCellValue(ws, rowIndex, colClk);
+                                    string sDATA = GetCellValue(ws, rowIndex, colData);
+                                    if (string.IsNullOrEmpty(sCodes))
+                                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在为空的Code，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                                    if (!basicMipiSettings.PinMap.Any(x => x.Key == sCLK))
+                                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的CLK - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK));
+                                    if (!basicMipiSettings.PinMap.Any(x => x.Key == sDATA))
+                                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的DATA - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sDATA));
+                                    if (basicMipiSettings.ChannelPairs.ContainsKey(sCLK))
+                                    {
+                                        if (basicMipiSettings.ChannelPairs[sCLK] != sDATA)
+                                            throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组的{CLK，DATA} - {{2}，{3}} 与其他组{{2}，{4}}存在冲突，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK, sDATA, basicMipiSettings.ChannelPairs[sCLK]));
+                                    }
+                                    else
+                                    {
+                                        if (!basicMipiSettings.ChannelPairs.ContainsValue(sDATA))
+                                            basicMipiSettings.ChannelPairs.Add(sCLK, sDATA);
+                                        else
+                                            throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组的{CLK，DATA} - {{2}，{3}} 与其他组{{4}，{3}}存在冲突，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK, sDATA, basicMipiSettings.ChannelPairs.First(x => x.Value == sDATA).Key));
+                                    }
+                                    MipiStep mipiStep = new MipiStep();
+                                    mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
+                                    mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                                    try
+                                    {
+                                        mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的Code，请确认!\n{2}", mipiMode.MipiModeName, mipiGroup.MipiGroupName, ex.Message));
+                                    }
+                                    mipiStep.CalculateLineCount();
+                                    mipiGroup.MipiSteps.Add(mipiStep);
+                                }
+                                mipiGroup.CalculateLineCount();
+                                if (mipiMode.MipiGroups.ContainsKey(mipiGroup.MipiGroupName))
+                                {
+                                    throw new Exception(string.Format("MIPI配置中，检测到{0}存在同名的组 - {1}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                                }
+                                else
+                                {
+                                    mipiMode.MipiGroups.Add(mipiGroup.MipiGroupName, mipiGroup);
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("MIPI配置中，检测到{0}存在错误的Mipi Group分组，请确认!", mipiMode.MipiModeName));
+                            }
                         }
                         else
                         {
-                            mipiGroup.MipiGroupName = sMipiGroup.Substring(0, sMipiGroup.IndexOf("("));
-                            string sElapsedMicroseconds = sMipiGroup.Substring(sMipiGroup.IndexOf("(") + 1, sMipiGroup.LastIndexOf(")") - sMipiGroup.IndexOf("(") - 1);
-                            uint iElapsedMicroseconds = 0;
-                            if (!uint.TryParse(sElapsedMicroseconds, out iElapsedMicroseconds))
+                            string sMipiGroup = GetCellValue(ws, rowIndex, colMipiGroup);
+                            if (string.IsNullOrEmpty(sMipiGroup))
+                                sMipiGroup = mipiMode.MipiModeName;
+                            MipiGroup mipiGroup = new MipiGroup();
+                            if (sMipiGroup.IndexOf("(") == -1)
                             {
-                                throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的时间参数，请确认必须为整型!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                                mipiGroup.MipiGroupName = sMipiGroup;
+                                mipiGroup.ElapsedMicroseconds = 0;
                             }
-                            mipiGroup.ElapsedMicroseconds = iElapsedMicroseconds;
-                        }
-                        
-                        for (int i = cellMipiGroupFirstRow; i <= cellMipiGroupLastRow; i++)
-                        {
-                            string sCode = GetCellValue(ws, i, colCode);
-                            string sCLK = GetCellValue(ws, i, colClk);
-                            string sDATA = GetCellValue(ws, i, colData);
-                            if (string.IsNullOrEmpty(sCode))
+                            else
+                            {
+                                mipiGroup.MipiGroupName = sMipiGroup.Substring(0, sMipiGroup.IndexOf("("));
+                                string sElapsedMicroseconds = sMipiGroup.Substring(sMipiGroup.IndexOf("(") + 1, sMipiGroup.LastIndexOf(")") - sMipiGroup.IndexOf("(") - 1);
+                                uint iElapsedMicroseconds = 0;
+                                if (!uint.TryParse(sElapsedMicroseconds, out iElapsedMicroseconds))
+                                {
+                                    throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的时间参数，请确认必须为整型!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                                }
+                                mipiGroup.ElapsedMicroseconds = iElapsedMicroseconds;
+                            }
+
+                            string sCodes = GetCellValue(ws, rowIndex, colCode);
+                            string sCLK = GetCellValue(ws, rowIndex, colClk);
+                            string sDATA = GetCellValue(ws, rowIndex, colData);
+                            if (string.IsNullOrEmpty(sCodes))
                                 throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在为空的Code，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
                             if (!basicMipiSettings.PinMap.Any(x => x.Key == sCLK))
                                 throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的CLK - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK));
@@ -632,31 +718,215 @@ namespace PAT_Editor
                             MipiStep mipiStep = new MipiStep();
                             mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
                             mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
-                            mipiStep.Codes = sCode.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            try
+                            {
+                                mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的Code，请确认!\n{2}", mipiMode.MipiModeName, mipiGroup.MipiGroupName, ex.Message));
+                            }
+                            mipiStep.CalculateLineCount();
                             mipiGroup.MipiSteps.Add(mipiStep);
+                            mipiGroup.CalculateLineCount();
+                            if (mipiMode.MipiGroups.ContainsKey(mipiGroup.MipiGroupName))
+                            {
+                                throw new Exception(string.Format("MIPI配置中，检测到{0}存在同名的组 - {1}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                            }
+                            else
+                            {
+                                mipiMode.MipiGroups.Add(mipiGroup.MipiGroupName, mipiGroup);
+                            }
+
+                            rowIndex++;
                         }
+                    }
+
+                    if (mipiModeSettings.MipiModes.ContainsKey(mipiMode.MipiModeName))
+                    {
+                        throw new Exception(string.Format("MIPI配置中，检测到同名的Mipi Mode - {0}，请确认!", mipiMode.MipiModeName));
                     }
                     else
                     {
-                        throw new Exception(string.Format("MIPI配置中，检测到{0}存在错误的Mipi Group分组，请确认!", mipiMode.MipiModeName));
+                        mipiModeSettings.MipiModes.Add(mipiMode.MipiModeName, mipiMode);
                     }
-                }
-
-                if (mipiModeSettings.MipiModes.ContainsKey(mipiMode.MipiModeName))
-                {
-                    throw new Exception(string.Format("MIPI配置中，检测到同名的Mipi Mode - {0}，请确认!", mipiMode.MipiModeName));
                 }
                 else
                 {
-                    mipiModeSettings.MipiModes.Add(mipiMode.MipiModeName, mipiMode);
+                    string sMipiMode = GetCellValue(ws, rowIndex, colMipiMode);
+                    if (string.IsNullOrEmpty(sMipiMode))
+                        throw new Exception(string.Format("MIPI配置中，检测到为空的Mipi Mode，请确认!"));
+                    MipiMode mipiMode = new MipiMode();
+                    mipiMode.MipiModeName = sMipiMode;
+
+                    string sMipiGroup = GetCellValue(ws, rowIndex, colMipiGroup);
+                    if (string.IsNullOrEmpty(sMipiGroup))
+                        sMipiGroup = mipiMode.MipiModeName;
+                    MipiGroup mipiGroup = new MipiGroup();
+                    if (sMipiGroup.IndexOf("(") == -1)
+                    {
+                        mipiGroup.MipiGroupName = sMipiGroup;
+                        mipiGroup.ElapsedMicroseconds = 0;
+                    }
+                    else
+                    {
+                        mipiGroup.MipiGroupName = sMipiGroup.Substring(0, sMipiGroup.IndexOf("("));
+                        string sElapsedMicroseconds = sMipiGroup.Substring(sMipiGroup.IndexOf("(") + 1, sMipiGroup.LastIndexOf(")") - sMipiGroup.IndexOf("(") - 1);
+                        uint iElapsedMicroseconds = 0;
+                        if (!uint.TryParse(sElapsedMicroseconds, out iElapsedMicroseconds))
+                        {
+                            throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的时间参数，请确认必须为整型!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                        }
+                        mipiGroup.ElapsedMicroseconds = iElapsedMicroseconds;
+                    }
+
+                    string sCodes = GetCellValue(ws, rowIndex, colCode);
+                    string sCLK = GetCellValue(ws, rowIndex, colClk);
+                    string sDATA = GetCellValue(ws, rowIndex, colData);
+                    if (string.IsNullOrEmpty(sCodes))
+                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在为空的Code，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                    if (!basicMipiSettings.PinMap.Any(x => x.Key == sCLK))
+                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的CLK - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK));
+                    if (!basicMipiSettings.PinMap.Any(x => x.Key == sDATA))
+                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的DATA - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sDATA));
+                    if (basicMipiSettings.ChannelPairs.ContainsKey(sCLK))
+                    {
+                        if (basicMipiSettings.ChannelPairs[sCLK] != sDATA)
+                            throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组的{CLK，DATA} - {{2}，{3}} 与其他组{{2}，{4}}存在冲突，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK, sDATA, basicMipiSettings.ChannelPairs[sCLK]));
+                    }
+                    else
+                    {
+                        if (!basicMipiSettings.ChannelPairs.ContainsValue(sDATA))
+                            basicMipiSettings.ChannelPairs.Add(sCLK, sDATA);
+                        else
+                            throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组的{CLK，DATA} - {{2}，{3}} 与其他组{{4}，{3}}存在冲突，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK, sDATA, basicMipiSettings.ChannelPairs.First(x => x.Value == sDATA).Key));
+                    }
+                    MipiStep mipiStep = new MipiStep();
+                    mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
+                    mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                    try
+                    {
+                        mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的Code，请确认!\n{2}", mipiMode.MipiModeName, mipiGroup.MipiGroupName, ex.Message));
+                    }
+                    mipiStep.CalculateLineCount();
+                    mipiGroup.MipiSteps.Add(mipiStep);
+                    mipiGroup.CalculateLineCount();
+                    if (mipiMode.MipiGroups.ContainsKey(mipiGroup.MipiGroupName))
+                    {
+                        throw new Exception(string.Format("MIPI配置中，检测到{0}存在同名的组 - {1}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                    }
+                    else
+                    {
+                        mipiMode.MipiGroups.Add(mipiGroup.MipiGroupName, mipiGroup);
+                    }
+
+                    if (mipiModeSettings.MipiModes.ContainsKey(mipiMode.MipiModeName))
+                    {
+                        throw new Exception(string.Format("MIPI配置中，检测到同名的Mipi Mode - {0}，请确认!", mipiMode.MipiModeName));
+                    }
+                    else
+                    {
+                        mipiModeSettings.MipiModes.Add(mipiMode.MipiModeName, mipiMode);
+                    }
+
+                    rowIndex++;
                 }
             }
 
             return mipiModeSettings;
         }
 
-        private void LoadMipiInfoVC(ISheet ws)
-        { }
+        private TruthModeSettings LoadTruthInfo(ISheet ws, BasicMipiSettings basicMipiSettings)
+        {
+            int rowCount = ws.LastRowNum; //得到行数 
+            int colTruthMode = 0;  // MipiMode的位置
+            int colCode = 1;  // Code的位置
+            TruthModeSettings truthModeSettings = new TruthModeSettings();
+
+            for (int rowIndex = 1; rowIndex <= rowCount; rowIndex++)
+            {
+                string sTruthMode = GetCellValue(ws, rowIndex, colTruthMode);
+                if (string.IsNullOrEmpty(sTruthMode))
+                    throw new Exception(string.Format("Sheet2中，检测到为空的Mipi Mode，请确认!"));
+                TruthMode truthMode = new TruthMode();
+                truthMode.TruthModeName = sTruthMode;
+
+                string sCode = GetCellValue(ws, rowIndex, colCode);
+                if (string.IsNullOrEmpty(sCode))
+                    throw new Exception(string.Format("Sheet2中，检测到{0}存在为空的Code，请确认!", truthMode.TruthModeName));
+                //foreach(var singleCode in sCode.Split(';'))
+                for (int i = 1; i <= sCode.Split(';').Length; i++)
+                {
+                    string singleCode = sCode.Split(';')[i - 1];
+                    if (singleCode.IndexOf("(") == -1)
+                    {
+                        if (basicMipiSettings.TruthTable.ContainsKey(singleCode))
+                        {
+                            truthMode.DeviceModes.Add(new KeyValuePair<DeviceMode, int>(basicMipiSettings.TruthTable[singleCode], 1));
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("Sheet2中，检测到{0}存在无效的Mode - {1}，请对照基础配置表进行确认!", truthMode.TruthModeName, singleCode));
+                        }
+                    }
+                    else
+                    {
+                        string sTimes = singleCode.Substring(singleCode.IndexOf("(") + 1, singleCode.LastIndexOf(")") - singleCode.IndexOf("(") - 1);
+                        if(sTimes.ToUpper().StartsWith("TRIGGER"))
+                        {
+                            if (truthMode.TriggerAt > 0)
+                            {
+                                throw new Exception(string.Format("Sheet2中，检测到{0}存在多个Trigger项，请确认!", truthMode.TruthModeName));
+                            }
+                            else
+                            {
+                                truthMode.TriggerAt = i;
+                            }
+
+                            //Remove 'Trigger'
+                            sTimes = sTimes.Substring(7);
+                        }
+
+                        int iTimes = 0;
+                        if (!int.TryParse(sTimes, out iTimes))
+                        {
+                            throw new Exception(string.Format("Sheet2中，检测到{0}存在无效配置，次数必须为整数，请确认!", truthMode.TruthModeName));
+                        }
+
+                        singleCode = singleCode.Substring(0, singleCode.IndexOf("("));
+                        if (basicMipiSettings.TruthTable.ContainsKey(singleCode))
+                        {
+                            truthMode.DeviceModes.Add(new KeyValuePair<DeviceMode, int>(basicMipiSettings.TruthTable[singleCode], iTimes));
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("Sheet2中，检测到{0}存在无效的Mode - {1}，请对照基础配置表进行确认!", truthMode.TruthModeName, singleCode));
+                        }
+                    }
+                }
+
+                if (truthModeSettings.TruthModes.ContainsKey(truthMode.TruthModeName))
+                {
+                    throw new Exception(string.Format("Sheet2中，检测到同名的Mipi Mode - {0}，请确认!", truthMode.TruthModeName));
+                }
+                else
+                {
+                    truthModeSettings.TruthModes.Add(truthMode.TruthModeName, truthMode);
+                }
+            }
+
+            return truthModeSettings;
+        }
+
+        private MipiModeSettings LoadMipiInfoVC(ISheet ws, BasicMipiSettings basicMipiSettings)
+        {
+            MipiModeSettings mipiModeSettings = new MipiModeSettings();
+            return mipiModeSettings;
+        }
 
         private string GetCellValue(ISheet ws, int rowIndex, int colIndex)
         {
@@ -668,6 +938,159 @@ namespace PAT_Editor
                 return "";
             else
                 return ws.GetRow(rowIndex).GetCell(colIndex).ToString().Trim();
+        }
+
+        private List<MipiCode> ParseMipiCodes(string sCodes)
+        {
+            List<MipiCode> mipiCodes = new List<MipiCode>();
+            string[] arrayCodes = sCodes.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string code in arrayCodes)
+            {
+                string userID = string.Empty;
+                string bc = string.Empty;
+                string regID = string.Empty;
+                string data = string.Empty;
+                MipiCode mipiCode = new MipiCode();
+                if (code.ToUpper().StartsWith("W"))
+                {
+                    mipiCode.MipiCodeType = ReadWrite.Write;
+                    userID = code.Substring(1, 1);
+                    regID = code.Substring(2, 2);
+                    data = code.Substring(4, code.Length - 4);
+                }
+                else if (code.ToUpper().StartsWith("R"))
+                {
+                    mipiCode.MipiCodeType = ReadWrite.Read;
+                    userID = code.Substring(1, 1);
+                    regID = code.Substring(2, 2);
+                    data = code.Substring(4, code.Length - 4);
+                }
+                else if (code.ToUpper().StartsWith("EW"))
+                {
+                    mipiCode.MipiCodeType = ReadWrite.ExtendWrite;
+                    userID = code.Substring(2, 1);
+                    bc = code.Substring(3, 1);
+                    regID = code.Substring(4, 2);
+                    data = code.Substring(6, code.Length - 6);
+                }
+                else if (code.ToUpper().StartsWith("ER"))
+                {
+                    mipiCode.MipiCodeType = ReadWrite.ExtendRead;
+                    userID = code.Substring(2, 1);
+                    bc = code.Substring(3, 1);
+                    regID = code.Substring(4, 2);
+                    data = code.Substring(6, code.Length - 6);
+                }
+                else if (code.ToUpper().StartsWith("DELAY"))
+                {
+                    mipiCode.MipiCodeType = ReadWrite.Delay;
+                    var sElapsedMicroseconds = code.ToUpper().Replace("DELAY", "").Replace("(", "").Replace(")", "");
+                    uint elapsedMicroseconds = 0;
+                    if (uint.TryParse(sElapsedMicroseconds, out elapsedMicroseconds))
+                    {
+                        mipiCode.ElapsedMicroseconds = elapsedMicroseconds;
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("非法的Delay时间 - {0}!", sElapsedMicroseconds));
+                    }
+                }
+                else if (code.ToUpper().StartsWith("ZW"))
+                {
+                    mipiCode.MipiCodeType = ReadWrite.ZeroWrite;
+                    userID = code.Substring(2, 1);
+                    regID = "0";
+                    data = code.Substring(4, 2);
+                }
+                else
+                {
+                    throw new Exception(String.Format("仅支持以W、R、EW、ER或DELAY开头的Code，{0}为非法Code，请修正!", code));
+                }
+
+                uint value = 0;
+                if (uint.TryParse(userID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                {
+                    if (value > 0xF)
+                    {
+                        throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                    }
+                    else
+                    {
+                        mipiCode.UserID = value;
+                    }
+                }
+                else
+                {
+                    throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                }
+
+                if (uint.TryParse(regID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                {
+                    if (value > 0xFF)
+                    {
+                        throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
+                    }
+                    else
+                    {
+                        if ((mipiCode.MipiCodeType == ReadWrite.Write || mipiCode.MipiCodeType == ReadWrite.Read) 
+                            && value > 0x1F)
+                            throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,1F]之间的整型！", code, regID));
+                        else
+                            mipiCode.RegID = value;
+                    }
+                }
+                else
+                {
+                    throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
+                }
+
+                if (uint.TryParse(data, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                {
+                    if (value > 0xFFFF)
+                    {
+                        throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FFFF]之间的整型！", code, data));
+                    }
+                    else
+                    {
+                        if ((mipiCode.MipiCodeType == ReadWrite.Write || mipiCode.MipiCodeType == ReadWrite.Read)
+                            && value > 0xFF)
+                            throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FF]之间的整型！", code, data));
+                        else
+                            mipiCode.Data = value;
+                    }
+                }
+                else
+                {
+                    throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FFFF]之间的整型！", code, data));
+                }
+
+                if (mipiCode.MipiCodeType == ReadWrite.ExtendWrite || mipiCode.MipiCodeType == ReadWrite.ExtendRead)
+                {
+                    if (uint.TryParse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 1)
+                        {
+                            throw new Exception(string.Format("{0}中的BC - {1}应该是[0,1]之间的整型！", code, bc));
+                        }
+                        else
+                        {
+                            if (mipiCode.Data >= 0 && mipiCode.Data <= 0xFF && value != 0)
+                                throw new Exception(string.Format("{0}中的BC - {1}应该是0！", code, bc));
+                            else if (mipiCode.Data > 0xFF && mipiCode.Data <= 0xFFFF && value != 1)
+                                throw new Exception(string.Format("{0}中的BC - {1}应该是1！", code, bc));
+                            else
+                                mipiCode.BC = value;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的BC - {1}应该是[0,1]之间的整型！", code, bc));
+                    }
+                }
+
+                mipiCodes.Add(mipiCode);
+            }
+            return mipiCodes;
         }
 
         #endregion
@@ -1222,11 +1645,11 @@ namespace PAT_Editor
                 }
                 return values;
             }
-                else
-                {
-                    throw new Exception("Invalid Data - " + Datas + "!");
-                }
+            else
+            {
+                throw new Exception("Invalid Data - " + Datas + "!");
             }
+        }
 
         private List<ReadWriteAction> ParseReadWriteActions(string ReadWriteActions)
         {

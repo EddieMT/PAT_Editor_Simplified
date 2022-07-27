@@ -68,6 +68,37 @@ namespace PAT_Editor
         public string MipiModeName { get; set; }
         public MipiModeType MipiModeType { get; set; }
         public Dictionary<string, MipiGroup> MipiGroups { get; set; } = new Dictionary<string, MipiGroup>();
+
+        public int LineStart
+        {
+            get
+            {
+                if (MipiGroups.Count > 0)
+                {
+                    return MipiGroups.First().Value.LineStart;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+        }
+        public int LineEnd
+        {
+            get
+            {
+                if (MipiGroups.Count > 0)
+                {
+                    return MipiGroups.Last().Value.LineEnd;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+        }
+
+        public bool LoopRequired;
     }
 
     public enum MipiModeType
@@ -81,7 +112,105 @@ namespace PAT_Editor
     {
         public Pin CLK { get; set; }
         public Pin DATA { get; set; }
-        public List<string> Codes { get; set; } = new List<string>();
+        public List<MipiCode> MipiCodes { get; set; } = new List<MipiCode>();
+
+        public int LineCount { get; private set; }
+        public decimal ElapsedMicroseconds { get; set; }
+
+        /// <summary>
+        /// time = line count / speed
+        /// 因为这里的speed是MHz，所以算出来的time是us
+        /// 因为line count是固定那几个值，speed也是固定那几个值，经过遍历发现
+        /// time永远是除得尽的，最多小数点后面三位。换句话说，在ns级别一定是一个整数！！！
+        /// </summary>
+        public void CalculateLineCount()
+        {
+            int lineCount = 0;
+            decimal elapsedMicroseconds = 0;
+            foreach (MipiCode code in MipiCodes)
+            {
+                if (code.MipiCodeType == ReadWrite.Write)
+                {
+                    lineCount += code.LineCount;
+                    elapsedMicroseconds += (decimal)code.LineCount / CLK.TSW.SpeedRateByMHz;
+                }
+                else if (code.MipiCodeType == ReadWrite.Read)
+                {
+                    lineCount += code.LineCount;
+                    elapsedMicroseconds += (decimal)code.LineCount / CLK.TSR.SpeedRateByMHz;
+                }
+                else if (code.MipiCodeType == ReadWrite.ExtendWrite)
+                {
+                    lineCount += code.LineCount;
+                    elapsedMicroseconds += (decimal)code.LineCount / CLK.TSW.SpeedRateByMHz;
+                }
+                else if (code.MipiCodeType == ReadWrite.ExtendRead)
+                {
+                    lineCount += code.LineCount;
+                    elapsedMicroseconds += (decimal)code.LineCount / CLK.TSR.SpeedRateByMHz;
+                }
+                else if (code.MipiCodeType == ReadWrite.ZeroWrite)
+                {
+                    lineCount += code.LineCount;
+                    elapsedMicroseconds += (decimal)code.LineCount / CLK.TSW.SpeedRateByMHz;
+                }
+                else
+                {
+                    elapsedMicroseconds += code.ElapsedMicroseconds;
+                    uint tempLineCount = code.ElapsedMicroseconds * CLK.TSW.SpeedRateByMHz;
+                    lineCount += (int)Math.Ceiling((double)tempLineCount / 1000);
+                }
+            }
+
+            LineCount = lineCount;
+            ElapsedMicroseconds = elapsedMicroseconds;
+        }
+    }
+
+    public class MipiCode
+    {
+        public ReadWrite MipiCodeType { get; set; }
+        public uint UserID { get; set; }
+        public uint RegID { get; set; }
+        public uint Data { get; set; }
+        public uint BC { get; set; }
+        public int LineCount
+        {
+            get
+            {
+                if (MipiCodeType == ReadWrite.Write)
+                    return 36;
+                else if (MipiCodeType == ReadWrite.Read)
+                    return 37;
+                if (MipiCodeType == ReadWrite.ExtendWrite)
+                {
+                    if (Data <= 0xFF)
+                        return 36 + 9;
+                    else if (Data <= 0xFFFF)
+                        return 36 + 18;
+                    else
+                        return -1;
+                }
+                else if (MipiCodeType == ReadWrite.ExtendRead)
+                {
+                    if (Data <= 0xFF)
+                        return 37 + 9;
+                    else if (Data <= 0xFFFF)
+                        return 37 + 18;
+                    else
+                        return -1;
+                }
+                else if (MipiCodeType == ReadWrite.ZeroWrite)
+                {
+                    return 27;
+                }
+                else if (MipiCodeType == ReadWrite.Delay)
+                    return 0;
+                else
+                    return -1;
+            }
+        }
+        public uint ElapsedMicroseconds { get; set; }
     }
 
     public class MipiGroup
@@ -89,9 +218,56 @@ namespace PAT_Editor
         public string MipiGroupName { get; set; }
         public List<MipiStep> MipiSteps { get; set; } = new List<MipiStep>();
         public uint ElapsedMicroseconds { get; set; }
-        public uint LineStart { get; set; }
-        public uint LineEnd { get; set; }
-        public uint LineCount { get; set; }
+        public int LineStart { get; set; }
+        public int LineEnd
+        {
+            get
+            {
+                return LineStart + LineCount - 1;
+            }
+        }
+        public int LineCount { get; private set; }
+        public void CalculateLineCount()
+        {
+            int lineCount = 0;
+            if (ElapsedMicroseconds == 0)
+            {
+                lineCount = MipiSteps.Sum(x => x.LineCount);
+            }
+            else
+            {
+                var calculatedElapsedMicroseconds = MipiSteps.Sum(x =>x.ElapsedMicroseconds);
+                if (calculatedElapsedMicroseconds == ElapsedMicroseconds)
+                {
+                    lineCount = MipiSteps.Sum(x => x.LineCount);
+                }
+                else if (calculatedElapsedMicroseconds < ElapsedMicroseconds)
+                {
+                    var toolSpeedRateByMHz = MipiSteps.Last().CLK.TSW.SpeedRateByMHz;
+                    var toolElapsedMicroseconds = ElapsedMicroseconds - calculatedElapsedMicroseconds;
+                    var toolLineCount = toolSpeedRateByMHz * toolElapsedMicroseconds;
+                    lineCount = MipiSteps.Sum(x => x.LineCount) + (int)Math.Ceiling(toolLineCount);
+                }
+                else
+                {
+                    throw new Exception(string.Format("MIPI配置中，检测到{0}组设置的{1}us无法覆盖其内部总{2}us的配置，请确认!", MipiGroupName, ElapsedMicroseconds, calculatedElapsedMicroseconds));
+                }
+            }
+
+            LineCount = lineCount;
+        }
+    }
+
+    public class TruthModeSettings
+    {
+        public Dictionary<string, TruthMode> TruthModes { get; set; } = new Dictionary<string, TruthMode>();
+    }
+
+    public class TruthMode
+    {
+        public string TruthModeName { get; set; }
+        public int TriggerAt { get; set; }
+        public List<KeyValuePair<DeviceMode, int>> DeviceModes { get; set; } = new List<KeyValuePair<DeviceMode, int>>();
     }
 
     #endregion
@@ -120,7 +296,11 @@ namespace PAT_Editor
     public enum ReadWrite
     {
         Read,
-        Write
+        Write,
+        ExtendRead,
+        ExtendWrite,
+        ZeroWrite,
+        Delay
     }
 
     public class ChannelGroup
