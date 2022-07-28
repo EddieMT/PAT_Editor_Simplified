@@ -217,7 +217,14 @@ namespace PAT_Editor
     {
         public string MipiGroupName { get; set; }
         public List<MipiStep> MipiSteps { get; set; } = new List<MipiStep>();
-        public uint ElapsedMicroseconds { get; set; }
+        public uint PreElapsedMicroseconds { get; set; }
+        public decimal ElapsedMicroseconds
+        {
+            get
+            {
+                return (PreElapsedMicroseconds != 0) ? PreElapsedMicroseconds : MipiSteps.Sum(x => x.ElapsedMicroseconds);
+            }
+        }
         public int LineStart { get; set; }
         public int LineEnd
         {
@@ -230,27 +237,27 @@ namespace PAT_Editor
         public void CalculateLineCount()
         {
             int lineCount = 0;
-            if (ElapsedMicroseconds == 0)
+            if (PreElapsedMicroseconds == 0)
             {
                 lineCount = MipiSteps.Sum(x => x.LineCount);
             }
             else
             {
                 var calculatedElapsedMicroseconds = MipiSteps.Sum(x =>x.ElapsedMicroseconds);
-                if (calculatedElapsedMicroseconds == ElapsedMicroseconds)
+                if (calculatedElapsedMicroseconds == PreElapsedMicroseconds)
                 {
                     lineCount = MipiSteps.Sum(x => x.LineCount);
                 }
-                else if (calculatedElapsedMicroseconds < ElapsedMicroseconds)
+                else if (calculatedElapsedMicroseconds < PreElapsedMicroseconds)
                 {
                     var toolSpeedRateByMHz = MipiSteps.Last().CLK.TSW.SpeedRateByMHz;
-                    var toolElapsedMicroseconds = ElapsedMicroseconds - calculatedElapsedMicroseconds;
+                    var toolElapsedMicroseconds = PreElapsedMicroseconds - calculatedElapsedMicroseconds;
                     var toolLineCount = toolSpeedRateByMHz * toolElapsedMicroseconds;
                     lineCount = MipiSteps.Sum(x => x.LineCount) + (int)Math.Ceiling(toolLineCount);
                 }
                 else
                 {
-                    throw new Exception(string.Format("MIPI配置中，检测到{0}组设置的{1}us无法覆盖其内部总{2}us的配置，请确认!", MipiGroupName, ElapsedMicroseconds, calculatedElapsedMicroseconds));
+                    throw new Exception(string.Format("MIPI配置中，检测到{0}组设置的{1}us无法覆盖其内部总{2}us的配置，请确认!", MipiGroupName, PreElapsedMicroseconds, calculatedElapsedMicroseconds));
                 }
             }
 
@@ -268,6 +275,21 @@ namespace PAT_Editor
         public string TruthModeName { get; set; }
         public int TriggerAt { get; set; }
         public List<KeyValuePair<DeviceMode, int>> DeviceModes { get; set; } = new List<KeyValuePair<DeviceMode, int>>();
+        public int LineStart { get; set; }
+        public int LineEnd
+        {
+            get
+            {
+                return LineStart + LineCount - 1;
+            }
+        }
+        public int LineCount
+        {
+            get
+            {
+                return DeviceModes.Count;
+            }
+        }
     }
 
     #endregion

@@ -125,10 +125,11 @@ namespace PAT_Editor
 
         private void GeneratePATbyXLSX(string filePAT)
         {
+            BasicMipiSettings basicMipiSettings;
+            MipiModeSettings mipiModeSettings = new MipiModeSettings();
+            TruthModeSettings truthModeSettings = new TruthModeSettings();
             using (FileStream fs = new FileStream(txtMipiConfigFilePath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                BasicMipiSettings basicMipiSettings;
-                MipiModeSettings mipiModeSettings;
                 IWorkbook workbook = new XSSFWorkbook(fs);
 
                 ISheet sheetBasic = workbook.GetSheet("基础配置");
@@ -141,29 +142,40 @@ namespace PAT_Editor
                     basicMipiSettings = LoadBasicInfo(sheetBasic);
                 }
 
+                int startlinenumber = 0;
                 ISheet sheetMIPI = workbook.GetSheet("MIPI配置2");
-                if (sheetMIPI == null)
-                {
-                    throw new Exception("未检测到MIPI配置，请检查MIPI配置文件！");
-                }
-                else
+                if (sheetMIPI != null)
                 {
                     string cellValue = GetCellValue(sheetMIPI, 0, 0);
                     if (string.Compare(cellValue, "PRODUCT", true) == 0)
                     {
-                        mipiModeSettings = LoadMipiInfoVC(sheetMIPI, basicMipiSettings);
+                        mipiModeSettings = LoadMipiInfoVC(sheetMIPI, basicMipiSettings,ref startlinenumber);
                     }
                     else
                     {
-                        mipiModeSettings = LoadMipiInfo(sheetMIPI, basicMipiSettings);
+                        mipiModeSettings = LoadMipiInfo(sheetMIPI, basicMipiSettings, ref startlinenumber);
                     }
                 }
 
                 ISheet sheetTruth = workbook.GetSheet("Sheet2");
                 if (sheetTruth != null)
                 {
-                    LoadTruthInfo(sheetTruth, basicMipiSettings);
+                    truthModeSettings = LoadTruthInfo(sheetTruth, basicMipiSettings, ref startlinenumber);
                 }
+            }
+
+            if (mipiModeSettings.MipiModes.Count > 0)
+            {
+
+            }
+            else
+            {
+                throw new Exception("Cannot find any MIPI setting!");
+            }
+
+            if (truthModeSettings.TruthModes.Count > 0)
+            {
+
             }
         }
 
@@ -561,7 +573,7 @@ namespace PAT_Editor
             return basicMipiSettings;
         }
 
-        private MipiModeSettings LoadMipiInfo(ISheet ws, BasicMipiSettings basicMipiSettings)
+        private MipiModeSettings LoadMipiInfo(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
         {
             int rowCount = ws.LastRowNum; //得到行数 
             int colMipiMode = 0;  // MipiMode的位置
@@ -605,7 +617,7 @@ namespace PAT_Editor
                                 if (sMipiGroup.IndexOf("(") == -1)
                                 {
                                     mipiGroup.MipiGroupName = sMipiGroup;
-                                    mipiGroup.ElapsedMicroseconds = 0;
+                                    mipiGroup.PreElapsedMicroseconds = 0;
                                 }
                                 else
                                 {
@@ -616,7 +628,7 @@ namespace PAT_Editor
                                     {
                                         throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的时间参数，请确认必须为整型!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
                                     }
-                                    mipiGroup.ElapsedMicroseconds = iElapsedMicroseconds;
+                                    mipiGroup.PreElapsedMicroseconds = iElapsedMicroseconds;
                                 }
 
                                 for (rowIndex = cellMipiGroupFirstRow; rowIndex <= cellMipiGroupLastRow; rowIndex++)
@@ -657,6 +669,8 @@ namespace PAT_Editor
                                     mipiGroup.MipiSteps.Add(mipiStep);
                                 }
                                 mipiGroup.CalculateLineCount();
+                                mipiGroup.LineStart = startlinenumber;
+                                startlinenumber = mipiGroup.LineEnd + 1;
                                 if (mipiMode.MipiGroups.ContainsKey(mipiGroup.MipiGroupName))
                                 {
                                     throw new Exception(string.Format("MIPI配置中，检测到{0}存在同名的组 - {1}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
@@ -680,7 +694,7 @@ namespace PAT_Editor
                             if (sMipiGroup.IndexOf("(") == -1)
                             {
                                 mipiGroup.MipiGroupName = sMipiGroup;
-                                mipiGroup.ElapsedMicroseconds = 0;
+                                mipiGroup.PreElapsedMicroseconds = 0;
                             }
                             else
                             {
@@ -691,7 +705,7 @@ namespace PAT_Editor
                                 {
                                     throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的时间参数，请确认必须为整型!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
                                 }
-                                mipiGroup.ElapsedMicroseconds = iElapsedMicroseconds;
+                                mipiGroup.PreElapsedMicroseconds = iElapsedMicroseconds;
                             }
 
                             string sCodes = GetCellValue(ws, rowIndex, colCode);
@@ -729,6 +743,8 @@ namespace PAT_Editor
                             mipiStep.CalculateLineCount();
                             mipiGroup.MipiSteps.Add(mipiStep);
                             mipiGroup.CalculateLineCount();
+                            mipiGroup.LineStart = startlinenumber;
+                            startlinenumber = mipiGroup.LineEnd + 1;
                             if (mipiMode.MipiGroups.ContainsKey(mipiGroup.MipiGroupName))
                             {
                                 throw new Exception(string.Format("MIPI配置中，检测到{0}存在同名的组 - {1}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
@@ -766,7 +782,7 @@ namespace PAT_Editor
                     if (sMipiGroup.IndexOf("(") == -1)
                     {
                         mipiGroup.MipiGroupName = sMipiGroup;
-                        mipiGroup.ElapsedMicroseconds = 0;
+                        mipiGroup.PreElapsedMicroseconds = 0;
                     }
                     else
                     {
@@ -777,7 +793,7 @@ namespace PAT_Editor
                         {
                             throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的时间参数，请确认必须为整型!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
                         }
-                        mipiGroup.ElapsedMicroseconds = iElapsedMicroseconds;
+                        mipiGroup.PreElapsedMicroseconds = iElapsedMicroseconds;
                     }
 
                     string sCodes = GetCellValue(ws, rowIndex, colCode);
@@ -815,6 +831,8 @@ namespace PAT_Editor
                     mipiStep.CalculateLineCount();
                     mipiGroup.MipiSteps.Add(mipiStep);
                     mipiGroup.CalculateLineCount();
+                    mipiGroup.LineStart = startlinenumber;
+                    startlinenumber = mipiGroup.LineEnd + 1;
                     if (mipiMode.MipiGroups.ContainsKey(mipiGroup.MipiGroupName))
                     {
                         throw new Exception(string.Format("MIPI配置中，检测到{0}存在同名的组 - {1}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
@@ -840,7 +858,7 @@ namespace PAT_Editor
             return mipiModeSettings;
         }
 
-        private TruthModeSettings LoadTruthInfo(ISheet ws, BasicMipiSettings basicMipiSettings)
+        private TruthModeSettings LoadTruthInfo(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
         {
             int rowCount = ws.LastRowNum; //得到行数 
             int colTruthMode = 0;  // MipiMode的位置
@@ -897,6 +915,11 @@ namespace PAT_Editor
                             throw new Exception(string.Format("Sheet2中，检测到{0}存在无效配置，次数必须为整数，请确认!", truthMode.TruthModeName));
                         }
 
+                        if (iTimes > 1000)
+                        {
+                            throw new Exception(string.Format("Sheet2中，检测到{0}存在无效配置，次数不能大于1000，请确认!", truthMode.TruthModeName));
+                        }
+
                         singleCode = singleCode.Substring(0, singleCode.IndexOf("("));
                         if (basicMipiSettings.TruthTable.ContainsKey(singleCode))
                         {
@@ -908,6 +931,9 @@ namespace PAT_Editor
                         }
                     }
                 }
+
+                truthMode.LineStart = startlinenumber;
+                startlinenumber = truthMode.LineEnd + 1;
 
                 if (truthModeSettings.TruthModes.ContainsKey(truthMode.TruthModeName))
                 {
@@ -922,7 +948,7 @@ namespace PAT_Editor
             return truthModeSettings;
         }
 
-        private MipiModeSettings LoadMipiInfoVC(ISheet ws, BasicMipiSettings basicMipiSettings)
+        private MipiModeSettings LoadMipiInfoVC(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
         {
             MipiModeSettings mipiModeSettings = new MipiModeSettings();
             return mipiModeSettings;
@@ -984,6 +1010,9 @@ namespace PAT_Editor
                 else if (code.ToUpper().StartsWith("DELAY"))
                 {
                     mipiCode.MipiCodeType = ReadWrite.Delay;
+                    userID = "0";
+                    regID = "0";
+                    data = "0";
                     var sElapsedMicroseconds = code.ToUpper().Replace("DELAY", "").Replace("(", "").Replace(")", "");
                     uint elapsedMicroseconds = 0;
                     if (uint.TryParse(sElapsedMicroseconds, out elapsedMicroseconds))
