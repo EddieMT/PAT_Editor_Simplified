@@ -143,7 +143,7 @@ namespace PAT_Editor
                 }
 
                 int startlinenumber = 0;
-                ISheet sheetMIPI = workbook.GetSheet("MIPI配置2");
+                ISheet sheetMIPI = workbook.GetSheet("MIPI配置");
                 if (sheetMIPI != null)
                 {
                     string cellValue = GetCellValue(sheetMIPI, 0, 0);
@@ -157,45 +157,118 @@ namespace PAT_Editor
                     }
                 }
 
-                ISheet sheetTruth = workbook.GetSheet("Sheet2");
+                ISheet sheetTruth = workbook.GetSheet("通用配置");
                 if (sheetTruth != null)
                 {
                     truthModeSettings = LoadTruthInfo(sheetTruth, basicMipiSettings, ref startlinenumber);
                 }
             }
 
-            if (mipiModeSettings.MipiModes.Count > 0)
+            using (FileStream fs = new FileStream(filePAT, FileMode.Create, FileAccess.Write))
             {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    string line = string.Empty;
+                    string comment = "//";
 
-            }
-            else
-            {
-                throw new Exception("Cannot find any MIPI setting!");
-            }
+                    #region write basicMipiSettings
+                    sw.WriteLine("//Time Sets");
+                    foreach (var timeSet in basicMipiSettings.TimeSets.Values)
+                    {
+                        sw.WriteLine("//{0}:{1}", timeSet.TSName, timeSet.SpeedRateByMHz);
+                    }
 
-            if (truthModeSettings.TruthModes.Count > 0)
-            {
+                    sw.WriteLine("//Pin Map");
+                    string pinName = comment + "Pin".PadRight(20);
+                    string site1 = "Site1".PadRight(10);
+                    string site2 = "Site2".PadRight(10);
+                    string site3 = "Site3".PadRight(10);
+                    string site4 = "Site4".PadRight(10);
+                    string tsw = "TSW".PadRight(10);
+                    string tsr = "TSR".PadRight(10);
+                    line = pinName + site1 + site2 + site3 + site4 + tsw + tsr;
+                    sw.WriteLine(line);
+                    foreach(var pin in basicMipiSettings.PinMap.Values)
+                    {
+                        pinName = comment + pin.PinName.PadRight(20);
+                        site1 = (pin.Site1 != uint.MaxValue) ? pin.Site1.ToString().PadRight(10) : String.Empty.PadRight(10);
+                        site2 = (pin.Site2 != uint.MaxValue) ? pin.Site2.ToString().PadRight(10) : String.Empty.PadRight(10);
+                        site3 = (pin.Site3 != uint.MaxValue) ? pin.Site3.ToString().PadRight(10) : String.Empty.PadRight(10);
+                        site4 = (pin.Site4 != uint.MaxValue) ? pin.Site4.ToString().PadRight(10) : String.Empty.PadRight(10);
+                        tsw = pin.TSW.TSName.PadRight(10);
+                        tsr = pin.TSR.TSName.PadRight(10);
+                        line = pinName + site1 + site2 + site3 + site4 + tsw + tsr;
+                        sw.WriteLine(line);
+                    }
 
+                    sw.WriteLine("//Clock Data Pairs");
+                    if (basicMipiSettings.ChannelPairs.Count > 0)
+                    {
+                        List<string> channelPairs = new List<string>();
+                        foreach (var pair in basicMipiSettings.ChannelPairs)
+                        {
+                            string channelPair = "{" + string.Format("{0},{1}", pair.Key, pair.Value) + "}";
+                            channelPairs.Add(channelPair);
+                        }
+                        line = string.Join(" ", channelPairs);
+                        sw.WriteLine(line);
+                    }
+
+                    sw.WriteLine("//Truth Table");
+                    if (basicMipiSettings.TruthTable.Count > 0)
+                    {
+                        var firstDeviceMode = basicMipiSettings.TruthTable.First().Value;
+                        line = comment + "Mode".PadRight(20);
+                        foreach(var pin in firstDeviceMode.TruthValues.Keys)
+                        {
+                            line += pin.PinName.PadRight(20);
+                        }
+                        line += "TSW";
+                        sw.WriteLine(line);
+
+                        foreach(var deviceMode in basicMipiSettings.TruthTable.Values)
+                        {
+                            line = comment + deviceMode.DeviceModeName.PadRight(20);
+                            foreach (var truthValues in deviceMode.TruthValues.Values)
+                            {
+                                line += truthValues.PadRight(20);
+                            }
+                            line += deviceMode.TSW.TSName;
+                            sw.WriteLine(line);
+                        }
+                    }
+                    #endregion
+
+                    if (mipiModeSettings.MipiModes.Count > 0)
+                    {
+
+                    }
+
+                    if (truthModeSettings.TruthModes.Count > 0)
+                    {
+
+                    }
+                }
             }
         }
 
         private BasicMipiSettings LoadBasicInfo(ISheet ws)
         {
-            int rowCount = ws.LastRowNum; //得到行数 
+            int rowCount = ws.LastRowNum + 1; //得到行数 
             BasicMipiSettings basicMipiSettings = new BasicMipiSettings();
 
-            int rowTS1 = 1;
-            int rowTS2 = 2;
-            int rowTS3 = 3;
-            int rowTS4 = 4;
-            int rowPinMapBegin = 6;
+            int rowTS1 = 0;
+            int rowTS2 = 1;
+            int rowTS3 = 2;
+            int rowTS4 = 3;
+            int rowPinMapBegin = 5;
             int rowModeBegin = 0;
-            for (int i = 1; i <= rowCount; i++)
+            for (int i = 0; i < rowCount; i++)
             {
-                string key = GetCellValue(ws, i - 1, 0);
+                string key = GetCellValue(ws, i, 0);
                 if (i <= rowTS4)
                 {
-                    string sSpeedRate = GetCellValue(ws, i - 1, 1);
+                    string sSpeedRate = GetCellValue(ws, i, 1);
                     uint speedRate = 0;
                     if (i == rowTS1)
                     {
@@ -276,22 +349,22 @@ namespace PAT_Editor
                     {
                         if (string.Compare(key, "PIN", true) == 0)
                         {
-                            key = GetCellValue(ws, i - 1, 1);
+                            key = GetCellValue(ws, i, 1);
                             if (string.Compare(key, "SITE1", true) != 0)
                                 throw new Exception("基础配置模板疑似被篡改，第6行第A列应为Site1！");
-                            key = GetCellValue(ws, i - 1, 2);
+                            key = GetCellValue(ws, i, 2);
                             if (string.Compare(key, "SITE2", true) != 0)
                                 throw new Exception("基础配置模板疑似被篡改，第6行第B列应为Site2！");
-                            key = GetCellValue(ws, i - 1, 3);
+                            key = GetCellValue(ws, i, 3);
                             if (string.Compare(key, "SITE3", true) != 0)
                                 throw new Exception("基础配置模板疑似被篡改，第6行第C列应为Site3！");
-                            key = GetCellValue(ws, i - 1, 4);
+                            key = GetCellValue(ws, i, 4);
                             if (string.Compare(key, "SITE4", true) != 0)
                                 throw new Exception("基础配置模板疑似被篡改，第6行第D列应为Site4！");
-                            key = GetCellValue(ws, i - 1, 5);
+                            key = GetCellValue(ws, i, 5);
                             if (string.Compare(key, "TSW", true) != 0)
                                 throw new Exception("基础配置模板疑似被篡改，第6行第E列应为TSW！");
-                            key = GetCellValue(ws, i - 1, 6);
+                            key = GetCellValue(ws, i, 6);
                             if (string.Compare(key, "TSR", true) != 0)
                                 throw new Exception("基础配置模板疑似被篡改，第6行第F列应为TSR！");
                         }
@@ -315,8 +388,8 @@ namespace PAT_Editor
             int colSite4 = 4;
             int colTSW = 5;
             int colTSR = 6;
-            int rowPinMapEnd = (rowModeBegin != 0) ? rowModeBegin : rowCount;
-            for (int i = rowPinMapBegin; i < rowPinMapEnd - 1; i++)
+            int rowPinMapEnd = (rowModeBegin != 0) ? rowModeBegin - 1 : rowCount;
+            for (int i = rowPinMapBegin + 1; i < rowPinMapEnd; i++)
             {
                 Pin pin = new Pin();
 
@@ -478,11 +551,11 @@ namespace PAT_Editor
 
             if (rowModeBegin != 0)
             {
-                int colCount = ws.GetRow(rowModeBegin - 1).LastCellNum;//得到列数
+                int colCount = ws.GetRow(rowModeBegin).LastCellNum;//得到列数
                 List<string> pins = new List<string>();
                 for (int i = 1; i < colCount; i++)
                 {
-                    string cellValue = GetCellValue(ws, rowModeBegin - 1, i);
+                    string cellValue = GetCellValue(ws, rowModeBegin, i);
                     if (i == colCount - 1)
                     {
                         if (cellValue != "TSW")
@@ -503,7 +576,7 @@ namespace PAT_Editor
                         }
                     }
                 }
-                for (int i = rowModeBegin; i < rowCount; i++)
+                for (int i = rowModeBegin + 1; i < rowCount; i++)
                 {
                     DeviceMode deviceMode = new DeviceMode();
 
@@ -575,7 +648,7 @@ namespace PAT_Editor
 
         private MipiModeSettings LoadMipiInfo(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
         {
-            int rowCount = ws.LastRowNum; //得到行数 
+            int rowCount = ws.LastRowNum + 1; //得到行数 
             int colMipiMode = 0;  // MipiMode的位置
             int colMipiGroup = 1;  // MiPi Group(us)的位置
             int colCode = 2;  // Code的位置
@@ -583,7 +656,7 @@ namespace PAT_Editor
             int colData = 4;  // Data的位置
             MipiModeSettings mipiModeSettings = new MipiModeSettings();
 
-            for (int rowIndex = 1; rowIndex <= rowCount;)
+            for (int rowIndex = 1; rowIndex < rowCount;)
             {
                 List<CellRangeAddress> cellMipiModes = ws.MergedRegions.Where(x => x.FirstColumn == colMipiMode).ToList();
                 if (cellMipiModes.Any(x => x.FirstRow == rowIndex))
@@ -860,22 +933,22 @@ namespace PAT_Editor
 
         private TruthModeSettings LoadTruthInfo(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
         {
-            int rowCount = ws.LastRowNum; //得到行数 
+            int rowCount = ws.LastRowNum + 1; //得到行数 
             int colTruthMode = 0;  // MipiMode的位置
             int colCode = 1;  // Code的位置
             TruthModeSettings truthModeSettings = new TruthModeSettings();
 
-            for (int rowIndex = 1; rowIndex <= rowCount; rowIndex++)
+            for (int rowIndex = 1; rowIndex < rowCount; rowIndex++)
             {
                 string sTruthMode = GetCellValue(ws, rowIndex, colTruthMode);
                 if (string.IsNullOrEmpty(sTruthMode))
-                    throw new Exception(string.Format("Sheet2中，检测到为空的Mipi Mode，请确认!"));
+                    throw new Exception(string.Format("通用配置中，检测到为空的Mipi Mode，请确认!"));
                 TruthMode truthMode = new TruthMode();
                 truthMode.TruthModeName = sTruthMode;
 
                 string sCode = GetCellValue(ws, rowIndex, colCode);
                 if (string.IsNullOrEmpty(sCode))
-                    throw new Exception(string.Format("Sheet2中，检测到{0}存在为空的Code，请确认!", truthMode.TruthModeName));
+                    throw new Exception(string.Format("通用配置中，检测到{0}存在为空的Code，请确认!", truthMode.TruthModeName));
                 //foreach(var singleCode in sCode.Split(';'))
                 for (int i = 1; i <= sCode.Split(';').Length; i++)
                 {
@@ -888,7 +961,7 @@ namespace PAT_Editor
                         }
                         else
                         {
-                            throw new Exception(string.Format("Sheet2中，检测到{0}存在无效的Mode - {1}，请对照基础配置表进行确认!", truthMode.TruthModeName, singleCode));
+                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效的Mode - {1}，请对照基础配置表进行确认!", truthMode.TruthModeName, singleCode));
                         }
                     }
                     else
@@ -898,7 +971,7 @@ namespace PAT_Editor
                         {
                             if (truthMode.TriggerAt > 0)
                             {
-                                throw new Exception(string.Format("Sheet2中，检测到{0}存在多个Trigger项，请确认!", truthMode.TruthModeName));
+                                throw new Exception(string.Format("通用配置中，检测到{0}存在多个Trigger项，请确认!", truthMode.TruthModeName));
                             }
                             else
                             {
@@ -912,12 +985,12 @@ namespace PAT_Editor
                         int iTimes = 0;
                         if (!int.TryParse(sTimes, out iTimes))
                         {
-                            throw new Exception(string.Format("Sheet2中，检测到{0}存在无效配置，次数必须为整数，请确认!", truthMode.TruthModeName));
+                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效配置，次数必须为整数，请确认!", truthMode.TruthModeName));
                         }
 
                         if (iTimes > 1000)
                         {
-                            throw new Exception(string.Format("Sheet2中，检测到{0}存在无效配置，次数不能大于1000，请确认!", truthMode.TruthModeName));
+                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效配置，次数不能大于1000，请确认!", truthMode.TruthModeName));
                         }
 
                         singleCode = singleCode.Substring(0, singleCode.IndexOf("("));
@@ -927,7 +1000,7 @@ namespace PAT_Editor
                         }
                         else
                         {
-                            throw new Exception(string.Format("Sheet2中，检测到{0}存在无效的Mode - {1}，请对照基础配置表进行确认!", truthMode.TruthModeName, singleCode));
+                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效的Mode - {1}，请对照基础配置表进行确认!", truthMode.TruthModeName, singleCode));
                         }
                     }
                 }
@@ -937,7 +1010,7 @@ namespace PAT_Editor
 
                 if (truthModeSettings.TruthModes.ContainsKey(truthMode.TruthModeName))
                 {
-                    throw new Exception(string.Format("Sheet2中，检测到同名的Mipi Mode - {0}，请确认!", truthMode.TruthModeName));
+                    throw new Exception(string.Format("通用配置中，检测到同名的Mipi Mode - {0}，请确认!", truthMode.TruthModeName));
                 }
                 else
                 {

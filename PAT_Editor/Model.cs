@@ -274,6 +274,13 @@ namespace PAT_Editor
     {
         public string TruthModeName { get; set; }
         public int TriggerAt { get; set; }
+        public int TriggerLie 
+        { 
+            get
+            {
+                return LineStart + TriggerAt - 1;
+            }
+        }
         public List<KeyValuePair<DeviceMode, int>> DeviceModes { get; set; } = new List<KeyValuePair<DeviceMode, int>>();
         public int LineStart { get; set; }
         public int LineEnd
