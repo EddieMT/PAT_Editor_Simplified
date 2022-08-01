@@ -1307,7 +1307,143 @@ namespace PAT_Editor
 
         private MipiModeSettings LoadMipiInfoVC(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
         {
+            int rowCount = ws.LastRowNum + 1; //得到行数 
+            int rowTitile = 5;
+            int colMipiMode = 2;  // MipiMode的位置
+            int colCode = 6;  // Code的位置
+            int colClk = 7;  // Clk的位置
+            int colData = 8;  // Data的位置
+            int colLoopRequired = 9;  // LoopRequired的位置
+
+            //Get colCount
+            int colNumber = colLoopRequired;
+            string colName = string.Empty;
+            do
+            {
+                colNumber++;
+                colName = GetCellValue(ws, rowTitile, colNumber);
+            } while (!string.IsNullOrEmpty(colName));
+            int colCount = colNumber;
+            int additionalColCount = colCount - 10;//In VC template, the original column count is 10.
+            if (additionalColCount > 0 && (additionalColCount % 3) != 0)
+            {
+                throw new Exception("MIPI配置中，检测到有额外未成对的Code/Clk/Data，请检查配置文件！");
+            }
+
             MipiModeSettings mipiModeSettings = new MipiModeSettings();
+
+            for (int rowIndex = rowTitile + 1; rowIndex < rowCount; rowIndex++)
+            {
+                string sMipiMode = GetCellValue(ws, rowIndex, colMipiMode);
+                if (string.IsNullOrEmpty(sMipiMode))
+                    throw new Exception(string.Format("MIPI配置中，检测到为空的Mipi Mode，请确认!"));
+                MipiMode mipiMode = new MipiMode();
+                mipiMode.MipiModeName = sMipiMode;
+                mipiMode.LoopRequired = GetCellValue(ws, rowIndex, colLoopRequired).ToUpper().Trim() == "Y" ? true : false;
+                MipiGroup mipiGroup = new MipiGroup();
+                mipiGroup.MipiGroupName = sMipiMode;
+                mipiGroup.PreElapsedMicroseconds = 0;
+
+                string sCodes = GetCellValue(ws, rowIndex, colCode);
+                string sCLK = GetCellValue(ws, rowIndex, colClk);
+                string sDATA = GetCellValue(ws, rowIndex, colData);
+                if (string.IsNullOrEmpty(sCodes))
+                    throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在为空的Code，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                if (!basicMipiSettings.PinMap.Any(x => x.Key == sCLK))
+                    throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的CLK - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK));
+                if (!basicMipiSettings.PinMap.Any(x => x.Key == sDATA))
+                    throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的DATA - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sDATA));
+                if (basicMipiSettings.ChannelPairs.ContainsKey(sCLK))
+                {
+                    if (basicMipiSettings.ChannelPairs[sCLK] != sDATA)
+                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组的{CLK，DATA} - {{2}，{3}} 与其他组{{2}，{4}}存在冲突，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK, sDATA, basicMipiSettings.ChannelPairs[sCLK]));
+                }
+                else
+                {
+                    if (!basicMipiSettings.ChannelPairs.ContainsValue(sDATA))
+                        basicMipiSettings.ChannelPairs.Add(sCLK, sDATA);
+                    else
+                        throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组的{CLK，DATA} - {{2}，{3}} 与其他组{{4}，{3}}存在冲突，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK, sDATA, basicMipiSettings.ChannelPairs.First(x => x.Value == sDATA).Key));
+                }
+                MipiStep mipiStep = new MipiStep();
+                mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
+                mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                try
+                {
+                    mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的Code，请确认!\n{2}", mipiMode.MipiModeName, mipiGroup.MipiGroupName, ex.Message));
+                }
+                mipiStep.CalculateLineCount();
+                mipiGroup.MipiSteps.Add(mipiStep);
+
+                if (additionalColCount > 0)
+                {
+                    for (int columnIndex = 10; columnIndex < colCount; )
+                    {
+                        sCodes = GetCellValue(ws, rowIndex, columnIndex);
+                        if (!string.IsNullOrEmpty(sCodes))
+                        {
+                            sCLK = GetCellValue(ws, rowIndex, columnIndex + 1);
+                            sDATA = GetCellValue(ws, rowIndex, columnIndex + 2);
+                            if (!basicMipiSettings.PinMap.Any(x => x.Key == sCLK))
+                                throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的CLK - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK));
+                            if (!basicMipiSettings.PinMap.Any(x => x.Key == sDATA))
+                                throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的DATA - {2}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sDATA));
+                            if (basicMipiSettings.ChannelPairs.ContainsKey(sCLK))
+                            {
+                                if (basicMipiSettings.ChannelPairs[sCLK] != sDATA)
+                                    throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组的{CLK，DATA} - {{2}，{3}} 与其他组{{2}，{4}}存在冲突，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK, sDATA, basicMipiSettings.ChannelPairs[sCLK]));
+                            }
+                            else
+                            {
+                                if (!basicMipiSettings.ChannelPairs.ContainsValue(sDATA))
+                                    basicMipiSettings.ChannelPairs.Add(sCLK, sDATA);
+                                else
+                                    throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组的{CLK，DATA} - {{2}，{3}} 与其他组{{4}，{3}}存在冲突，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName, sCLK, sDATA, basicMipiSettings.ChannelPairs.First(x => x.Value == sDATA).Key));
+                            }
+                            mipiStep = new MipiStep();
+                            mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
+                            mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                            try
+                            {
+                                mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在非法的Code，请确认!\n{2}", mipiMode.MipiModeName, mipiGroup.MipiGroupName, ex.Message));
+                            }
+                            mipiStep.CalculateLineCount();
+                            mipiGroup.MipiSteps.Add(mipiStep);
+                        }
+                        columnIndex = columnIndex + 3;
+                    }
+                }
+
+                mipiGroup.CalculateLineCount();
+                mipiGroup.LineStart = startlinenumber;
+                startlinenumber = mipiGroup.LineEnd + 1;
+                if (mipiMode.MipiGroups.ContainsKey(mipiGroup.MipiGroupName))
+                {
+                    throw new Exception(string.Format("MIPI配置中，检测到{0}存在同名的组 - {1}，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
+                }
+                else
+                {
+                    mipiMode.MipiGroups.Add(mipiGroup.MipiGroupName, mipiGroup);
+                }
+
+                if (mipiModeSettings.MipiModes.ContainsKey(mipiMode.MipiModeName))
+                {
+                    throw new Exception(string.Format("MIPI配置中，检测到同名的Mipi Mode - {0}，请确认!", mipiMode.MipiModeName));
+                }
+                else
+                {
+                    mipiModeSettings.MipiModes.Add(mipiMode.MipiModeName, mipiMode);
+                }
+            }
+
             return mipiModeSettings;
         }
 
