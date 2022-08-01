@@ -234,34 +234,38 @@ namespace PAT_Editor
             }
         }
         public int LineCount { get; private set; }
+        public TimeSet SupplementalTimeSet { get; private set; }
+        public int SupplementalLineCount { get; private set; }
+        public int SupplementalLineRemainder { get; private set; }
         public void CalculateLineCount()
         {
-            int lineCount = 0;
             if (PreElapsedMicroseconds == 0)
             {
-                lineCount = MipiSteps.Sum(x => x.LineCount);
+                LineCount = MipiSteps.Sum(x => x.LineCount);
             }
             else
             {
                 var calculatedElapsedMicroseconds = MipiSteps.Sum(x =>x.ElapsedMicroseconds);
                 if (calculatedElapsedMicroseconds == PreElapsedMicroseconds)
                 {
-                    lineCount = MipiSteps.Sum(x => x.LineCount);
+                    SupplementalTimeSet = MipiSteps.Last().CLK.TSW;
+                    SupplementalLineCount = 0;
+                    SupplementalLineRemainder = 0;
+                    LineCount = MipiSteps.Sum(x => x.LineCount);
                 }
                 else if (calculatedElapsedMicroseconds < PreElapsedMicroseconds)
                 {
-                    var toolSpeedRateByMHz = MipiSteps.Last().CLK.TSW.SpeedRateByMHz;
-                    var toolElapsedMicroseconds = PreElapsedMicroseconds - calculatedElapsedMicroseconds;
-                    var toolLineCount = toolSpeedRateByMHz * toolElapsedMicroseconds;
-                    lineCount = MipiSteps.Sum(x => x.LineCount) + (int)Math.Ceiling(toolLineCount);
+                    SupplementalTimeSet = MipiSteps.Last().CLK.TSW;
+                    SupplementalLineCount = (int)Math.Ceiling(SupplementalTimeSet.SpeedRateByMHz * (PreElapsedMicroseconds - calculatedElapsedMicroseconds));
+                    SupplementalLineRemainder = SupplementalLineCount % 1000;
+                    SupplementalLineCount = (int)Math.Ceiling((double)SupplementalLineCount / 1000);
+                    LineCount = MipiSteps.Sum(x => x.LineCount) + SupplementalLineCount;
                 }
                 else
                 {
                     throw new Exception(string.Format("MIPI配置中，检测到{0}组设置的{1}us无法覆盖其内部总{2}us的配置，请确认!", MipiGroupName, PreElapsedMicroseconds, calculatedElapsedMicroseconds));
                 }
             }
-
-            LineCount = lineCount;
         }
     }
 
@@ -274,7 +278,7 @@ namespace PAT_Editor
     {
         public string TruthModeName { get; set; }
         public int TriggerAt { get; set; }
-        public int TriggerLie 
+        public int TriggerLine
         { 
             get
             {
