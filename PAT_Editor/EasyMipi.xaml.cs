@@ -29,7 +29,7 @@ namespace PAT_Editor
             try
             {
                 OpenFileDialog dlg = new OpenFileDialog();
-                dlg.Filter = "MIPI配置文件|*.csv;*.xlsx";
+                dlg.Filter = "Pattern配置文件|*.csv;*.xlsx";
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     txtMipiConfigFilePath.Text = dlg.FileName;
@@ -125,9 +125,9 @@ namespace PAT_Editor
 
         private void GeneratePATbyXLSX(string filePAT)
         {
-            BasicMipiSettings basicMipiSettings;
-            MipiModeSettings mipiModeSettings = new MipiModeSettings();
-            TruthModeSettings truthModeSettings = new TruthModeSettings();
+            BasicPatternSettings basicPatternSettings;
+            MipiPatternSettings mipiPatternSettings = new MipiPatternSettings();
+            GeneralPatternSettings generalPatternSettings = new GeneralPatternSettings();
             using (FileStream fs = new FileStream(txtMipiConfigFilePath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
@@ -135,11 +135,11 @@ namespace PAT_Editor
                 ISheet sheetBasic = workbook.GetSheet("基础配置");
                 if (sheetBasic == null)
                 {
-                    throw new Exception("未检测到基础配置，请检查MIPI配置文件！");
+                    throw new Exception("未检测到基础配置，请检查Pattern配置文件！");
                 }
                 else
                 {
-                    basicMipiSettings = LoadBasicInfo(sheetBasic);
+                    basicPatternSettings = LoadBasicInfo(sheetBasic);
                 }
 
                 int startlinenumber = 0;
@@ -149,18 +149,18 @@ namespace PAT_Editor
                     string cellValue = GetCellValue(sheetMIPI, 0, 0);
                     if (string.Compare(cellValue, "PRODUCT", true) == 0)
                     {
-                        mipiModeSettings = LoadMipiInfoVC(sheetMIPI, basicMipiSettings,ref startlinenumber);
+                        mipiPatternSettings = LoadMipiPatternVC(sheetMIPI, basicPatternSettings,ref startlinenumber);
                     }
                     else
                     {
-                        mipiModeSettings = LoadMipiInfo(sheetMIPI, basicMipiSettings, ref startlinenumber);
+                        mipiPatternSettings = LoadMipiPattern(sheetMIPI, basicPatternSettings, ref startlinenumber);
                     }
                 }
 
-                ISheet sheetTruth = workbook.GetSheet("通用配置");
-                if (sheetTruth != null)
+                ISheet sheetGeneral = workbook.GetSheet("通用配置");
+                if (sheetGeneral != null)
                 {
-                    truthModeSettings = LoadTruthInfo(sheetTruth, basicMipiSettings, ref startlinenumber);
+                    generalPatternSettings = LoadGeneralPattern(sheetGeneral, basicPatternSettings, ref startlinenumber);
                 }
             }
 
@@ -172,7 +172,7 @@ namespace PAT_Editor
 
                     #region write basicMipiSettings
                     sw.WriteLine("//Time Sets");
-                    foreach (var timeSet in basicMipiSettings.TimeSets.Values)
+                    foreach (var timeSet in basicPatternSettings.TimeSets.Values)
                     {
                         sw.WriteLine("//{0}:{1}", timeSet.TSName, timeSet.SpeedRateByMHz);
                     }
@@ -187,7 +187,7 @@ namespace PAT_Editor
                     string tsr = "TSR".PadRight(10);
                     line = pinName + site1 + site2 + site3 + site4 + tsw + tsr;
                     sw.WriteLine(line);
-                    foreach(var pin in basicMipiSettings.PinMap.Values)
+                    foreach(var pin in basicPatternSettings.PinMap.Values)
                     {
                         pinName = "//" + pin.PinName.PadRight(20);
                         site1 = (pin.Site1 != uint.MaxValue) ? pin.Site1.ToString().PadRight(10) : String.Empty.PadRight(10);
@@ -201,10 +201,10 @@ namespace PAT_Editor
                     }
 
                     sw.WriteLine("//Clock Data Pairs");
-                    if (basicMipiSettings.ChannelPairs.Count > 0)
+                    if (basicPatternSettings.ChannelPairs.Count > 0)
                     {
                         List<string> channelPairs = new List<string>();
-                        foreach (var pair in basicMipiSettings.ChannelPairs)
+                        foreach (var pair in basicPatternSettings.ChannelPairs)
                         {
                             string channelPair = "{" + string.Format("{0},{1}", pair.Key, pair.Value) + "}";
                             channelPairs.Add(channelPair);
@@ -214,9 +214,9 @@ namespace PAT_Editor
                     }
 
                     sw.WriteLine("//Truth Table");
-                    if (basicMipiSettings.TruthTable.Count > 0)
+                    if (basicPatternSettings.TruthTable.Count > 0)
                     {
-                        var firstDeviceMode = basicMipiSettings.TruthTable.First().Value;
+                        var firstDeviceMode = basicPatternSettings.TruthTable.First().Value;
                         line = "//Mode".PadRight(20);
                         foreach(var pin in firstDeviceMode.TruthValues.Keys)
                         {
@@ -225,7 +225,7 @@ namespace PAT_Editor
                         line += "TSW";
                         sw.WriteLine(line);
 
-                        foreach(var deviceMode in basicMipiSettings.TruthTable.Values)
+                        foreach(var deviceMode in basicPatternSettings.TruthTable.Values)
                         {
                             line = "//" + deviceMode.DeviceModeName.PadRight(20);
                             foreach (var truthValues in deviceMode.TruthValues.Values)
@@ -242,17 +242,17 @@ namespace PAT_Editor
 
                     #region summary line number
                     sw.WriteLine("//MIPI-START");
-                    if (mipiModeSettings.MipiModes.Count > 0)
+                    if (mipiPatternSettings.MipiModes.Count > 0)
                     {
-                        foreach (var mipiMode in mipiModeSettings.MipiModes.Values)
+                        foreach (var mipiMode in mipiPatternSettings.MipiModes.Values)
                         {
                             line = string.Format("//{0}:{1}-{2}", mipiMode.MipiModeName, mipiMode.LineStart, mipiMode.LineEnd);
                             sw.WriteLine(line);
                         }
                     }
-                    if (truthModeSettings.TruthModes.Count > 0)
+                    if (generalPatternSettings.GeneralModes.Count > 0)
                     {
-                        foreach (var truthMode in truthModeSettings.TruthModes.Values)
+                        foreach (var truthMode in generalPatternSettings.GeneralModes.Values)
                         {
                             if (truthMode.TriggerAt > 0)
                                 line = string.Format("//{0}:{1}-{2}-{3}", truthMode.TruthModeName, truthMode.LineStart, truthMode.LineEnd, truthMode.TriggerLine);
@@ -265,9 +265,9 @@ namespace PAT_Editor
                     #endregion
 
                     #region write mipiModeSettings
-                    if (mipiModeSettings.MipiModes.Count > 0)
+                    if (mipiPatternSettings.MipiModes.Count > 0)
                     {
-                        foreach(var mipiMode in mipiModeSettings.MipiModes.Values)
+                        foreach(var mipiMode in mipiPatternSettings.MipiModes.Values)
                         {
                             sw.WriteLine(string.Format("//--------------------------------------------{0}-----------------------------------------------------------", mipiMode.MipiModeName));
                             foreach (var mipiGroup in mipiMode.MipiGroups.Values)
@@ -513,10 +513,10 @@ namespace PAT_Editor
                     #endregion
 
                     #region write truthModeSettings
-                    if (truthModeSettings.TruthModes.Count > 0)
+                    if (generalPatternSettings.GeneralModes.Count > 0)
                     {
                         string supplementalLine = "FC       {0}     {1}               {2};// {3}---{4}";
-                        foreach (var truthMode in truthModeSettings.TruthModes.Values)
+                        foreach (var truthMode in generalPatternSettings.GeneralModes.Values)
                         {
                             sw.WriteLine(string.Format("//--------------------------------------------{0}-----------------------------------------------------------", truthMode.TruthModeName));
                             var lineNumber = truthMode.LineStart;
@@ -536,10 +536,10 @@ namespace PAT_Editor
             }
         }
 
-        private BasicMipiSettings LoadBasicInfo(ISheet ws)
+        private BasicPatternSettings LoadBasicInfo(ISheet ws)
         {
             int rowCount = ws.LastRowNum + 1; //得到行数 
-            BasicMipiSettings basicMipiSettings = new BasicMipiSettings();
+            BasicPatternSettings basicMipiSettings = new BasicPatternSettings();
 
             int rowTS1 = 0;
             int rowTS2 = 1;
@@ -930,7 +930,7 @@ namespace PAT_Editor
             return basicMipiSettings;
         }
 
-        private MipiModeSettings LoadMipiInfo(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
+        private MipiPatternSettings LoadMipiPattern(ISheet ws, BasicPatternSettings basicMipiSettings, ref int startlinenumber)
         {
             int rowCount = ws.LastRowNum + 1; //得到行数 
             int colMipiMode = 0;  // MipiMode的位置
@@ -938,7 +938,7 @@ namespace PAT_Editor
             int colCode = 2;  // Code的位置
             int colClk = 3;  // Clk的位置
             int colData = 4;  // Data的位置
-            MipiModeSettings mipiModeSettings = new MipiModeSettings();
+            MipiPatternSettings mipiModeSettings = new MipiPatternSettings();
 
             for (int rowIndex = 1; rowIndex < rowCount;)
             {
@@ -1215,19 +1215,19 @@ namespace PAT_Editor
             return mipiModeSettings;
         }
 
-        private TruthModeSettings LoadTruthInfo(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
+        private GeneralPatternSettings LoadGeneralPattern(ISheet ws, BasicPatternSettings basicMipiSettings, ref int startlinenumber)
         {
             int rowCount = ws.LastRowNum + 1; //得到行数 
             int colTruthMode = 0;  // MipiMode的位置
             int colCode = 1;  // Code的位置
-            TruthModeSettings truthModeSettings = new TruthModeSettings();
+            GeneralPatternSettings truthModeSettings = new GeneralPatternSettings();
 
             for (int rowIndex = 1; rowIndex < rowCount; rowIndex++)
             {
                 string sTruthMode = GetCellValue(ws, rowIndex, colTruthMode);
                 if (string.IsNullOrEmpty(sTruthMode))
                     throw new Exception(string.Format("通用配置中，检测到为空的Mipi Mode，请确认!"));
-                TruthMode truthMode = new TruthMode();
+                GeneralMode truthMode = new GeneralMode();
                 truthMode.TruthModeName = sTruthMode;
 
                 string sCode = GetCellValue(ws, rowIndex, colCode);
@@ -1292,20 +1292,20 @@ namespace PAT_Editor
                 truthMode.LineStart = startlinenumber;
                 startlinenumber = truthMode.LineEnd + 1;
 
-                if (truthModeSettings.TruthModes.ContainsKey(truthMode.TruthModeName))
+                if (truthModeSettings.GeneralModes.ContainsKey(truthMode.TruthModeName))
                 {
                     throw new Exception(string.Format("通用配置中，检测到同名的Mipi Mode - {0}，请确认!", truthMode.TruthModeName));
                 }
                 else
                 {
-                    truthModeSettings.TruthModes.Add(truthMode.TruthModeName, truthMode);
+                    truthModeSettings.GeneralModes.Add(truthMode.TruthModeName, truthMode);
                 }
             }
 
             return truthModeSettings;
         }
 
-        private MipiModeSettings LoadMipiInfoVC(ISheet ws, BasicMipiSettings basicMipiSettings, ref int startlinenumber)
+        private MipiPatternSettings LoadMipiPatternVC(ISheet ws, BasicPatternSettings basicMipiSettings, ref int startlinenumber)
         {
             int rowCount = ws.LastRowNum + 1; //得到行数 
             int rowTitile = 5;
@@ -1330,7 +1330,7 @@ namespace PAT_Editor
                 throw new Exception("MIPI配置中，检测到有额外未成对的Code/Clk/Data，请检查配置文件！");
             }
 
-            MipiModeSettings mipiModeSettings = new MipiModeSettings();
+            MipiPatternSettings mipiModeSettings = new MipiPatternSettings();
 
             for (int rowIndex = rowTitile + 1; rowIndex < rowCount; rowIndex++)
             {

@@ -8,7 +8,7 @@ namespace PAT_Editor
 {
     #region Classes for version 3
 
-    public class BasicMipiSettings
+    public class BasicPatternSettings
     {
         public Dictionary<string, TimeSet> TimeSets { get; set; } = new Dictionary<string, TimeSet>();
         public Dictionary<string, Pin> PinMap { get; set; } = new Dictionary<string, Pin>();
@@ -58,7 +58,7 @@ namespace PAT_Editor
         public TimeSet TSW { get; set; }
     }
 
-    public class MipiModeSettings
+    public class MipiPatternSettings
     {
         public Dictionary<string, MipiMode> MipiModes { get; set; } = new Dictionary<string, MipiMode>();
     }
@@ -269,12 +269,12 @@ namespace PAT_Editor
         }
     }
 
-    public class TruthModeSettings
+    public class GeneralPatternSettings
     {
-        public Dictionary<string, TruthMode> TruthModes { get; set; } = new Dictionary<string, TruthMode>();
+        public Dictionary<string, GeneralMode> GeneralModes { get; set; } = new Dictionary<string, GeneralMode>();
     }
 
-    public class TruthMode
+    public class GeneralMode
     {
         public string TruthModeName { get; set; }
         public int TriggerAt { get; set; }
