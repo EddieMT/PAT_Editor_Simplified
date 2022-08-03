@@ -252,12 +252,12 @@ namespace PAT_Editor
                     }
                     if (generalPatternSettings.GeneralModes.Count > 0)
                     {
-                        foreach (var truthMode in generalPatternSettings.GeneralModes.Values)
+                        foreach (var generalMode in generalPatternSettings.GeneralModes.Values)
                         {
-                            if (truthMode.TriggerAt > 0)
-                                line = string.Format("//{0}:{1}-{2}-{3}", truthMode.TruthModeName, truthMode.LineStart, truthMode.LineEnd, truthMode.TriggerLine);
+                            if (generalMode.TriggerAt > 0)
+                                line = string.Format("//{0}:{1}-{2}-{3}", generalMode.GeneralModeName, generalMode.LineStart, generalMode.LineEnd, generalMode.TriggerLine);
                             else
-                                line = string.Format("//{0}:{1}-{2}", truthMode.TruthModeName, truthMode.LineStart, truthMode.LineEnd);
+                                line = string.Format("//{0}:{1}-{2}", generalMode.GeneralModeName, generalMode.LineStart, generalMode.LineEnd);
                             sw.WriteLine(line);
                         }
                     }
@@ -512,19 +512,19 @@ namespace PAT_Editor
                     }
                     #endregion
 
-                    #region write truthModeSettings
+                    #region write generalPatternSettings
                     if (generalPatternSettings.GeneralModes.Count > 0)
                     {
                         string supplementalLine = "FC       {0}     {1}               {2};// {3}---{4}";
-                        foreach (var truthMode in generalPatternSettings.GeneralModes.Values)
+                        foreach (var generalMode in generalPatternSettings.GeneralModes.Values)
                         {
-                            sw.WriteLine(string.Format("//--------------------------------------------{0}-----------------------------------------------------------", truthMode.TruthModeName));
-                            var lineNumber = truthMode.LineStart;
-                            for (int i = 1; i <= truthMode.DeviceModes.Count; i++)
+                            sw.WriteLine(string.Format("//--------------------------------------------{0}-----------------------------------------------------------", generalMode.GeneralModeName));
+                            var lineNumber = generalMode.LineStart;
+                            for (int i = 1; i <= generalMode.DeviceModes.Count; i++)
                             {
-                                var pair = truthMode.DeviceModes[i - 1];
+                                var pair = generalMode.DeviceModes[i - 1];
                                 line = string.Format(supplementalLine, pair.Value.ToString().PadRight(4), pair.Key.TSW.TSName, pair.Key.Command, pair.Key.DeviceModeName, lineNumber);
-                                if (i == truthMode.TriggerAt)
+                                if (i == generalMode.TriggerAt)
                                     line += "---trigger";
                                 sw.WriteLine(line);
                                 lineNumber++;
@@ -546,8 +546,7 @@ namespace PAT_Editor
             int rowTS3 = 2;
             int rowTS4 = 3;
             int rowPinMapBegin = 5;
-            int rowModeBegin = 0;
-            for (int i = 0; i < rowCount; i++)
+            for (int i = 0; i <= rowPinMapBegin; i++)
             {
                 string key = GetCellValue(ws, i, 0);
                 if (i <= rowTS4)
@@ -657,11 +656,6 @@ namespace PAT_Editor
                             throw new Exception("基础配置模板疑似被篡改，第6行第A列应为Pin！");
                         }
                     }
-
-                    if (string.Compare(key, "MODE", true) == 0)
-                    {
-                        rowModeBegin = i;
-                    }
                 }
             }
 
@@ -672,8 +666,7 @@ namespace PAT_Editor
             int colSite4 = 4;
             int colTSW = 5;
             int colTSR = 6;
-            int rowPinMapEnd = (rowModeBegin != 0) ? rowModeBegin - 1 : rowCount;
-            for (int i = rowPinMapBegin + 1; i < rowPinMapEnd; i++)
+            for (int i = rowPinMapBegin + 1; i < rowCount; i++)
             {
                 Pin pin = new Pin();
 
@@ -830,100 +823,6 @@ namespace PAT_Editor
                         if (iPin.Site4 == jPin.Site4)
                             throw new Exception(string.Format("检测到{0}的Site4与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
                     }
-                }
-            }
-
-            if (rowModeBegin != 0)
-            {
-                int colCount = ws.GetRow(rowModeBegin).LastCellNum;//得到列数
-                List<string> pins = new List<string>();
-                for (int i = 1; i < colCount; i++)
-                {
-                    string cellValue = GetCellValue(ws, rowModeBegin, i);
-                    if (i == colCount - 1)
-                    {
-                        if (cellValue != "TSW")
-                            throw new Exception("基础配置模板疑似被篡改，Mode行最后一列应为TSW！");
-                    }
-                    else
-                    {
-                        if (basicMipiSettings.PinMap.ContainsKey(cellValue))
-                        {
-                            if (!pins.Contains(cellValue))
-                                pins.Add(cellValue);
-                            else
-                                throw new Exception(string.Format("Mode行中出现重复的{0}，请确认！", cellValue));
-                        }
-                        else
-                        {
-                            throw new Exception(string.Format("Mode行中的{0}未在PinMap中定义，请确认！", cellValue));
-                        }
-                    }
-                }
-                for (int i = rowModeBegin + 1; i < rowCount; i++)
-                {
-                    DeviceMode deviceMode = new DeviceMode();
-
-                    for (int j = 0; j < colCount; j++)
-                    {
-                        string cellValue = GetCellValue(ws, i, j);
-                        if (j == 0)
-                        {
-                            deviceMode.DeviceModeName = cellValue;
-                        }
-                        else if (j == colCount - 1)
-                        {
-                            if (string.Compare(cellValue, "TS1", true) == 0)
-                                deviceMode.TSW = basicMipiSettings.TimeSets["TS1"];
-                            else if (string.Compare(cellValue, "TS2", true) == 0)
-                                deviceMode.TSW = basicMipiSettings.TimeSets["TS2"];
-                            else if (string.Compare(cellValue, "TS3", true) == 0)
-                                deviceMode.TSW = basicMipiSettings.TimeSets["TS3"];
-                            else if (string.Compare(cellValue, "TS4", true) == 0)
-                                deviceMode.TSW = basicMipiSettings.TimeSets["TS4"];
-                            else
-                                throw new Exception(string.Format("{0}的TSW检测到非法的TS配置{1}，请填入TS1,TS2,TS3或TS4！", deviceMode.DeviceModeName, cellValue));
-                        }
-                        else
-                        {
-                            if (string.Compare(cellValue, "1", true) == 0
-                                || string.Compare(cellValue, "0", true) == 0
-                                || string.Compare(cellValue, "X", true) == 0)
-                                deviceMode.TruthValues.Add(basicMipiSettings.PinMap[pins[j - 1]], cellValue);
-                            else
-                                throw new Exception(string.Format("{0}的{1}检测到非法的输入{2}，请填入0,1或X！", deviceMode.DeviceModeName, pins[j - 1], cellValue));
-                        }
-                    }
-
-                    deviceMode.Command = string.Empty.PadRight(32, 'X');
-                    foreach (var truthValue in deviceMode.TruthValues)
-                    {
-                        if (truthValue.Key.Site1 != uint.MaxValue)
-                        {
-                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site1 - 1, 1);
-                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site1 - 1, truthValue.Value);
-                        }
-                        if (truthValue.Key.Site2 != uint.MaxValue)
-                        {
-                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site2 - 1, 1);
-                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site2 - 1, truthValue.Value);
-                        }
-                        if (truthValue.Key.Site3 != uint.MaxValue)
-                        {
-                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site3 - 1, 1);
-                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site3 - 1, truthValue.Value);
-                        }
-                        if (truthValue.Key.Site4 != uint.MaxValue)
-                        {
-                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site4 - 1, 1);
-                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site4 - 1, truthValue.Value);
-                        }
-                    }
-
-                    if (basicMipiSettings.TruthTable.ContainsKey(deviceMode.DeviceModeName))
-                        throw new Exception(string.Format("Mode - {0}已存在，请确认！", deviceMode.DeviceModeName));
-                    else
-                        basicMipiSettings.TruthTable.Add(deviceMode.DeviceModeName, deviceMode);
                 }
             }
 
@@ -1218,22 +1117,129 @@ namespace PAT_Editor
         private GeneralPatternSettings LoadGeneralPattern(ISheet ws, BasicPatternSettings basicMipiSettings, ref int startlinenumber)
         {
             int rowCount = ws.LastRowNum + 1; //得到行数 
-            int colTruthMode = 0;  // MipiMode的位置
+            int colPattern = 0;  // MipiMode的位置
             int colCode = 1;  // Code的位置
-            GeneralPatternSettings truthModeSettings = new GeneralPatternSettings();
-
-            for (int rowIndex = 1; rowIndex < rowCount; rowIndex++)
+            int rowPatternTitle = 0;
+            for (int i = 1; i < rowCount; i++)
             {
-                string sTruthMode = GetCellValue(ws, rowIndex, colTruthMode);
-                if (string.IsNullOrEmpty(sTruthMode))
-                    throw new Exception(string.Format("通用配置中，检测到为空的Mipi Mode，请确认!"));
-                GeneralMode truthMode = new GeneralMode();
-                truthMode.TruthModeName = sTruthMode;
+                string titlePattern = GetCellValue(ws, i, colPattern).ToUpper().Trim();
+                string titleCode = GetCellValue(ws, i, colCode).ToUpper().Trim();
+                if (titlePattern == "PATTERN" && titleCode == "CODE")
+                {
+                    rowPatternTitle = i;
+                    break;
+                }
+            }
+
+            int rowIndex = 0;
+            int colCount = ws.GetRow(rowIndex).LastCellNum;//得到列数
+            List<string> pins = new List<string>();
+            for (int columnIndex = 1; columnIndex < colCount; columnIndex++)
+            {
+                string cellValue = GetCellValue(ws, rowIndex, columnIndex);
+                if (columnIndex == colCount - 1)
+                {
+                    if (cellValue != "TS")
+                        throw new Exception("通用配置中，DeviceMode行最后一列应为TSW！");
+                }
+                else
+                {
+                    if (basicMipiSettings.PinMap.ContainsKey(cellValue))
+                    {
+                        if (!pins.Contains(cellValue))
+                            pins.Add(cellValue);
+                        else
+                            throw new Exception(string.Format("通用配置中，DeviceMode行中出现重复的{0}，请确认！", cellValue));
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("通用配置中，DeviceMode行中的{0}未在PinMap中定义，请确认！", cellValue));
+                    }
+                }
+            }
+
+            rowIndex++;
+            for (; rowIndex < rowPatternTitle; rowIndex++)
+            {
+                string cellValue = GetCellValue(ws, rowIndex, 0);
+                if (string.IsNullOrEmpty(cellValue))
+                    continue;
+                else
+                {
+                    DeviceMode deviceMode = new DeviceMode();
+                    deviceMode.DeviceModeName = cellValue;
+                    for (int columnIndex = 1; columnIndex < colCount; columnIndex++)
+                    {
+                        cellValue = GetCellValue(ws, rowIndex, columnIndex);
+                        if (columnIndex == colCount - 1)
+                        {
+                            if (string.Compare(cellValue, "TS1", true) == 0)
+                                deviceMode.TSW = basicMipiSettings.TimeSets["TS1"];
+                            else if (string.Compare(cellValue, "TS2", true) == 0)
+                                deviceMode.TSW = basicMipiSettings.TimeSets["TS2"];
+                            else if (string.Compare(cellValue, "TS3", true) == 0)
+                                deviceMode.TSW = basicMipiSettings.TimeSets["TS3"];
+                            else if (string.Compare(cellValue, "TS4", true) == 0)
+                                deviceMode.TSW = basicMipiSettings.TimeSets["TS4"];
+                            else
+                                throw new Exception(string.Format("{0}的TS检测到非法的TS配置{1}，请填入TS1,TS2,TS3或TS4！", deviceMode.DeviceModeName, cellValue));
+                        }
+                        else
+                        {
+                            if (string.Compare(cellValue, "1", true) == 0
+                                || string.Compare(cellValue, "0", true) == 0
+                                || string.Compare(cellValue, "X", true) == 0)
+                                deviceMode.TruthValues.Add(basicMipiSettings.PinMap[pins[columnIndex - 1]], cellValue);
+                            else
+                                throw new Exception(string.Format("{0}的{1}检测到非法的输入{2}，请填入0,1或X！", deviceMode.DeviceModeName, pins[columnIndex - 1], cellValue));
+                        }
+                    }
+
+                    deviceMode.Command = string.Empty.PadRight(32, 'X');
+                    foreach (var truthValue in deviceMode.TruthValues)
+                    {
+                        if (truthValue.Key.Site1 != uint.MaxValue)
+                        {
+                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site1 - 1, 1);
+                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site1 - 1, truthValue.Value);
+                        }
+                        if (truthValue.Key.Site2 != uint.MaxValue)
+                        {
+                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site2 - 1, 1);
+                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site2 - 1, truthValue.Value);
+                        }
+                        if (truthValue.Key.Site3 != uint.MaxValue)
+                        {
+                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site3 - 1, 1);
+                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site3 - 1, truthValue.Value);
+                        }
+                        if (truthValue.Key.Site4 != uint.MaxValue)
+                        {
+                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site4 - 1, 1);
+                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site4 - 1, truthValue.Value);
+                        }
+                    }
+
+                    if (basicMipiSettings.TruthTable.ContainsKey(deviceMode.DeviceModeName))
+                        throw new Exception(string.Format("DeviceMode - {0}已存在，请确认！", deviceMode.DeviceModeName));
+                    else
+                        basicMipiSettings.TruthTable.Add(deviceMode.DeviceModeName, deviceMode);
+                }
+            }
+
+            rowIndex = rowPatternTitle + 1;
+            GeneralPatternSettings generalPatternSettings = new GeneralPatternSettings();
+            for (; rowIndex < rowCount; rowIndex++)
+            {
+                string sGeneralMode = GetCellValue(ws, rowIndex, colPattern);
+                if (string.IsNullOrEmpty(sGeneralMode))
+                    throw new Exception(string.Format("通用配置中，检测到为空的Pattern，请确认!"));
+                GeneralMode generalMode = new GeneralMode();
+                generalMode.GeneralModeName = sGeneralMode;
 
                 string sCode = GetCellValue(ws, rowIndex, colCode);
                 if (string.IsNullOrEmpty(sCode))
-                    throw new Exception(string.Format("通用配置中，检测到{0}存在为空的Code，请确认!", truthMode.TruthModeName));
-                //foreach(var singleCode in sCode.Split(';'))
+                    throw new Exception(string.Format("通用配置中，检测到{0}存在为空的Code，请确认!", generalMode.GeneralModeName));
                 for (int i = 1; i <= sCode.Split(';').Length; i++)
                 {
                     string singleCode = sCode.Split(';')[i - 1];
@@ -1241,11 +1247,11 @@ namespace PAT_Editor
                     {
                         if (basicMipiSettings.TruthTable.ContainsKey(singleCode))
                         {
-                            truthMode.DeviceModes.Add(new KeyValuePair<DeviceMode, int>(basicMipiSettings.TruthTable[singleCode], 1));
+                            generalMode.DeviceModes.Add(new KeyValuePair<DeviceMode, int>(basicMipiSettings.TruthTable[singleCode], 1));
                         }
                         else
                         {
-                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效的Mode - {1}，请对照基础配置表进行确认!", truthMode.TruthModeName, singleCode));
+                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效的DeviceMode - {1}，请对照基础配置表进行确认!", generalMode.GeneralModeName, singleCode));
                         }
                     }
                     else
@@ -1253,13 +1259,13 @@ namespace PAT_Editor
                         string sTimes = singleCode.Substring(singleCode.IndexOf("(") + 1, singleCode.LastIndexOf(")") - singleCode.IndexOf("(") - 1);
                         if(sTimes.ToUpper().StartsWith("TRIGGER"))
                         {
-                            if (truthMode.TriggerAt > 0)
+                            if (generalMode.TriggerAt > 0)
                             {
-                                throw new Exception(string.Format("通用配置中，检测到{0}存在多个Trigger项，请确认!", truthMode.TruthModeName));
+                                throw new Exception(string.Format("通用配置中，检测到{0}存在多个Trigger项，请确认!", generalMode.GeneralModeName));
                             }
                             else
                             {
-                                truthMode.TriggerAt = i;
+                                generalMode.TriggerAt = i;
                             }
 
                             //Remove 'Trigger'
@@ -1269,40 +1275,40 @@ namespace PAT_Editor
                         int iTimes = 0;
                         if (!int.TryParse(sTimes, out iTimes))
                         {
-                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效配置，次数必须为整数，请确认!", truthMode.TruthModeName));
+                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效配置，次数必须为整数，请确认!", generalMode.GeneralModeName));
                         }
 
                         if (iTimes > 1000)
                         {
-                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效配置，次数不能大于1000，请确认!", truthMode.TruthModeName));
+                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效配置，次数不能大于1000，请确认!", generalMode.GeneralModeName));
                         }
 
                         singleCode = singleCode.Substring(0, singleCode.IndexOf("("));
                         if (basicMipiSettings.TruthTable.ContainsKey(singleCode))
                         {
-                            truthMode.DeviceModes.Add(new KeyValuePair<DeviceMode, int>(basicMipiSettings.TruthTable[singleCode], iTimes));
+                            generalMode.DeviceModes.Add(new KeyValuePair<DeviceMode, int>(basicMipiSettings.TruthTable[singleCode], iTimes));
                         }
                         else
                         {
-                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效的Mode - {1}，请对照基础配置表进行确认!", truthMode.TruthModeName, singleCode));
+                            throw new Exception(string.Format("通用配置中，检测到{0}存在无效的DeviceMode - {1}，请对照基础配置表进行确认!", generalMode.GeneralModeName, singleCode));
                         }
                     }
                 }
 
-                truthMode.LineStart = startlinenumber;
-                startlinenumber = truthMode.LineEnd + 1;
+                generalMode.LineStart = startlinenumber;
+                startlinenumber = generalMode.LineEnd + 1;
 
-                if (truthModeSettings.GeneralModes.ContainsKey(truthMode.TruthModeName))
+                if (generalPatternSettings.GeneralModes.ContainsKey(generalMode.GeneralModeName))
                 {
-                    throw new Exception(string.Format("通用配置中，检测到同名的Mipi Mode - {0}，请确认!", truthMode.TruthModeName));
+                    throw new Exception(string.Format("通用配置中，检测到同名的Pattern - {0}，请确认!", generalMode.GeneralModeName));
                 }
                 else
                 {
-                    truthModeSettings.GeneralModes.Add(truthMode.TruthModeName, truthMode);
+                    generalPatternSettings.GeneralModes.Add(generalMode.GeneralModeName, generalMode);
                 }
             }
 
-            return truthModeSettings;
+            return generalPatternSettings;
         }
 
         private MipiPatternSettings LoadMipiPatternVC(ISheet ws, BasicPatternSettings basicMipiSettings, ref int startlinenumber)

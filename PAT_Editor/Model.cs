@@ -276,7 +276,7 @@ namespace PAT_Editor
 
     public class GeneralMode
     {
-        public string TruthModeName { get; set; }
+        public string GeneralModeName { get; set; }
         public int TriggerAt { get; set; }
         public int TriggerLine
         { 
