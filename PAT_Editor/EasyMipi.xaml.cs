@@ -209,7 +209,7 @@ namespace PAT_Editor
                             string channelPair = "{" + string.Format("{0},{1}", pair.Key, pair.Value) + "}";
                             channelPairs.Add(channelPair);
                         }
-                        line = string.Join(" ", channelPairs);
+                        line = "//" + string.Join(" ", channelPairs);
                         sw.WriteLine(line);
                     }
 
@@ -1188,7 +1188,7 @@ namespace PAT_Editor
                         {
                             if (string.Compare(cellValue, "1", true) == 0
                                 || string.Compare(cellValue, "0", true) == 0
-                                || string.Compare(cellValue, "X", true) == 0)
+                                || string.Compare(cellValue, "X", false) == 0)
                                 deviceMode.TruthValues.Add(basicMipiSettings.PinMap[pins[columnIndex - 1]], cellValue);
                             else
                                 throw new Exception(string.Format("{0}的{1}检测到非法的输入{2}，请填入0,1或X！", deviceMode.DeviceModeName, pins[columnIndex - 1], cellValue));
