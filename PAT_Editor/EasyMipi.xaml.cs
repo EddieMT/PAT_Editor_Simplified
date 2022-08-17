@@ -314,7 +314,7 @@ namespace PAT_Editor
                                             {
                                                 prefix = string.Format(prefix, mipiStep.CLK.TSW.TSName);
                                             }
-                                            sw.WriteLine(string.Format("// Register {0} : Data {1} -----------------------------------------------------------", mipiCode.RegID.ToString("X"), mipiCode.Data.ToString("X")));
+                                            sw.WriteLine(string.Format("// Register {0} : Data {1} -----------------------------------------------------------", mipiCode.RegID.ToString("X"), mipiCode.DataString));
                                             #region Start Sequence Control
                                             sw.WriteLine("// SSC: Start Sequence Control");
                                             sValue = "XXX00000010";
@@ -405,7 +405,7 @@ namespace PAT_Editor
                                                 sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:7] + Reg Addr[6:0])");
                                                 sValue = Convert.ToString(mipiCode.UserID, 2).PadLeft(4, '0');
                                                 sValue += "1";
-                                                sValue += Convert.ToString(mipiCode.Data, 2).PadLeft(7, '0');
+                                                sValue += Convert.ToString(mipiCode.Datas[0], 2).PadLeft(7, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sCF = string.Empty;
                                                 sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
@@ -427,34 +427,14 @@ namespace PAT_Editor
                                             }
                                             #endregion
                                             #region Data
-                                            if (mipiCode.MipiCodeType == ReadWrite.Read || mipiCode.MipiCodeType == ReadWrite.Write) 
+                                            if (mipiCode.MipiCodeType != ReadWrite.ZeroWrite)
+                                            // mipiCode.MipiCodeType == ReadWrite.Read || mipiCode.MipiCodeType == ReadWrite.Write
+                                            // mipiCode.MipiCodeType == ReadWrite.ExtendRead || mipiCode.MipiCodeType == ReadWrite.ExtendWrite
                                             {
-                                                sw.WriteLine("// Data (8 bits + Parity)");
-                                                sValue = Convert.ToString(mipiCode.Data, 2).PadLeft(8, '0');
-                                                sValue += GetParityBit(sValue);
-                                                string sData = string.Empty;
-                                                sData += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D7\n";
-                                                sData += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D6\n";
-                                                sData += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D5\n";
-                                                sData += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D4\n";
-                                                sData += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D3\n";
-                                                sData += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D2\n";
-                                                sData += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D1\n";
-                                                sData += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D0\n";
-                                                sData += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
-                                                sw.Write(sData);
-                                            }
-                                            else if (mipiCode.MipiCodeType == ReadWrite.ExtendRead || mipiCode.MipiCodeType == ReadWrite.ExtendWrite)
-                                            {
-                                                string sDataLength = Convert.ToString(mipiCode.Data, 2);
-                                                int iDataLength = sDataLength.Length;
-                                                int countSplitBy8 = (int)Math.Ceiling((double)iDataLength / 8);
-                                                sDataLength.PadLeft(8 * countSplitBy8, '0');
-                                                //write data from high to low by each 8bits in sequence
-                                                for (int i = 0; i < countSplitBy8; i++)
+                                                for (int i = 0; i < mipiCode.Datas.Count; i++)
                                                 {
                                                     sw.WriteLine("// Data (8 bits + Parity)");
-                                                    sValue = sDataLength.Substring(i * 8, 8);
+                                                    sValue = Convert.ToString(mipiCode.Datas[i], 2).PadLeft(8, '0');
                                                     sValue += GetParityBit(sValue);
                                                     string sData = string.Empty;
                                                     sData += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D7\n";
@@ -468,10 +448,6 @@ namespace PAT_Editor
                                                     sData += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
                                                     sw.Write(sData);
                                                 }
-                                            }
-                                            else // if (mipiCode.MipiCodeType == ReadWrite.ZeroWrite)
-                                            {
-                                                //See Command Frame
                                             }
                                             #endregion
                                             #region Bus Park
@@ -1475,6 +1451,7 @@ namespace PAT_Editor
                 string bc = string.Empty;
                 string regID = string.Empty;
                 string data = string.Empty;
+                List<string> datas = new List<string>();
                 MipiCode mipiCode = new MipiCode();
                 if (code.ToUpper().StartsWith("W"))
                 {
@@ -1528,7 +1505,7 @@ namespace PAT_Editor
                     mipiCode.MipiCodeType = ReadWrite.ZeroWrite;
                     userID = code.Substring(2, 1);
                     regID = "0";
-                    data = code.Substring(4, 2);
+                    data = code.Substring(4, code.Length - 4);
                 }
                 else
                 {
@@ -1572,49 +1549,89 @@ namespace PAT_Editor
                     throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
                 }
 
-                if (uint.TryParse(data, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                if (data.Length % 2 == 1)
                 {
-                    if (value > 0xFFFF)
+                    datas.Add(data.Substring(0, 1));
+                    for (int i = 1; i < data.Length;)
                     {
-                        throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FFFF]之间的整型！", code, data));
-                    }
-                    else
-                    {
-                        if ((mipiCode.MipiCodeType == ReadWrite.Write || mipiCode.MipiCodeType == ReadWrite.Read)
-                            && value > 0xFF)
-                            throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FF]之间的整型！", code, data));
-                        if (mipiCode.MipiCodeType == ReadWrite.ZeroWrite && value > 0x7F)
-                            throw new Exception(string.Format("{0}中的Data - {1}应该是[0,7F]之间的整型！", code, data));
-                        else
-                            mipiCode.Data = value;
+                        datas.Add(data.Substring(i, 2));
+                        i = i + 2;
                     }
                 }
                 else
                 {
-                    throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FFFF]之间的整型！", code, data));
-                }
-
-                if (mipiCode.MipiCodeType == ReadWrite.ExtendWrite || mipiCode.MipiCodeType == ReadWrite.ExtendRead)
-                {
-                    if (uint.TryParse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    for (int i = 0; i < data.Length;)
                     {
-                        if (value > 1)
+                        datas.Add(data.Substring(i, 2));
+                        i = i + 2;
+                    }
+                }
+                if (datas.Count == 0)
+                {
+                    throw new Exception(string.Format("{0}中的Data为空，请确认！", code));
+                }
+                if (mipiCode.MipiCodeType == ReadWrite.Write || mipiCode.MipiCodeType == ReadWrite.Read
+                    || mipiCode.MipiCodeType == ReadWrite.ZeroWrite || mipiCode.MipiCodeType == ReadWrite.Delay)
+                {
+                    if (datas.Count > 1)
+                        throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FF]之间的整型！", code, data));
+                }
+                else
+                {
+                    if (datas.Count > 0xF)
+                        throw new Exception(string.Format("{0}中的Data - {1}超出最大限制，128位！", code, data));
+                }
+                
+                for (int i = 0; i < datas.Count; i++)
+                {
+                    string splittedData = datas[i];
+                    if (uint.TryParse(splittedData, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (mipiCode.MipiCodeType == ReadWrite.ZeroWrite)
                         {
-                            throw new Exception(string.Format("{0}中的BC - {1}应该是[0,1]之间的整型！", code, bc));
+                            if (value > 0x7F)
+                            {
+                                throw new Exception(string.Format("{0}中的Data - {1}应该是[0,7F]之间的整型！", code, splittedData));
+                            }
+                            else
+                                mipiCode.Datas.Add(value);
                         }
                         else
                         {
-                            if (mipiCode.Data >= 0 && mipiCode.Data <= 0xFF && value != 0)
-                                throw new Exception(string.Format("{0}中的BC - {1}应该是0！", code, bc));
-                            else if (mipiCode.Data > 0xFF && mipiCode.Data <= 0xFFFF && value != 1)
-                                throw new Exception(string.Format("{0}中的BC - {1}应该是1！", code, bc));
+                            if (value > 0xFF)
+                            {
+                                if (mipiCode.MipiCodeType == ReadWrite.ExtendWrite || mipiCode.MipiCodeType == ReadWrite.ExtendRead)
+                                    throw new Exception(string.Format("{0}中的第{2}段Data - {1}应该是[0,FF]之间的整型！", code, splittedData, i + 1));
+                                else
+                                    throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FF]之间的整型！", code, splittedData));
+                            }
                             else
-                                mipiCode.BC = value;
+                                mipiCode.Datas.Add(value);
                         }
                     }
                     else
                     {
-                        throw new Exception(string.Format("{0}中的BC - {1}应该是[0,1]之间的整型！", code, bc));
+                        throw new Exception(string.Format("{0}中的Data - {1}包含了非法的{2}，应该是[0,FF]之间的整型！", code, data, splittedData));
+                    }
+                }
+                
+                if (mipiCode.MipiCodeType == ReadWrite.ExtendWrite || mipiCode.MipiCodeType == ReadWrite.ExtendRead)
+                {
+                    if (uint.TryParse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xF)
+                        {
+                            throw new Exception(string.Format("{0}中的BC - {1}应该是[0,F]之间的整型！", code, bc));
+                        }
+                        else
+                        {
+                            if (mipiCode.BC != value)
+                                throw new Exception(string.Format("基于Data - {3}，{0}中的BC - {1}应该是{2}！", code, bc, mipiCode.BC.ToString("X1"), data));
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的BC - {1}应该是[0,F]之间的整型！", code, bc));
                     }
                 }
 

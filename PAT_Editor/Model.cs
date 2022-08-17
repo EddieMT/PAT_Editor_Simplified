@@ -172,8 +172,26 @@ namespace PAT_Editor
         public ReadWrite MipiCodeType { get; set; }
         public uint UserID { get; set; }
         public uint RegID { get; set; }
-        public uint Data { get; set; }
-        public uint BC { get; set; }
+        public List<uint> Datas { get; set; } = new List<uint>();
+        public string DataString 
+        { 
+            get
+            {
+                string data = string.Empty;
+                for (int i = 0; i < Datas.Count; i++)
+                {
+                    data += Datas[i].ToString("X");
+                }
+                return data;
+            }
+        }
+        public uint BC 
+        { 
+            get
+            {
+                return (uint)Datas.Count - 1;
+            }
+        }
         public int LineCount
         {
             get
@@ -184,21 +202,11 @@ namespace PAT_Editor
                     return 37;
                 if (MipiCodeType == ReadWrite.ExtendWrite)
                 {
-                    if (Data <= 0xFF)
-                        return 36 + 9;
-                    else if (Data <= 0xFFFF)
-                        return 36 + 18;
-                    else
-                        return -1;
+                    return 36 + 9 * Datas.Count;
                 }
                 else if (MipiCodeType == ReadWrite.ExtendRead)
                 {
-                    if (Data <= 0xFF)
-                        return 37 + 9;
-                    else if (Data <= 0xFFFF)
-                        return 37 + 18;
-                    else
-                        return -1;
+                    return 37 + 9 * Datas.Count;
                 }
                 else if (MipiCodeType == ReadWrite.ZeroWrite)
                 {
