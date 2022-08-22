@@ -1092,6 +1092,13 @@ namespace PAT_Editor
 
         private GeneralPatternSettings LoadGeneralPattern(ISheet ws, BasicPatternSettings basicMipiSettings, ref int startlinenumber)
         {
+            if (ws.LastRowNum == 0)
+                return new GeneralPatternSettings();
+
+            string key = GetCellValue(ws, 0, 0);
+            if (string.Compare(key, "DeviceMode", true) != 0)
+                throw new Exception("通用配置模板疑似被篡改，请确认！如无需通用配置，可将整个sheet删除。");
+
             int rowCount = ws.LastRowNum + 1; //得到行数 
             int colPattern = 0;  // MipiMode的位置
             int colCode = 1;  // Code的位置
