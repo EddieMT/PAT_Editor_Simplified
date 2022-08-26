@@ -300,7 +300,6 @@ namespace PAT_Editor
                                                 }
                                                 sw.WriteLine(line);
                                             }
-                                            sw.WriteLine();
                                         }
                                         else
                                         {
@@ -1978,10 +1977,34 @@ namespace PAT_Editor
                 process.Start();
                 process.WaitForExit();
                 process.Close();
+
+                //如下模式可以从process中读取信息
+                //如果成功，OutputDataReceived的e.Data不为空
+                //如果有错，ErrorDataReceived的e.Data不为空
+                //介于此，可以利用ErrorDataReceived，不为空则报错，为空则报成功
+                //process.StartInfo.UseShellExecute = false;
+                //process.StartInfo.RedirectStandardInput = true;
+                //process.StartInfo.RedirectStandardOutput = true;
+                //process.StartInfo.RedirectStandardError = true;
+                //process.ErrorDataReceived += Process_ErrorDataReceived;
+                //process.OutputDataReceived += Process_OutputDataReceived;
+                //process.Start();
+                //process.BeginOutputReadLine();
+                //process.BeginErrorReadLine();
             }
 
             System.Windows.MessageBox.Show("Both PAT & PEZ file have been generated successfully!\n\nYou can click the DEBUG button to test them in panel.");
             txtFilePAT.Text = filePAT;
+        }
+
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private List<ChannelGroup> ParseChannelGroups(string ChnsOfClock, string ChnsOfData)
