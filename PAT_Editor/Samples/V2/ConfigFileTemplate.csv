@@ -1,0 +1,8 @@
+PATItem,BitOfCLK,BitOfData,UserID,RegItem(0-1F),Data(0-FF),W/R TS
+B7,1,2,E,1C,38,W1
+B7,1,2,E,1C,38,R2
+B8,1,2,E,1C,38,W1-R2
+B9,1,2,E,0,0-F,W1
+B10,1,2,E,0-3,0,W1
+B11,1,2,E,0-3,0-F,W1-R2
+B12,"1,3","2,4",E,1C,0,W1
