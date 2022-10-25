@@ -318,17 +318,17 @@ namespace PAT_Editor
                                             sw.WriteLine("// SSC: Start Sequence Control");
                                             sValue = "XXX00000010";
                                             string sSSC = string.Empty;
-                                            sSSC += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
-                                            sSSC += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
+                                            sSSC += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";\n";
                                             sw.Write(sSSC);
                                             #endregion
                                             #region Command Frame
@@ -340,21 +340,21 @@ namespace PAT_Editor
                                                 sValue += Convert.ToString(mipiCode.RegID, 2).PadLeft(5, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sCF = string.Empty;
-                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA) + ";// Write Command C7 (010: Write, 011: Read)\n";
-                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA) + ";// Write Command C6\n";
-                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA) + ";// Write Command C5\n";
-                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address C4\n";
-                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address C3\n";
-                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address C2\n";
-                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address C1\n";
-                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address C0\n";
-                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA) + ";// Parity Bit\n";
+                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C7 (010: Write, 011: Read)\n";
+                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C6\n";
+                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C5\n";
+                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address C4\n";
+                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address C3\n";
+                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address C2\n";
+                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address C1\n";
+                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address C0\n";
+                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
                                                 if (mipiCode.MipiCodeType == ReadWrite.Read)
-                                                    sCF += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA) + ";// Park Bit\n";
+                                                    sCF += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Park Bit\n";
                                                 sw.Write(sCF);
                                             }
                                             else if (mipiCode.MipiCodeType == ReadWrite.ExtendRead || mipiCode.MipiCodeType == ReadWrite.ExtendWrite)
@@ -365,19 +365,19 @@ namespace PAT_Editor
                                                 sValue += Convert.ToString(mipiCode.BC, 2).PadLeft(4, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sCF = string.Empty;
-                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA) + ";// Write Command C7 (0000: Write, 0010: Read)\n";
-                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA) + ";// Write Command C6\n";
-                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA) + ";// Write Command C5\n";
-                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA) + ";// Write Command C4\n";
-                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA) + ";// BC3\n";
-                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA) + ";// BC2\n";
-                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA) + ";// BC1\n";
-                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA) + ";// BC0\n";
-                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA) + ";// Parity Bit\n";
+                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C7 (0000: Write, 0010: Read)\n";
+                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C6\n";
+                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C5\n";
+                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C4\n";
+                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC3\n";
+                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC2\n";
+                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC1\n";
+                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC0\n";
+                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
                                                 sw.Write(sCF);
 
                                                 #region Reg Addr
@@ -385,17 +385,17 @@ namespace PAT_Editor
                                                 sValue = Convert.ToString(mipiCode.RegID, 2).PadLeft(8, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sAddr = string.Empty;
-                                                sAddr += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address A7\n";
-                                                sAddr += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address A6\n";
-                                                sAddr += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address A5\n";
-                                                sAddr += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address A4\n";
-                                                sAddr += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address A3\n";
-                                                sAddr += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address A2\n";
-                                                sAddr += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address A1\n";
-                                                sAddr += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA) + ";// Reg Address A0\n";
-                                                sAddr += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA) + ";// Parity Bit\n";
+                                                sAddr += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A7\n";
+                                                sAddr += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A6\n";
+                                                sAddr += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A5\n";
+                                                sAddr += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A4\n";
+                                                sAddr += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A3\n";
+                                                sAddr += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A2\n";
+                                                sAddr += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A1\n";
+                                                sAddr += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A0\n";
+                                                sAddr += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
                                                 if (mipiCode.MipiCodeType == ReadWrite.ExtendRead)
-                                                    sAddr += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA) + ";// Park Bit\n";
+                                                    sAddr += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Park Bit\n";
                                                 sw.Write(sAddr);
                                                 #endregion
                                             }
@@ -407,21 +407,21 @@ namespace PAT_Editor
                                                 sValue += Convert.ToString(mipiCode.Datas[0], 2).PadLeft(7, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sCF = string.Empty;
-                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA) + ";// Slave Addr\n";
-                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA) + ";// Write\n";
-                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA) + ";// Data D6\n";
-                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA) + ";// Data D5\n";
-                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA) + ";// Data D4\n";
-                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA) + ";// Data D3\n";
-                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA) + ";// Data D2\n";
-                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA) + ";// Data D1\n";
-                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA) + ";// Data D0\n";
-                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA) + ";// Parity Bit\n";
+                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write\n";
+                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D6\n";
+                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D5\n";
+                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D4\n";
+                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D3\n";
+                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D2\n";
+                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D1\n";
+                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D0\n";
+                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
                                                 if (mipiCode.MipiCodeType == ReadWrite.Read)
-                                                    sCF += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA) + ";// Park Bit\n";
+                                                    sCF += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Park Bit\n";
                                                 sw.Write(sCF);
                                             }
                                             #endregion
@@ -436,15 +436,15 @@ namespace PAT_Editor
                                                     sValue = Convert.ToString(mipiCode.Datas[i], 2).PadLeft(8, '0');
                                                     sValue += GetParityBit(sValue);
                                                     string sData = string.Empty;
-                                                    sData += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D7\n";
-                                                    sData += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D6\n";
-                                                    sData += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D5\n";
-                                                    sData += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D4\n";
-                                                    sData += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D3\n";
-                                                    sData += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D2\n";
-                                                    sData += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D1\n";
-                                                    sData += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D0\n";
-                                                    sData += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
+                                                    sData += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D7\n";
+                                                    sData += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D6\n";
+                                                    sData += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D5\n";
+                                                    sData += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D4\n";
+                                                    sData += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D3\n";
+                                                    sData += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D2\n";
+                                                    sData += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D1\n";
+                                                    sData += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D0\n";
+                                                    sData += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
                                                     sw.Write(sData);
                                                 }
                                             }
@@ -453,9 +453,9 @@ namespace PAT_Editor
                                             sw.WriteLine("// Bus Park");
                                             sValue = "0XX";
                                             string sBP = string.Empty;
-                                            sBP += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA) + ";// Bus Park (Drive 0 then Tri-State at CLK falling)\n";
-                                            sBP += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, '0') + ";//\n";
-                                            sBP += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, 'X') + ";//\n";
+                                            sBP += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Bus Park (Drive 0 then Tri-State at CLK falling)\n";
+                                            sBP += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";//\n";
+                                            sBP += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, 'X') + ";//\n";
                                             sw.Write(sBP);
                                             #endregion
                                         }
@@ -746,60 +746,59 @@ namespace PAT_Editor
                 else
                     basicMipiSettings.PinMap.Add(pin.PinName, pin);
             }
-            var pinMapKeys = basicMipiSettings.PinMap.Keys.ToList();
-            for (int i = 0; i < basicMipiSettings.PinMap.Count; i++)
-            {
-                for (int j = i + 1; j < basicMipiSettings.PinMap.Count; j++)
-                {
-                    
-                    var iPin = basicMipiSettings.PinMap[pinMapKeys[i]];
-                    var jPin = basicMipiSettings.PinMap[pinMapKeys[j]];
-                    if (iPin.Site1 != uint.MaxValue)
-                    {
-                        if (iPin.Site1 == jPin.Site1)
-                            throw new Exception(string.Format("检测到{0}的Site1与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site1 == jPin.Site2)
-                            throw new Exception(string.Format("检测到{0}的Site1与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site1 == jPin.Site3)
-                            throw new Exception(string.Format("检测到{0}的Site1与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site1 == jPin.Site4)
-                            throw new Exception(string.Format("检测到{0}的Site1与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                    }
-                    if (iPin.Site2 != uint.MaxValue)
-                    {
-                        if (iPin.Site2 == jPin.Site1)
-                            throw new Exception(string.Format("检测到{0}的Site2与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site2 == jPin.Site2)
-                            throw new Exception(string.Format("检测到{0}的Site2与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site2 == jPin.Site3)
-                            throw new Exception(string.Format("检测到{0}的Site2与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site2 == jPin.Site4)
-                            throw new Exception(string.Format("检测到{0}的Site2与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                    }
-                    if (iPin.Site3 != uint.MaxValue)
-                    {
-                        if (iPin.Site3 == jPin.Site1)
-                            throw new Exception(string.Format("检测到{0}的Site3与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site3 == jPin.Site2)
-                            throw new Exception(string.Format("检测到{0}的Site3与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site3 == jPin.Site3)
-                            throw new Exception(string.Format("检测到{0}的Site3与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site3 == jPin.Site4)
-                            throw new Exception(string.Format("检测到{0}的Site3与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                    }
-                    if (iPin.Site4 != uint.MaxValue)
-                    {
-                        if (iPin.Site4 == jPin.Site1)
-                            throw new Exception(string.Format("检测到{0}的Site4与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site4 == jPin.Site2)
-                            throw new Exception(string.Format("检测到{0}的Site4与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site4 == jPin.Site3)
-                            throw new Exception(string.Format("检测到{0}的Site4与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                        if (iPin.Site4 == jPin.Site4)
-                            throw new Exception(string.Format("检测到{0}的Site4与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
-                    }
-                }
-            }
+            //var pinMapKeys = basicMipiSettings.PinMap.Keys.ToList();
+            //for (int i = 0; i < basicMipiSettings.PinMap.Count; i++)
+            //{
+            //    for (int j = i + 1; j < basicMipiSettings.PinMap.Count; j++)
+            //    {
+            //        var iPin = basicMipiSettings.PinMap[pinMapKeys[i]];
+            //        var jPin = basicMipiSettings.PinMap[pinMapKeys[j]];
+            //        if (iPin.Site1 != uint.MaxValue)
+            //        {
+            //            if (iPin.Site1 == jPin.Site1)
+            //                throw new Exception(string.Format("检测到{0}的Site1与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site1 == jPin.Site2)
+            //                throw new Exception(string.Format("检测到{0}的Site1与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site1 == jPin.Site3)
+            //                throw new Exception(string.Format("检测到{0}的Site1与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site1 == jPin.Site4)
+            //                throw new Exception(string.Format("检测到{0}的Site1与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //        }
+            //        if (iPin.Site2 != uint.MaxValue)
+            //        {
+            //            if (iPin.Site2 == jPin.Site1)
+            //                throw new Exception(string.Format("检测到{0}的Site2与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site2 == jPin.Site2)
+            //                throw new Exception(string.Format("检测到{0}的Site2与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site2 == jPin.Site3)
+            //                throw new Exception(string.Format("检测到{0}的Site2与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site2 == jPin.Site4)
+            //                throw new Exception(string.Format("检测到{0}的Site2与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //        }
+            //        if (iPin.Site3 != uint.MaxValue)
+            //        {
+            //            if (iPin.Site3 == jPin.Site1)
+            //                throw new Exception(string.Format("检测到{0}的Site3与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site3 == jPin.Site2)
+            //                throw new Exception(string.Format("检测到{0}的Site3与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site3 == jPin.Site3)
+            //                throw new Exception(string.Format("检测到{0}的Site3与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site3 == jPin.Site4)
+            //                throw new Exception(string.Format("检测到{0}的Site3与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //        }
+            //        if (iPin.Site4 != uint.MaxValue)
+            //        {
+            //            if (iPin.Site4 == jPin.Site1)
+            //                throw new Exception(string.Format("检测到{0}的Site4与{1}的Site1配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site4 == jPin.Site2)
+            //                throw new Exception(string.Format("检测到{0}的Site4与{1}的Site2配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site4 == jPin.Site3)
+            //                throw new Exception(string.Format("检测到{0}的Site4与{1}的Site3配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //            if (iPin.Site4 == jPin.Site4)
+            //                throw new Exception(string.Format("检测到{0}的Site4与{1}的Site4配置了同样的资源，请确认！", iPin.PinName, jPin.PinName));
+            //        }
+            //    }
+            //}
 
             return basicMipiSettings;
         }
@@ -812,6 +811,7 @@ namespace PAT_Editor
             int colCode = 2;  // Code的位置
             int colClk = 3;  // Clk的位置
             int colData = 4;  // Data的位置
+            int colSite = 5; //Site的位置
             MipiPatternSettings mipiModeSettings = new MipiPatternSettings();
 
             for (int rowIndex = 1; rowIndex < rowCount;)
@@ -867,6 +867,7 @@ namespace PAT_Editor
                                     string sCodes = GetCellValue(ws, rowIndex, colCode);
                                     string sCLK = GetCellValue(ws, rowIndex, colClk);
                                     string sDATA = GetCellValue(ws, rowIndex, colData);
+                                    string sSite = GetCellValue(ws, rowIndex, colSite);
                                     if (string.IsNullOrEmpty(sCodes))
                                         throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在为空的Code，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
                                     if (!basicMipiSettings.PinMap.Any(x => x.Key == sCLK))
@@ -888,6 +889,7 @@ namespace PAT_Editor
                                     MipiStep mipiStep = new MipiStep();
                                     mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
                                     mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                                    mipiStep.SiteConfig = ParseSiteConfig(sSite);
                                     try
                                     {
                                         mipiStep.MipiCodes = ParseMipiCodes(sCodes);
@@ -942,6 +944,7 @@ namespace PAT_Editor
                             string sCodes = GetCellValue(ws, rowIndex, colCode);
                             string sCLK = GetCellValue(ws, rowIndex, colClk);
                             string sDATA = GetCellValue(ws, rowIndex, colData);
+                            string sSite = GetCellValue(ws, rowIndex, colSite);
                             if (string.IsNullOrEmpty(sCodes))
                                 throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在为空的Code，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
                             if (!basicMipiSettings.PinMap.Any(x => x.Key == sCLK))
@@ -963,6 +966,7 @@ namespace PAT_Editor
                             MipiStep mipiStep = new MipiStep();
                             mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
                             mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                            mipiStep.SiteConfig = ParseSiteConfig(sSite);
                             try
                             {
                                 mipiStep.MipiCodes = ParseMipiCodes(sCodes);
@@ -1030,6 +1034,7 @@ namespace PAT_Editor
                     string sCodes = GetCellValue(ws, rowIndex, colCode);
                     string sCLK = GetCellValue(ws, rowIndex, colClk);
                     string sDATA = GetCellValue(ws, rowIndex, colData);
+                    string sSite = GetCellValue(ws, rowIndex, colSite);
                     if (string.IsNullOrEmpty(sCodes))
                         throw new Exception(string.Format("MIPI配置中，检测到{0}的{1}组存在为空的Code，请确认!", mipiMode.MipiModeName, mipiGroup.MipiGroupName));
                     if (!basicMipiSettings.PinMap.Any(x => x.Key == sCLK))
@@ -1051,6 +1056,7 @@ namespace PAT_Editor
                     MipiStep mipiStep = new MipiStep();
                     mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
                     mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                    mipiStep.SiteConfig = ParseSiteConfig(sSite);
                     try
                     {
                         mipiStep.MipiCodes = ParseMipiCodes(sCodes);
@@ -1087,6 +1093,25 @@ namespace PAT_Editor
             }
 
             return mipiModeSettings;
+        }
+
+        private SiteConfig ParseSiteConfig(string sSite)
+        {
+            SiteConfig siteConfig = SiteConfig.SiteNull;
+
+            if (sSite.Contains("1"))
+                siteConfig = siteConfig | SiteConfig.Site1;
+            if (sSite.Contains("2"))
+                siteConfig = siteConfig | SiteConfig.Site2;
+            if (sSite.Contains("3"))
+                siteConfig = siteConfig | SiteConfig.Site3;
+            if (sSite.Contains("4"))
+                siteConfig = siteConfig | SiteConfig.Site4;
+
+            if (siteConfig == SiteConfig.SiteNull)
+                siteConfig = SiteConfig.SiteAll;
+
+            return siteConfig;
         }
 
         private GeneralPatternSettings LoadGeneralPattern(ISheet ws, BasicPatternSettings basicMipiSettings, ref int startlinenumber)
@@ -1222,6 +1247,8 @@ namespace PAT_Editor
                 string sCode = GetCellValue(ws, rowIndex, colCode);
                 if (string.IsNullOrEmpty(sCode))
                     throw new Exception(string.Format("通用配置中，检测到{0}存在为空的Code，请确认!", generalMode.GeneralModeName));
+                if (sCode.EndsWith(";"))
+                    sCode = sCode.Substring(0, sCode.Length - 1);
                 for (int i = 1; i <= sCode.Split(';').Length; i++)
                 {
                     string singleCode = sCode.Split(';')[i - 1];
@@ -1646,19 +1673,25 @@ namespace PAT_Editor
             return mipiCodes;
         }
 
-        private string BuildData(char data, Pin pinCLK, Pin pinDATA, char clock = '1', bool isRead = false)
+        private string BuildData(char data, Pin pinCLK, Pin pinDATA, SiteConfig siteConfig, char clock = '1', bool isRead = false)
         {
             string res = string.Empty;
 
             for (uint i = 1; i <= 32; i++)
             {
-                if (pinCLK.Site1 == i || pinCLK.Site2 == i || pinCLK.Site3 == i || pinCLK.Site4 == i)
+                if ((pinCLK.Site1 == i && siteConfig.HasFlag(SiteConfig.Site1)) 
+                    || (pinCLK.Site2 == i && siteConfig.HasFlag(SiteConfig.Site2)) 
+                    || (pinCLK.Site3 == i && siteConfig.HasFlag(SiteConfig.Site3)) 
+                    || (pinCLK.Site4 == i && siteConfig.HasFlag(SiteConfig.Site4)))
                 {
                     res += clock;
                     continue;
                 }
 
-                if (pinDATA.Site1 == i || pinDATA.Site2 == i || pinDATA.Site3 == i || pinDATA.Site4 == i)
+                if ((pinDATA.Site1 == i && siteConfig.HasFlag(SiteConfig.Site1)) 
+                    || (pinDATA.Site2 == i && siteConfig.HasFlag(SiteConfig.Site2)) 
+                    || (pinDATA.Site3 == i && siteConfig.HasFlag(SiteConfig.Site3)) 
+                    || (pinDATA.Site4 == i && siteConfig.HasFlag(SiteConfig.Site4)))
                 {
                     if (isRead)
                         res += (data == '0' ? "L" : "H");

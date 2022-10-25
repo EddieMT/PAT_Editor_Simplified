@@ -112,6 +112,7 @@ namespace PAT_Editor
     {
         public Pin CLK { get; set; }
         public Pin DATA { get; set; }
+        public SiteConfig SiteConfig { get; set; } = SiteConfig.SiteNull;
         public List<MipiCode> MipiCodes { get; set; } = new List<MipiCode>();
 
         public int LineCount { get; private set; }
@@ -165,6 +166,16 @@ namespace PAT_Editor
             LineCount = lineCount;
             ElapsedMicroseconds = elapsedMicroseconds;
         }
+    }
+
+    public enum SiteConfig
+    {
+        SiteNull = 0,
+        Site1 = 1,
+        Site2 = 2,
+        Site3 = 4,
+        Site4 = 8,
+        SiteAll = 15
     }
 
     public class MipiCode
