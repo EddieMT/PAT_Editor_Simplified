@@ -54,7 +54,6 @@ namespace PAT_Editor
     {
         public string DeviceModeName { get; set; }
         public Dictionary<Pin, string> TruthValues { get; set; } = new Dictionary<Pin, string>();
-        public string Command { get; set; }
         public TimeSet TSW { get; set; }
     }
 
@@ -320,6 +319,7 @@ namespace PAT_Editor
                 return DeviceModes.Count;
             }
         }
+        public SiteConfig SiteConfig { get; set; } = SiteConfig.SiteNull;
     }
 
     #endregion

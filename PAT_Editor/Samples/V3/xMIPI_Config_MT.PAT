@@ -4112,10 +4112,10 @@ FC       1   TS1              XXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
 FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 
 //--------------------------------------------TXtoRX-----------------------------------------------------------
-FC       10       TS4               XXX100XXXXXXXXXXXXX100XXXXXXXXXX;// TX---3398
-FC       10       TS4               XXX010XXXXXXXXXXXXX010XXXXXXXXXX;// RX---3399---trigger
-FC       1        TS4               XXX010XXXXXXXXXXXXX010XXXXXXXXXX;// RX---3400
-FC       1        TS4               XXX010XXXXXXXXXXXXX010XXXXXXXXXX;// RX---3401
+FC       10       TS4               XXXXXXXXXXXXXXXXXXX100XXXXXXXXXX;// TX---3398
+FC       10       TS4               XXXXXXXXXXXXXXXXXXX010XXXXXXXXXX;// RX---3399---trigger
+FC       1        TS4               XXXXXXXXXXXXXXXXXXX010XXXXXXXXXX;// RX---3400
+FC       1        TS4               XXXXXXXXXXXXXXXXXXX010XXXXXXXXXX;// RX---3401
 //--------------------------------------------RXtoOFF-----------------------------------------------------------
 FC       10       TS4               XXX010XXXXXXXXXXXXX010XXXXXXXXXX;// RX---3402
 FC       10       TS4               XXX000XXXXXXXXXXXXX000XXXXXXXXXX;// OFF---3403---trigger

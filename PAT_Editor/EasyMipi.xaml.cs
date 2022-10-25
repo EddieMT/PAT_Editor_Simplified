@@ -498,7 +498,7 @@ namespace PAT_Editor
                             for (int i = 1; i <= generalMode.DeviceModes.Count; i++)
                             {
                                 var pair = generalMode.DeviceModes[i - 1];
-                                line = string.Format(supplementalLine, pair.Value.ToString().PadRight(4), pair.Key.TSW.TSName, pair.Key.Command, pair.Key.DeviceModeName, lineNumber);
+                                line = string.Format(supplementalLine, pair.Value.ToString().PadRight(4), pair.Key.TSW.TSName, BuildData(pair.Key, generalMode.SiteConfig), pair.Key.DeviceModeName, lineNumber);
                                 if (i == generalMode.TriggerAt)
                                     line += "---trigger";
                                 sw.WriteLine(line);
@@ -1126,6 +1126,7 @@ namespace PAT_Editor
             int rowCount = ws.LastRowNum + 1; //得到行数 
             int colPattern = 0;  // MipiMode的位置
             int colCode = 1;  // Code的位置
+            int colSite = 2;  // Site的位置
             int rowPatternTitle = 0;
             for (int i = 1; i < rowCount; i++)
             {
@@ -1202,31 +1203,6 @@ namespace PAT_Editor
                         }
                     }
 
-                    deviceMode.Command = string.Empty.PadRight(32, 'X');
-                    foreach (var truthValue in deviceMode.TruthValues)
-                    {
-                        if (truthValue.Key.Site1 != uint.MaxValue)
-                        {
-                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site1 - 1, 1);
-                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site1 - 1, truthValue.Value);
-                        }
-                        if (truthValue.Key.Site2 != uint.MaxValue)
-                        {
-                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site2 - 1, 1);
-                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site2 - 1, truthValue.Value);
-                        }
-                        if (truthValue.Key.Site3 != uint.MaxValue)
-                        {
-                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site3 - 1, 1);
-                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site3 - 1, truthValue.Value);
-                        }
-                        if (truthValue.Key.Site4 != uint.MaxValue)
-                        {
-                            deviceMode.Command = deviceMode.Command.Remove((int)truthValue.Key.Site4 - 1, 1);
-                            deviceMode.Command = deviceMode.Command.Insert((int)truthValue.Key.Site4 - 1, truthValue.Value);
-                        }
-                    }
-
                     if (basicMipiSettings.TruthTable.ContainsKey(deviceMode.DeviceModeName))
                         throw new Exception(string.Format("DeviceMode - {0}已存在，请确认！", deviceMode.DeviceModeName));
                     else
@@ -1245,6 +1221,7 @@ namespace PAT_Editor
                 generalMode.GeneralModeName = sGeneralMode;
 
                 string sCode = GetCellValue(ws, rowIndex, colCode);
+                string sSite = GetCellValue(ws, rowIndex, colSite);
                 if (string.IsNullOrEmpty(sCode))
                     throw new Exception(string.Format("通用配置中，检测到{0}存在为空的Code，请确认!", generalMode.GeneralModeName));
                 if (sCode.EndsWith(";"))
@@ -1303,7 +1280,7 @@ namespace PAT_Editor
                         }
                     }
                 }
-
+                generalMode.SiteConfig = ParseSiteConfig(sSite);
                 generalMode.LineStart = startlinenumber;
                 startlinenumber = generalMode.LineEnd + 1;
 
@@ -1703,6 +1680,35 @@ namespace PAT_Editor
                 res += 'X';
             }
 
+            return res;
+        }
+
+        private string BuildData(DeviceMode deviceMode ,SiteConfig siteConfig)
+        {
+            string res = string.Empty.PadRight(32, 'X');
+            foreach (var truthValue in deviceMode.TruthValues)
+            {
+                if (truthValue.Key.Site1 != uint.MaxValue && siteConfig.HasFlag(SiteConfig.Site1))
+                {
+                    res = res.Remove((int)truthValue.Key.Site1 - 1, 1);
+                    res = res.Insert((int)truthValue.Key.Site1 - 1, truthValue.Value);
+                }
+                if (truthValue.Key.Site2 != uint.MaxValue && siteConfig.HasFlag(SiteConfig.Site2))
+                {
+                    res = res.Remove((int)truthValue.Key.Site2 - 1, 1);
+                    res = res.Insert((int)truthValue.Key.Site2 - 1, truthValue.Value);
+                }
+                if (truthValue.Key.Site3 != uint.MaxValue && siteConfig.HasFlag(SiteConfig.Site3))
+                {
+                    res = res.Remove((int)truthValue.Key.Site3 - 1, 1);
+                    res = res.Insert((int)truthValue.Key.Site3 - 1, truthValue.Value);
+                }
+                if (truthValue.Key.Site4 != uint.MaxValue && siteConfig.HasFlag(SiteConfig.Site4))
+                {
+                    res = res.Remove((int)truthValue.Key.Site4 - 1, 1);
+                    res = res.Insert((int)truthValue.Key.Site4 - 1, truthValue.Value);
+                }
+            }
             return res;
         }
 
