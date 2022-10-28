@@ -292,7 +292,10 @@ namespace PAT_Editor
                                             {
                                                 if (i == tempLineCount)
                                                 {
-                                                    line = string.Format(supplementalLine, tempRemainder.ToString().PadRight(4), mipiStep.CLK.TSW.TSName);
+                                                    if (tempRemainder == 0)
+                                                        line = string.Format(supplementalLine, "1000", mipiStep.CLK.TSW.TSName);
+                                                    else
+                                                        line = string.Format(supplementalLine, tempRemainder.ToString().PadRight(4), mipiStep.CLK.TSW.TSName);
                                                 }
                                                 else
                                                 {
@@ -1503,7 +1506,10 @@ namespace PAT_Editor
                     uint elapsedMicroseconds = 0;
                     if (uint.TryParse(sElapsedMicroseconds, out elapsedMicroseconds))
                     {
-                        mipiCode.ElapsedMicroseconds = elapsedMicroseconds;
+                        if (elapsedMicroseconds == 0)
+                            throw new Exception(string.Format("非法的Delay时间 - {0}!", sElapsedMicroseconds));
+                        else
+                            mipiCode.ElapsedMicroseconds = elapsedMicroseconds;
                     }
                     else
                     {
