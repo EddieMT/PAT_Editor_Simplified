@@ -463,11 +463,11 @@ namespace PAT_Editor
                                             #endregion
                                             #region Bus Park
                                             sw.WriteLine("// Bus Park");
-                                            sValue = "0XX";
+                                            sValue = "000";
                                             string sBP = string.Empty;
                                             sBP += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Bus Park (Drive 0 then Tri-State at CLK falling)\n";
                                             sBP += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";//\n";
-                                            sBP += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, 'X') + ";//\n";
+                                            sBP += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";//\n";
                                             sw.Write(sBP);
                                             #endregion
                                         }

@@ -84,8 +84,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[1][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -126,8 +126,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[1][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -178,8 +178,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[1][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -220,8 +220,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[1][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -262,8 +262,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[1][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -304,8 +304,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[1][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -346,8 +346,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[2]-----------------------------------------------------------
 //--------------------------------------------Test1.G1[2][1]-----------------------------------------------------------
 // Register 1C : Data 40 -----------------------------------------------------------
@@ -389,8 +389,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[2][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -431,8 +431,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[2][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -483,8 +483,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[2][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -525,8 +525,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[2][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -567,8 +567,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[2][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -609,8 +609,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1[2][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -651,8 +651,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G1 Supplemental Lines-----------------------------------------------------------
 FC       1000   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 FC       734    TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
@@ -699,8 +699,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G2[1][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -741,8 +741,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G2[1][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -793,8 +793,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G2[1][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -835,8 +835,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G2[1][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -877,8 +877,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G2[1][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -919,8 +919,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G2[1][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -961,8 +961,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.ttt-----------------------------------------------------------
 //--------------------------------------------Test1.ttt[1]-----------------------------------------------------------
 //--------------------------------------------Test1.ttt[1][1]-----------------------------------------------------------
@@ -1005,8 +1005,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.ttt[1][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1047,8 +1047,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.ttt[1][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1099,8 +1099,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.ttt[1][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1141,8 +1141,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.ttt[1][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1183,8 +1183,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.ttt[1][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1225,8 +1225,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.ttt[1][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1267,8 +1267,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3-----------------------------------------------------------
 //--------------------------------------------Test1.G3[1]-----------------------------------------------------------
 //--------------------------------------------Test1.G3[1][1]-----------------------------------------------------------
@@ -1311,8 +1311,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[1][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1353,8 +1353,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[1][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1405,8 +1405,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[1][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1447,8 +1447,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[1][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1489,8 +1489,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[1][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1531,8 +1531,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[1][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1573,8 +1573,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[2]-----------------------------------------------------------
 //--------------------------------------------Test1.G3[2][1]-----------------------------------------------------------
 // Register 1C : Data 40 -----------------------------------------------------------
@@ -1616,8 +1616,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[2][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1658,8 +1658,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[2][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1710,8 +1710,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[2][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1752,8 +1752,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[2][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1794,8 +1794,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[2][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1836,8 +1836,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3[2][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1878,8 +1878,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------Test1.G3 Supplemental Lines-----------------------------------------------------------
 FC       1000   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 FC       734    TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
@@ -1927,8 +1927,8 @@ FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G1[1][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -1969,8 +1969,8 @@ FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G1[1][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2021,8 +2021,8 @@ FC       1   TS1              11XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G1[1][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2063,8 +2063,8 @@ FC       1   TS1              11XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G1[1][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2105,8 +2105,8 @@ FC       1   TS1              11XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G1[1][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2147,8 +2147,8 @@ FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G1[1][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2189,8 +2189,8 @@ FC       1   TS1              11XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2-----------------------------------------------------------
 //--------------------------------------------LB_IN1_LB_G10_960.G2[1]-----------------------------------------------------------
 //--------------------------------------------LB_IN1_LB_G10_960.G2[1][1]-----------------------------------------------------------
@@ -2233,8 +2233,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[1][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2275,8 +2275,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[1][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2327,8 +2327,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[1][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2369,8 +2369,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[1][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2411,8 +2411,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[1][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2453,8 +2453,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[1][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2495,8 +2495,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[2]-----------------------------------------------------------
 //--------------------------------------------LB_IN1_LB_G10_960.G2[2][1]-----------------------------------------------------------
 // Register 1C : Data 40 -----------------------------------------------------------
@@ -2538,8 +2538,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[2][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2580,8 +2580,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[2][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2632,8 +2632,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[2][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2674,8 +2674,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[2][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2716,8 +2716,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[2][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2758,8 +2758,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[2][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2800,8 +2800,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[3]-----------------------------------------------------------
 //--------------------------------------------LB_IN1_LB_G10_960.G2[3][1]-----------------------------------------------------------
 // Register 1C : Data 40 -----------------------------------------------------------
@@ -2843,8 +2843,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[3][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2885,8 +2885,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[3][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2937,8 +2937,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[3][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -2979,8 +2979,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[3][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3021,8 +3021,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[3][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3063,8 +3063,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G2[3][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3105,8 +3105,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3-----------------------------------------------------------
 //--------------------------------------------LB_IN1_LB_G10_960.G3[1]-----------------------------------------------------------
 //--------------------------------------------LB_IN1_LB_G10_960.G3[1][1]-----------------------------------------------------------
@@ -3149,8 +3149,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[1][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3191,8 +3191,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[1][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3243,8 +3243,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[1][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3285,8 +3285,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[1][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3327,8 +3327,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[1][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3369,8 +3369,8 @@ FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[1][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3411,8 +3411,8 @@ FC       1   TS1              11XXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              10XXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              0XXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              00XXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2]-----------------------------------------------------------
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2][1]-----------------------------------------------------------
 // Register 1C : Data 40 -----------------------------------------------------------
@@ -3454,8 +3454,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3496,8 +3496,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3548,8 +3548,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3590,8 +3590,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3632,8 +3632,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3674,8 +3674,8 @@ FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3716,8 +3716,8 @@ FC       1   TS3              XXXXXXXXXXX1111XXXXXXXXXXXXXXXXX;// Data D0
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS3              XXXXXXXXXXX1010XXXXXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS3              XXXXXXXXXXX0X0XXXXXXXXXXXXXXXXXX;//
-FC       1   TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
+FC       1   TS3              XXXXXXXXXXX0000XXXXXXXXXXXXXXXXX;//
 //--------------------------------------------LB_IN1_LB_G10_960.G3[2][8]-----------------------------------------------------------
 //--------------------------------------------DELAY(8)-----------------------------------------------------------
 FC       8      TS3              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
@@ -3764,8 +3764,8 @@ FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              XXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test3.G1[1][2]-----------------------------------------------------------
 // Register 1C : Data 38 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3806,8 +3806,8 @@ FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              XXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test3.G1[1][3]-----------------------------------------------------------
 // Register 2D : Data FF -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3858,8 +3858,8 @@ FC       1   TS1              XXXXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              XXXXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              XXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test3.G1[1][4]-----------------------------------------------------------
 // Register 0 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3900,8 +3900,8 @@ FC       1   TS1              XXXXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              XXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test3.G1[1][5]-----------------------------------------------------------
 // Register 11 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3942,8 +3942,8 @@ FC       1   TS1              XXXXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              XXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test3.G1[1][6]-----------------------------------------------------------
 // Register 9 : Data D4 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -3984,8 +3984,8 @@ FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              XXXXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              XXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------Test3.G1[1][7]-----------------------------------------------------------
 // Register 12 : Data 1 -----------------------------------------------------------
 // SSC: Start Sequence Control
@@ -4026,8 +4026,8 @@ FC       1   TS1              XXXXXXXXXXXXXXXX11XXXXXXXXXXXXXX;// Data D0
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Parity Bit (to make odd sum Data)
 // Bus Park
 FC       1   TS1              XXXXXXXXXXXXXXXX10XXXXXXXXXXXXXX;// Bus Park (Drive 0 then Tri-State at CLK falling)
-FC       1   TS1              XXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXX;//
-FC       1   TS1              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
+FC       1   TS1              XXXXXXXXXXXXXXXX00XXXXXXXXXXXXXX;//
 //--------------------------------------------TXtoRX-----------------------------------------------------------
 FC       10       TS4               XXXXXXXXXXXXXXXXXXX100XXXXXXXXXX;// TX---3401
 FC       10       TS4               XXXXXXXXXXXXXXXXXXX010XXXXXXXXXX;// RX---3402---trigger
