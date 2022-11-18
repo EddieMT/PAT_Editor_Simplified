@@ -59,7 +59,29 @@ namespace PAT_Editor
 
     public class MipiPatternSettings
     {
-        public Dictionary<string, MipiMode> MipiModes { get; set; } = new Dictionary<string, MipiMode>();
+        public Dictionary<string, MipiMode> MipiModes { get; set; }
+
+        public MipiPatternSettings()
+        {
+            MipiModes = new Dictionary<string, MipiMode>();
+            MipiMode mipiMode = new MipiMode();
+            mipiMode.MipiModeName = "RESET";
+            mipiMode.LoopRequired = false;
+            MipiGroup mipiGroup = new MipiGroup();
+            mipiGroup.MipiGroupName = "RESET";
+            mipiGroup.PreElapsedMicroseconds = 0;
+            MipiStep mipiStep = new MipiStep();
+            mipiStep.MipiCodes = new List<MipiCode>();
+            MipiCode mipiCode = new MipiCode();
+            mipiCode.MipiCodeType = ReadWrite.Reset;
+            mipiStep.MipiCodes.Add(mipiCode);
+            mipiStep.CalculateLineCount();
+            mipiGroup.MipiSteps.Add(mipiStep);
+            mipiGroup.CalculateLineCount();
+            mipiGroup.LineStart = 0;
+            mipiMode.MipiGroups.Add(mipiGroup.MipiGroupName, mipiGroup);
+            MipiModes.Add(mipiMode.MipiModeName, mipiMode);
+        }
     }
 
     public class MipiMode
@@ -154,6 +176,10 @@ namespace PAT_Editor
                     lineCount += code.LineCount;
                     elapsedMicroseconds += (decimal)code.LineCount / CLK.TSW.SpeedRateByMHz;
                 }
+                else if (code.MipiCodeType == ReadWrite.Reset)
+                {
+                    lineCount += code.LineCount;
+                }
                 else
                 {
                     elapsedMicroseconds += code.ElapsedMicroseconds;
@@ -224,6 +250,8 @@ namespace PAT_Editor
                 }
                 else if (MipiCodeType == ReadWrite.Delay)
                     return 0;
+                else if (MipiCodeType == ReadWrite.Reset)
+                    return 3;
                 else
                     return -1;
             }
@@ -352,7 +380,8 @@ namespace PAT_Editor
         ExtendRead,
         ExtendWrite,
         ZeroWrite,
-        Delay
+        Delay,
+        Reset
     }
 
     public class ChannelGroup

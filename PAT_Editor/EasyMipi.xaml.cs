@@ -304,6 +304,15 @@ namespace PAT_Editor
                                                 sw.WriteLine(line);
                                             }
                                         }
+                                        else if (mipiCode.MipiCodeType == ReadWrite.Reset)
+                                        {
+                                            sw.WriteLine("//--------------------------------------------RESET-----------------------------------------------------------");
+                                            for (int i = 0; i < 3; i++)
+                                            {
+                                                line = string.Format(supplementalLine, "1", "TS4");
+                                                sw.WriteLine(line);
+                                            }
+                                        }
                                         else
                                         {
                                             string sValue = string.Empty;
@@ -462,7 +471,6 @@ namespace PAT_Editor
                                             sw.Write(sBP);
                                             #endregion
                                         }
-                                        sw.WriteLine();
                                         indexCode++;
                                     }
                                     indexStep++;
@@ -816,6 +824,7 @@ namespace PAT_Editor
             int colData = 4;  // Data的位置
             int colSite = 5; //Site的位置
             MipiPatternSettings mipiModeSettings = new MipiPatternSettings();
+            startlinenumber = 3; //因为加入了RESET
 
             for (int rowIndex = 1; rowIndex < rowCount;)
             {
@@ -1326,6 +1335,7 @@ namespace PAT_Editor
             }
 
             MipiPatternSettings mipiModeSettings = new MipiPatternSettings();
+            startlinenumber = 3; //因为加入了RESET
 
             for (int rowIndex = rowTitile + 1; rowIndex < rowCount; rowIndex++)
             {
@@ -1363,6 +1373,7 @@ namespace PAT_Editor
                 MipiStep mipiStep = new MipiStep();
                 mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
                 mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                mipiStep.SiteConfig = ParseSiteConfig(string.Empty);
                 try
                 {
                     mipiStep.MipiCodes = ParseMipiCodes(sCodes);
@@ -1402,6 +1413,7 @@ namespace PAT_Editor
                             mipiStep = new MipiStep();
                             mipiStep.CLK = basicMipiSettings.PinMap[sCLK];
                             mipiStep.DATA = basicMipiSettings.PinMap[sDATA];
+                            mipiStep.SiteConfig = ParseSiteConfig(string.Empty);
                             try
                             {
                                 mipiStep.MipiCodes = ParseMipiCodes(sCodes);
