@@ -65,12 +65,13 @@ namespace PAT_Editor
         {
             MipiModes = new Dictionary<string, MipiMode>();
             MipiMode mipiMode = new MipiMode();
-            mipiMode.MipiModeName = "RESET";
+            mipiMode.MipiModeName = "PATTERN_RESET";
             mipiMode.LoopRequired = false;
             MipiGroup mipiGroup = new MipiGroup();
-            mipiGroup.MipiGroupName = "RESET";
+            mipiGroup.MipiGroupName = "PATTERN_RESET";
             mipiGroup.PreElapsedMicroseconds = 0;
             MipiStep mipiStep = new MipiStep();
+            mipiStep.CLK = new Pin() { TSW = new TimeSet("TSX", 1), TSR = new TimeSet("TSX", 1) };
             mipiStep.MipiCodes = new List<MipiCode>();
             MipiCode mipiCode = new MipiCode();
             mipiCode.MipiCodeType = ReadWrite.Reset;
@@ -135,9 +136,54 @@ namespace PAT_Editor
         public Pin DATA { get; set; }
         public SiteConfig SiteConfig { get; set; } = SiteConfig.SiteNull;
         public List<MipiCode> MipiCodes { get; set; } = new List<MipiCode>();
-
+        public string OriginalCodes { get; set; }
         public int LineCount { get; private set; }
         public decimal ElapsedMicroseconds { get; set; }
+
+        public MipiStepSummary Summary
+        {
+            get
+            {
+                MipiStepSummary summary = new MipiStepSummary();
+                summary.Codes = OriginalCodes;
+                summary.TSWByMHz = CLK.TSW.SpeedRateByMHz;
+                summary.TSRByMHz = CLK.TSR.SpeedRateByMHz;
+                if (SiteConfig.HasFlag(SiteConfig.Site1))
+                {
+                    if (CLK.Site1 != uint.MaxValue && DATA.Site1 != uint.MaxValue)
+                    {
+                        summary.CLKs.Add(CLK.Site1);
+                        summary.DATAs.Add(DATA.Site1);
+                    }
+                }
+                if (SiteConfig.HasFlag(SiteConfig.Site2))
+                {
+                    if (CLK.Site2 != uint.MaxValue && DATA.Site2 != uint.MaxValue)
+                    {
+                        summary.CLKs.Add(CLK.Site2);
+                        summary.DATAs.Add(DATA.Site2);
+                    }
+                }
+                if (SiteConfig.HasFlag(SiteConfig.Site3))
+                {
+                    if (CLK.Site3 != uint.MaxValue && DATA.Site3 != uint.MaxValue)
+                    {
+                        summary.CLKs.Add(CLK.Site3);
+                        summary.DATAs.Add(DATA.Site3);
+                    }
+                }
+                if (SiteConfig.HasFlag(SiteConfig.Site4))
+                {
+                    if (CLK.Site4 != uint.MaxValue && DATA.Site4 != uint.MaxValue)
+                    {
+                        summary.CLKs.Add(CLK.Site4);
+                        summary.DATAs.Add(DATA.Site4);
+                    }
+                }
+
+                return summary;
+            }
+        }
 
         /// <summary>
         /// time = line count / speed
@@ -191,6 +237,15 @@ namespace PAT_Editor
             LineCount = lineCount;
             ElapsedMicroseconds = elapsedMicroseconds;
         }
+    }
+
+    public class MipiStepSummary
+    {
+        public List<uint> CLKs = new List<uint>();
+        public List<uint> DATAs = new List<uint>();
+        public uint TSWByMHz;
+        public uint TSRByMHz;
+        public string Codes;
     }
 
     public enum SiteConfig

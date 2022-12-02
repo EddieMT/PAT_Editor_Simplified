@@ -1,4 +1,5 @@
 ﻿using ExcelDataReader;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
@@ -248,6 +249,16 @@ namespace PAT_Editor
                         {
                             line = string.Format("//{0}:{1}-{2}", mipiMode.MipiModeName, mipiMode.LineStart, mipiMode.LineEnd);
                             sw.WriteLine(line);
+                            foreach (var mipiGroup in mipiMode.MipiGroups.Values)
+                            {
+                                int stepIndex = 1;
+                                foreach (var mipiStep in mipiGroup.MipiSteps)
+                                {
+                                    line = string.Format("////{0}[{1}]:{2}", mipiGroup.MipiGroupName, stepIndex, JsonConvert.SerializeObject(mipiStep.Summary));
+                                    sw.WriteLine(line);
+                                    stepIndex++;
+                                }
+                            }
                         }
                     }
                     if (generalPatternSettings.GeneralModes.Count > 0)
@@ -284,7 +295,7 @@ namespace PAT_Editor
                                         sw.WriteLine(string.Format("//--------------------------------------------{0}.{1}[{2}][{3}]-----------------------------------------------------------", mipiMode.MipiModeName, mipiGroup.MipiGroupName, indexStep, indexCode));
                                         if (mipiCode.MipiCodeType == ReadWrite.Delay)
                                         {
-                                            sw.WriteLine(string.Format("//--------------------------------------------DELAY({0})-----------------------------------------------------------", mipiCode.ElapsedMicroseconds));
+                                            sw.WriteLine(string.Format("// DELAY({0})-----------------------------------------------------------", mipiCode.ElapsedMicroseconds));
                                             uint tempLineCount = mipiCode.ElapsedMicroseconds * mipiStep.CLK.TSW.SpeedRateByMHz;
                                             uint tempRemainder = tempLineCount % 1000;
                                             tempLineCount = (uint)Math.Ceiling((double)tempLineCount / 1000);
@@ -306,7 +317,7 @@ namespace PAT_Editor
                                         }
                                         else if (mipiCode.MipiCodeType == ReadWrite.Reset)
                                         {
-                                            sw.WriteLine("//--------------------------------------------RESET-----------------------------------------------------------");
+                                            sw.WriteLine("// PATTERN_RESET-----------------------------------------------------------");
                                             for (int i = 0; i < 3; i++)
                                             {
                                                 line = string.Format(supplementalLine, "1", "TS4");
@@ -905,6 +916,7 @@ namespace PAT_Editor
                                     try
                                     {
                                         mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                                        mipiStep.OriginalCodes = sCodes;
                                     }
                                     catch (Exception ex)
                                     {
@@ -982,6 +994,7 @@ namespace PAT_Editor
                             try
                             {
                                 mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                                mipiStep.OriginalCodes = sCodes;
                             }
                             catch (Exception ex)
                             {
@@ -1072,6 +1085,7 @@ namespace PAT_Editor
                     try
                     {
                         mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                        mipiStep.OriginalCodes = sCodes;
                     }
                     catch (Exception ex)
                     {
@@ -1377,6 +1391,7 @@ namespace PAT_Editor
                 try
                 {
                     mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                    mipiStep.OriginalCodes = sCodes;
                 }
                 catch (Exception ex)
                 {
@@ -1417,6 +1432,7 @@ namespace PAT_Editor
                             try
                             {
                                 mipiStep.MipiCodes = ParseMipiCodes(sCodes);
+                                mipiStep.OriginalCodes = sCodes;
                             }
                             catch (Exception ex)
                             {
