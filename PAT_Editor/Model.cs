@@ -262,7 +262,21 @@ namespace PAT_Editor
     {
         public ReadWrite MipiCodeType { get; set; }
         public uint UserID { get; set; }
-        public uint RegID { get; set; }
+        public uint Command { get; set; }
+        public uint BC { get; set; }
+        public List<uint> RegIDs { get; set; } = new List<uint>();
+        public string RegIDString
+        {
+            get
+            {
+                string regID = string.Empty;
+                for (int i = 0; i < RegIDs.Count; i++)
+                {
+                    regID += RegIDs[i].ToString("X");
+                }
+                return regID;
+            }
+        }
         public List<uint> Datas { get; set; } = new List<uint>();
         public string DataString 
         { 
@@ -276,32 +290,45 @@ namespace PAT_Editor
                 return data;
             }
         }
-        public uint BC 
-        { 
-            get
-            {
-                return (uint)Datas.Count - 1;
-            }
-        }
         public int LineCount
         {
             get
             {
                 if (MipiCodeType == ReadWrite.Write)
-                    return 36;
+                    return 36;//11+13+9+3
                 else if (MipiCodeType == ReadWrite.Read)
-                    return 37;
-                if (MipiCodeType == ReadWrite.ExtendWrite)
+                    return 37;//11+14+9+3
+                else if(MipiCodeType == ReadWrite.ExtendWrite)
                 {
-                    return 36 + 9 * Datas.Count;
+                    return 36 + 9 * Datas.Count;//11+13+9+9x+3
                 }
                 else if (MipiCodeType == ReadWrite.ExtendRead)
                 {
-                    return 37 + 9 * Datas.Count;
+                    return 37 + 9 * Datas.Count;//11+13+10+9x+3
                 }
                 else if (MipiCodeType == ReadWrite.ZeroWrite)
                 {
-                    return 27;
+                    return 27;//11+13+3
+                }
+                else if (MipiCodeType == ReadWrite.MaskWrite)
+                {
+                    return 54;//11+13+9+9+9+3
+                }
+                else if (MipiCodeType == ReadWrite.LongExtendWrite)
+                {
+                    return 45 + 9 * Datas.Count;//11+13+18+9x+3
+                }
+                else if (MipiCodeType == ReadWrite.LongExtendRead)
+                {
+                    return 46 + 9 * Datas.Count;//11+13+19+9x+3
+                }
+                else if (MipiCodeType == ReadWrite.UniversalExtendWrite)
+                {
+                    return 27 + 9 * RegIDs.Count + 9 * Datas.Count;//11+13+9y+9x+3
+                }
+                else if (MipiCodeType == ReadWrite.UniversalExtendRead)
+                {
+                    return 28 + 9 * RegIDs.Count + 9 * Datas.Count;//11+13+9y+1+9x+3
                 }
                 else if (MipiCodeType == ReadWrite.Delay)
                     return 0;
@@ -434,6 +461,11 @@ namespace PAT_Editor
         Write,
         ExtendRead,
         ExtendWrite,
+        LongExtendRead,
+        LongExtendWrite,
+        MaskWrite,
+        UniversalExtendWrite,
+        UniversalExtendRead,
         ZeroWrite,
         Delay,
         Reset

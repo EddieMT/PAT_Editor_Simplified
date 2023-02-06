@@ -336,7 +336,7 @@ namespace PAT_Editor
                                             {
                                                 prefix = string.Format(prefix, mipiStep.CLK.TSW.TSName);
                                             }
-                                            sw.WriteLine(string.Format("// Register {0} : Data {1} -----------------------------------------------------------", mipiCode.RegID.ToString("X"), mipiCode.DataString));
+                                            sw.WriteLine(string.Format("// Register {0} : Data {1} -----------------------------------------------------------", mipiCode.RegIDString, mipiCode.DataString));
                                             #region Start Sequence Control
                                             sw.WriteLine("// SSC: Start Sequence Control");
                                             sValue = "XXX00000010";
@@ -360,7 +360,7 @@ namespace PAT_Editor
                                                 sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:5] + Reg Addr[4:0])");
                                                 sValue = Convert.ToString(mipiCode.UserID, 2).PadLeft(4, '0');
                                                 sValue += (mipiCode.MipiCodeType == ReadWrite.Write) ? "010" : "011";
-                                                sValue += Convert.ToString(mipiCode.RegID, 2).PadLeft(5, '0');
+                                                sValue += Convert.ToString(mipiCode.RegIDs[0], 2).PadLeft(5, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sCF = string.Empty;
                                                 sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
@@ -380,11 +380,16 @@ namespace PAT_Editor
                                                     sCF += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Park Bit\n";
                                                 sw.Write(sCF);
                                             }
-                                            else if (mipiCode.MipiCodeType == ReadWrite.ExtendRead || mipiCode.MipiCodeType == ReadWrite.ExtendWrite)
+                                            else if (mipiCode.MipiCodeType == ReadWrite.ExtendRead || mipiCode.MipiCodeType == ReadWrite.ExtendWrite || mipiCode.MipiCodeType == ReadWrite.MaskWrite)
                                             {
                                                 sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:4] + BC[3:0])");
                                                 sValue = Convert.ToString(mipiCode.UserID, 2).PadLeft(4, '0');
-                                                sValue += (mipiCode.MipiCodeType == ReadWrite.ExtendWrite) ? "0000" : "0010";
+                                                if (mipiCode.MipiCodeType == ReadWrite.ExtendWrite)
+                                                    sValue += "0000";
+                                                else if (mipiCode.MipiCodeType == ReadWrite.ExtendRead)
+                                                    sValue += "0010";
+                                                else
+                                                    sValue += "0001";
                                                 sValue += Convert.ToString(mipiCode.BC, 2).PadLeft(4, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sCF = string.Empty;
@@ -405,7 +410,7 @@ namespace PAT_Editor
 
                                                 #region Reg Addr
                                                 sw.WriteLine("// Reg Addr (8 bits)");
-                                                sValue = Convert.ToString(mipiCode.RegID, 2).PadLeft(8, '0');
+                                                sValue = Convert.ToString(mipiCode.RegIDs[0], 2).PadLeft(8, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sAddr = string.Empty;
                                                 sAddr += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A7\n";
@@ -418,7 +423,7 @@ namespace PAT_Editor
                                                 sAddr += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A0\n";
                                                 sAddr += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
                                                 if (mipiCode.MipiCodeType == ReadWrite.ExtendRead)
-                                                    sAddr += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Park Bit\n";
+                                                    sAddr += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Bus Park\n";
                                                 sw.Write(sAddr);
                                                 #endregion
                                             }
@@ -1488,48 +1493,19 @@ namespace PAT_Editor
             string[] arrayCodes = sCodes.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string code in arrayCodes)
             {
+                uint value = 0;
                 string userID = string.Empty;
+                string command = string.Empty;
                 string bc = string.Empty;
                 string regID = string.Empty;
+                List<string> regIDs = new List<string>();
                 string data = string.Empty;
                 List<string> datas = new List<string>();
+
                 MipiCode mipiCode = new MipiCode();
-                if (code.ToUpper().StartsWith("W"))
-                {
-                    mipiCode.MipiCodeType = ReadWrite.Write;
-                    userID = code.Substring(1, 1);
-                    regID = code.Substring(2, 2);
-                    data = code.Substring(4, code.Length - 4);
-                }
-                else if (code.ToUpper().StartsWith("R"))
-                {
-                    mipiCode.MipiCodeType = ReadWrite.Read;
-                    userID = code.Substring(1, 1);
-                    regID = code.Substring(2, 2);
-                    data = code.Substring(4, code.Length - 4);
-                }
-                else if (code.ToUpper().StartsWith("EW"))
-                {
-                    mipiCode.MipiCodeType = ReadWrite.ExtendWrite;
-                    userID = code.Substring(2, 1);
-                    bc = code.Substring(3, 1);
-                    regID = code.Substring(4, 2);
-                    data = code.Substring(6, code.Length - 6);
-                }
-                else if (code.ToUpper().StartsWith("ER"))
-                {
-                    mipiCode.MipiCodeType = ReadWrite.ExtendRead;
-                    userID = code.Substring(2, 1);
-                    bc = code.Substring(3, 1);
-                    regID = code.Substring(4, 2);
-                    data = code.Substring(6, code.Length - 6);
-                }
-                else if (code.ToUpper().StartsWith("DELAY"))
+                if (code.ToUpper().StartsWith("DELAY"))
                 {
                     mipiCode.MipiCodeType = ReadWrite.Delay;
-                    userID = "0";
-                    regID = "0";
-                    data = "0";
                     var sElapsedMicroseconds = code.ToUpper().Replace("DELAY", "").Replace("(", "").Replace(")", "");
                     uint elapsedMicroseconds = 0;
                     if (uint.TryParse(sElapsedMicroseconds, out elapsedMicroseconds))
@@ -1544,139 +1520,507 @@ namespace PAT_Editor
                         throw new Exception(string.Format("非法的Delay时间 - {0}!", sElapsedMicroseconds));
                     }
                 }
-                else if (code.ToUpper().StartsWith("ZW"))
+                else if (code.ToUpper().StartsWith("W") || code.ToUpper().StartsWith("R"))
                 {
-                    mipiCode.MipiCodeType = ReadWrite.ZeroWrite;
-                    userID = code.Substring(2, 1);
-                    regID = "0";
-                    data = code.Substring(4, code.Length - 4);
-                }
-                else
-                {
-                    throw new Exception(String.Format("仅支持以W、R、EW、ER或DELAY开头的Code，{0}为非法Code，请修正!", code));
-                }
+                    if (code.Length <= 4)
+                        throw new Exception(string.Format("{0}格式错误！例W21C40，User ID为2，Register Address为1C，Data为40。", code));
 
-                uint value = 0;
-                if (uint.TryParse(userID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
-                {
-                    if (value > 0xF)
-                    {
-                        throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
-                    }
-                    else
-                    {
-                        mipiCode.UserID = value;
-                    }
-                }
-                else
-                {
-                    throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
-                }
+                    mipiCode.MipiCodeType = code.ToUpper().StartsWith("W") ? ReadWrite.Write : ReadWrite.Read;
 
-                if (uint.TryParse(regID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
-                {
-                    if (value > 0xFF)
-                    {
-                        throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
-                    }
-                    else
-                    {
-                        if ((mipiCode.MipiCodeType == ReadWrite.Write || mipiCode.MipiCodeType == ReadWrite.Read) 
-                            && value > 0x1F)
-                            throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,1F]之间的整型！", code, regID));
-                        else
-                            mipiCode.RegID = value;
-                    }
-                }
-                else
-                {
-                    throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
-                }
-
-                if (data.Length % 2 == 1)
-                {
-                    datas.Add(data.Substring(0, 1));
-                    for (int i = 1; i < data.Length;)
-                    {
-                        datas.Add(data.Substring(i, 2));
-                        i = i + 2;
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < data.Length;)
-                    {
-                        datas.Add(data.Substring(i, 2));
-                        i = i + 2;
-                    }
-                }
-                if (datas.Count == 0)
-                {
-                    throw new Exception(string.Format("{0}中的Data为空，请确认！", code));
-                }
-                if (mipiCode.MipiCodeType == ReadWrite.Write || mipiCode.MipiCodeType == ReadWrite.Read
-                    || mipiCode.MipiCodeType == ReadWrite.ZeroWrite || mipiCode.MipiCodeType == ReadWrite.Delay)
-                {
-                    if (datas.Count > 1)
-                        throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FF]之间的整型！", code, data));
-                }
-                else
-                {
-                    if (datas.Count > 0xF)
-                        throw new Exception(string.Format("{0}中的Data - {1}超出最大限制，128位！", code, data));
-                }
-                
-                for (int i = 0; i < datas.Count; i++)
-                {
-                    string splittedData = datas[i];
-                    if (uint.TryParse(splittedData, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
-                    {
-                        if (mipiCode.MipiCodeType == ReadWrite.ZeroWrite)
-                        {
-                            if (value > 0x7F)
-                            {
-                                throw new Exception(string.Format("{0}中的Data - {1}应该是[0,7F]之间的整型！", code, splittedData));
-                            }
-                            else
-                                mipiCode.Datas.Add(value);
-                        }
-                        else
-                        {
-                            if (value > 0xFF)
-                            {
-                                if (mipiCode.MipiCodeType == ReadWrite.ExtendWrite || mipiCode.MipiCodeType == ReadWrite.ExtendRead)
-                                    throw new Exception(string.Format("{0}中的第{2}段Data - {1}应该是[0,FF]之间的整型！", code, splittedData, i + 1));
-                                else
-                                    throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FF]之间的整型！", code, splittedData));
-                            }
-                            else
-                                mipiCode.Datas.Add(value);
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception(string.Format("{0}中的Data - {1}包含了非法的{2}，应该是[0,FF]之间的整型！", code, data, splittedData));
-                    }
-                }
-                
-                if (mipiCode.MipiCodeType == ReadWrite.ExtendWrite || mipiCode.MipiCodeType == ReadWrite.ExtendRead)
-                {
-                    if (uint.TryParse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    userID = code.Substring(1, 1);
+                    if (uint.TryParse(userID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
                     {
                         if (value > 0xF)
                         {
-                            throw new Exception(string.Format("{0}中的BC - {1}应该是[0,F]之间的整型！", code, bc));
+                            throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
                         }
                         else
                         {
-                            if (mipiCode.BC != value)
-                                throw new Exception(string.Format("基于Data - {3}，{0}中的BC - {1}应该是{2}！", code, bc, mipiCode.BC.ToString("X1"), data));
+                            mipiCode.UserID = value;
                         }
                     }
                     else
                     {
-                        throw new Exception(string.Format("{0}中的BC - {1}应该是[0,F]之间的整型！", code, bc));
+                        throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
                     }
+
+                    command = code.ToUpper().StartsWith("W") ? "010" : "011";
+                    mipiCode.Command = uint.Parse(command);
+
+                    mipiCode.BC = 0;
+
+                    regID = code.Substring(2, 2);
+                    if (uint.TryParse(regID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0x1F)
+                        {
+                            throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,1F]之间的整型！", code, regID));
+                        }
+                        else
+                        {
+                            mipiCode.RegIDs.Add(value);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,1F]之间的整型！", code, regID));
+                    }
+
+                    data = code.Substring(4, code.Length - 4);
+                    if (uint.TryParse(data, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xFF)
+                        {
+                            throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FF]之间的整型！", code, data));
+                        }
+                        else
+                        {
+                            mipiCode.Datas.Add(value);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的Data - {1}应该是[0,FF]之间的整型！", code, data));
+                    }
+                }
+                else if (code.ToUpper().StartsWith("EW") || code.ToUpper().StartsWith("ER"))
+                {
+                    if (code.Length <= 6)
+                        throw new Exception(string.Format("{0}格式错误！例EW212DFFEE，User ID为2，BC为1，Register Address为2D，Data为FFEE。", code));
+
+                    mipiCode.MipiCodeType = code.ToUpper().StartsWith("EW") ? ReadWrite.ExtendWrite : ReadWrite.ExtendRead;
+
+                    userID = code.Substring(2, 1);
+                    if (uint.TryParse(userID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xF)
+                        {
+                            throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                        }
+                        else
+                        {
+                            mipiCode.UserID = value;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                    }
+
+                    command = code.ToUpper().StartsWith("EW") ? "0000" : "0010";
+                    mipiCode.Command = uint.Parse(command);
+
+                    bc = code.Substring(3, 1);
+                    mipiCode.BC = uint.Parse(bc);
+
+                    regID = code.Substring(4, 2);
+                    if (uint.TryParse(regID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xFF)
+                        {
+                            throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
+                        }
+                        else
+                        {
+                            mipiCode.RegIDs.Add(value);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
+                    }
+
+                    data = code.Substring(6, code.Length - 6);
+                    if (data.Length % 2 == 1)
+                    {
+                        datas.Add(data.Substring(0, 1));
+                        for (int i = 1; i < data.Length;)
+                        {
+                            datas.Add(data.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < data.Length;)
+                        {
+                            datas.Add(data.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    if (datas.Count > 0xF)
+                        throw new Exception(string.Format("{0}中的Data - {1}超出最大限制，128位！", code, data));
+                    if (datas.Count != mipiCode.BC + 1)
+                        throw new Exception(string.Format("{0}中的Data - {1}与BC - {2}位数不匹配！", code, data, bc));
+                    for (int i = 0; i < datas.Count; i++)
+                    {
+                        string splittedData = datas[i];
+                        if (uint.TryParse(splittedData, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                        {
+                            if (value > 0xFF)
+                            {
+                                throw new Exception(string.Format("{0}中的第{2}段Data - {1}应该是[0,FF]之间的整型！", code, splittedData, i + 1));
+                            }
+                            else
+                            {
+                                mipiCode.Datas.Add(value);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("{0}中的Data - {1}包含了非法的{2}，应该是[0,FF]之间的整型！", code, data, splittedData));
+                        }
+                    }
+                }
+                else if (code.ToUpper().StartsWith("ZW"))
+                {
+                    if (code.Length <= 5)
+                        throw new Exception(string.Format("{0}格式错误！例ZW2003F，User ID为2，Register Address为00，Data为3F。", code));
+
+                    mipiCode.MipiCodeType = ReadWrite.ZeroWrite;
+
+                    userID = code.Substring(2, 1);
+                    if (uint.TryParse(userID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xF)
+                        {
+                            throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                        }
+                        else
+                        {
+                            mipiCode.UserID = value;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                    }
+
+                    mipiCode.Command = 0;
+
+                    mipiCode.BC = 0;
+
+                    regID = code.Substring(3, 2);
+                    if (regID != "00")
+                        throw new Exception(string.Format("{0}格式错误！例ZW2003F，User ID为2，Register Address为00，Data为3F。", code));
+                    mipiCode.RegIDs.Add(0);
+
+                    data = code.Substring(5, code.Length - 5);
+                    if (uint.TryParse(data, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0x7F)
+                        {
+                            throw new Exception(string.Format("{0}中的Data - {1}应该是[0,7F]之间的整型！", code, data));
+                        }
+                        else
+                        {
+                            mipiCode.Datas.Add(value);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的Data - {1}应该是[0,7F]之间的整型！", code, data));
+                    }
+                }
+                else if (code.ToUpper().StartsWith("MW"))
+                {
+                    if (code.Length <= 5)
+                        throw new Exception(string.Format("{0}格式错误！例MW200FFFE，User ID为2，Register Address为00，Mask为FF，Data为FE。", code));
+
+                    mipiCode.MipiCodeType = ReadWrite.MaskWrite;
+
+                    userID = code.Substring(2, 1);
+                    if (uint.TryParse(userID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xF)
+                        {
+                            throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                        }
+                        else
+                        {
+                            mipiCode.UserID = value;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                    }
+
+                    command = "0001";
+                    mipiCode.Command = uint.Parse(command);
+
+                    bc = "1001";
+                    mipiCode.BC = uint.Parse(bc);
+
+                    regID = code.Substring(3, 2);
+                    if (uint.TryParse(regID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xFF)
+                        {
+                            throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
+                        }
+                        else
+                        {
+                            mipiCode.RegIDs.Add(value);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的Register Address - {1}应该是[0,FF]之间的整型！", code, regID));
+                    }
+
+                    data = code.Substring(5, code.Length - 5);
+                    if (data.Length % 2 == 1)
+                    {
+                        datas.Add(data.Substring(0, 1));
+                        for (int i = 1; i < data.Length;)
+                        {
+                            datas.Add(data.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < data.Length;)
+                        {
+                            datas.Add(data.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    if (datas.Count != 2)
+                        throw new Exception(string.Format("{0}中的MaskData - {1}位数不匹配！", code, data));
+                    for (int i = 0; i < datas.Count; i++)
+                    {
+                        string splittedData = datas[i];
+                        if (uint.TryParse(splittedData, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                        {
+                            if (value > 0xFF)
+                            {
+                                throw new Exception(string.Format("{0}中的第{2}段Data - {1}应该是[0,FF]之间的整型！", code, splittedData, i + 1));
+                            }
+                            else
+                            {
+                                mipiCode.Datas.Add(value);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("{0}中的Data - {1}包含了非法的{2}，应该是[0,FF]之间的整型！", code, data, splittedData));
+                        }
+                    }
+                }
+                else if (code.ToUpper().StartsWith("LEW") || code.ToUpper().StartsWith("LER"))
+                {
+                    if (code.Length <= 9)
+                        throw new Exception(string.Format("{0}格式错误！例LEW212D2BFFEE，User ID为2，BC为1，Register Address为2D2B，Data为FFEE。", code));
+
+                    mipiCode.MipiCodeType = code.ToUpper().StartsWith("LEW") ? ReadWrite.LongExtendWrite : ReadWrite.LongExtendRead;
+
+                    userID = code.Substring(3, 1);
+                    if (uint.TryParse(userID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xF)
+                        {
+                            throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                        }
+                        else
+                        {
+                            mipiCode.UserID = value;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                    }
+
+                    command = code.ToUpper().StartsWith("LEW") ? "00110" : "00111";
+                    mipiCode.Command = uint.Parse(command);
+
+                    bc = code.Substring(4, 1);
+                    mipiCode.BC = uint.Parse(bc);
+
+                    regID = code.Substring(5, 4);
+                    for (int i = 0; i < regID.Length;)
+                    {
+                        regIDs.Add(regID.Substring(i, 2));
+                        i = i + 2;
+                    }
+                    if (regIDs.Count != 2)
+                    {
+                        throw new Exception(string.Format("{0}中的Register Address - {1}位数不匹配！", code, regID));
+                    }
+                    for (int i = 0; i < regIDs.Count; i++)
+                    {
+                        string splittedRegID = regIDs[i];
+                        if (uint.TryParse(splittedRegID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                        {
+                            if (value > 0xFF)
+                            {
+                                throw new Exception(string.Format("{0}中的第{2}段Register Address - {1}应该是[0,FF]之间的整型！", code, splittedRegID, i + 1));
+                            }
+                            else
+                            {
+                                mipiCode.RegIDs.Add(value);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("{0}中的Register Address - {1}包含了非法的{2}，应该是[0,FF]之间的整型！", code, data, splittedRegID));
+                        }
+                    }
+
+                    data = code.Substring(9, code.Length - 9);
+                    if (data.Length % 2 == 1)
+                    {
+                        datas.Add(data.Substring(0, 1));
+                        for (int i = 1; i < data.Length;)
+                        {
+                            datas.Add(data.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < data.Length;)
+                        {
+                            datas.Add(data.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    if (datas.Count > 0xF)
+                        throw new Exception(string.Format("{0}中的Data - {1}超出最大限制，128位！", code, data));
+                    if (datas.Count != mipiCode.BC + 1)
+                        throw new Exception(string.Format("{0}中的Data - {1}与BC - {2}位数不匹配！", code, data, bc));
+                    for (int i = 0; i < datas.Count; i++)
+                    {
+                        string splittedData = datas[i];
+                        if (uint.TryParse(splittedData, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                        {
+                            if (value > 0xFF)
+                            {
+                                throw new Exception(string.Format("{0}中的第{2}段Data - {1}应该是[0,FF]之间的整型！", code, splittedData, i + 1));
+                            }
+                            else
+                            {
+                                mipiCode.Datas.Add(value);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("{0}中的Data - {1}包含了非法的{2}，应该是[0,FF]之间的整型！", code, data, splittedData));
+                        }
+                    }
+                }
+                else if (code.ToUpper().StartsWith("UEW") || code.ToUpper().StartsWith("UER"))
+                {
+                    var codes = code.Split('_');
+                    if (codes.Length != 3)
+                        throw new Exception(string.Format("{0}格式错误！例UEW2AA_2D2B22_FFEEDDCCBB，User ID为2，Command为A，BC为A，Register Address为2D2B22，Data为FFEEDDCCBB。", code));
+
+                    mipiCode.MipiCodeType = code.ToUpper().StartsWith("UEW") ? ReadWrite.UniversalExtendWrite : ReadWrite.UniversalExtendRead;
+                    
+                    userID = code.Substring(3, 1);
+                    if (uint.TryParse(userID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > 0xF)
+                        {
+                            throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                        }
+                        else
+                        {
+                            mipiCode.UserID = value;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("{0}中的User ID - {1}应该是[0,F]之间的整型！", code, userID));
+                    }
+
+                    command = code.Substring(4, 1);
+                    mipiCode.Command = uint.Parse(command);
+
+                    bc = code.Substring(5, 1);
+                    mipiCode.BC = uint.Parse(bc);
+
+                    regID = codes[1];
+                    if (regID.Length % 2 == 1)
+                    {
+                        regIDs.Add(regID.Substring(0, 1));
+                        for (int i = 1; i < regID.Length;)
+                        {
+                            regIDs.Add(regID.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < regID.Length;)
+                        {
+                            regIDs.Add(regID.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    for (int i = 0; i < regIDs.Count; i++)
+                    {
+                        string splittedRegID = regIDs[i];
+                        if (uint.TryParse(splittedRegID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                        {
+                            if (value > 0xFF)
+                            {
+                                throw new Exception(string.Format("{0}中的第{2}段Register Address - {1}应该是[0,FF]之间的整型！", code, splittedRegID, i + 1));
+                            }
+                            else
+                            {
+                                mipiCode.RegIDs.Add(value);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("{0}中的Register Address - {1}包含了非法的{2}，应该是[0,FF]之间的整型！", code, data, splittedRegID));
+                        }
+                    }
+
+                    data = codes[2];
+                    if (data.Length % 2 == 1)
+                    {
+                        datas.Add(data.Substring(0, 1));
+                        for (int i = 1; i < data.Length;)
+                        {
+                            datas.Add(data.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < data.Length;)
+                        {
+                            datas.Add(data.Substring(i, 2));
+                            i = i + 2;
+                        }
+                    }
+                    for (int i = 0; i < datas.Count; i++)
+                    {
+                        string splittedData = datas[i];
+                        if (uint.TryParse(splittedData, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                        {
+                            if (value > 0xFF)
+                            {
+                                throw new Exception(string.Format("{0}中的第{2}段Data - {1}应该是[0,FF]之间的整型！", code, splittedData, i + 1));
+                            }
+                            else
+                            {
+                                mipiCode.Datas.Add(value);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("{0}中的Data - {1}包含了非法的{2}，应该是[0,FF]之间的整型！", code, data, splittedData));
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception(String.Format("仅支持以W、R、ZW、MW、EW、ER、LEW、LER、UEW、UER或DELAY开头的Code，{0}为非法Code，请修正!", code));
                 }
 
                 mipiCodes.Add(mipiCode);
