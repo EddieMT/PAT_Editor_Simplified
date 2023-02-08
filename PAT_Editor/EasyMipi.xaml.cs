@@ -446,8 +446,6 @@ namespace PAT_Editor
                                                 sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D1\n";
                                                 sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Data D0\n";
                                                 sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
-                                                if (mipiCode.MipiCodeType == ReadWrite.Read)
-                                                    sCF += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Park Bit\n";
                                                 sw.Write(sCF);
                                             }
                                             else if (mipiCode.MipiCodeType == ReadWrite.MaskWrite)
