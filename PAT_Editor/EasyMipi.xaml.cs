@@ -295,6 +295,7 @@ namespace PAT_Editor
                                         sw.WriteLine(string.Format("//--------------------------------------------{0}.{1}[{2}][{3}]-----------------------------------------------------------", mipiMode.MipiModeName, mipiGroup.MipiGroupName, indexStep, indexCode));
                                         if (mipiCode.MipiCodeType == ReadWrite.Delay)
                                         {
+                                            string prefix = "FC       {0}   {1}              ";
                                             sw.WriteLine(string.Format("// DELAY({0})-----------------------------------------------------------", mipiCode.ElapsedMicroseconds));
                                             uint tempLineCount = mipiCode.ElapsedMicroseconds * mipiStep.CLK.TSW.SpeedRateByMHz;
                                             uint tempRemainder = tempLineCount % 1000;
@@ -304,14 +305,15 @@ namespace PAT_Editor
                                                 if (i == tempLineCount)
                                                 {
                                                     if (tempRemainder == 0)
-                                                        line = string.Format(supplementalLine, "1000", mipiStep.CLK.TSW.TSName);
+                                                        prefix = string.Format(prefix, "1000", mipiStep.CLK.TSW.TSName);
                                                     else
-                                                        line = string.Format(supplementalLine, tempRemainder.ToString().PadRight(4), mipiStep.CLK.TSW.TSName);
+                                                        prefix = string.Format(prefix, tempRemainder.ToString().PadRight(4), mipiStep.CLK.TSW.TSName);
                                                 }
                                                 else
                                                 {
-                                                    line = string.Format(supplementalLine, "1000", mipiStep.CLK.TSW.TSName);
+                                                    prefix = string.Format(prefix, "1000", mipiStep.CLK.TSW.TSName);
                                                 }
+                                                line = prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, '0') + ";//\n";
                                                 sw.WriteLine(line);
                                             }
                                         }
@@ -328,7 +330,8 @@ namespace PAT_Editor
                                         {
                                             string sValue = string.Empty;
                                             string prefix = "FC       1   {0}              ";
-                                            if (mipiCode.MipiCodeType == ReadWrite.Read || mipiCode.MipiCodeType == ReadWrite.ExtendRead)
+                                            if (mipiCode.MipiCodeType == ReadWrite.Read || mipiCode.MipiCodeType == ReadWrite.ExtendRead
+                                                || mipiCode.MipiCodeType == ReadWrite.LongExtendRead || mipiCode.MipiCodeType == ReadWrite.UniversalExtendRead)
                                             {
                                                 prefix = string.Format(prefix, mipiStep.CLK.TSR.TSName);
                                             }
@@ -1741,7 +1744,9 @@ namespace PAT_Editor
                     mipiCode.Command = uint.Parse(command);
 
                     bc = code.Substring(3, 1);
-                    mipiCode.BC = uint.Parse(bc);
+                    mipiCode.BC = uint.Parse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                    if (mipiCode.BC > 0xF)
+                        throw new Exception(string.Format("{0}中的BC - {1}应该是[0,F]之间的整型！", code, bc));
 
                     regID = code.Substring(4, 2);
                     if (uint.TryParse(regID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
@@ -1967,7 +1972,9 @@ namespace PAT_Editor
                     mipiCode.Command = uint.Parse(command);
 
                     bc = code.Substring(4, 1);
-                    mipiCode.BC = uint.Parse(bc);
+                    mipiCode.BC = uint.Parse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                    if (mipiCode.BC > 7)
+                        throw new Exception(string.Format("{0}中的BC - {1}应该是[0,7]之间的整型！", code, bc));
 
                     regID = code.Substring(5, 4);
                     for (int i = 0; i < regID.Length;)
@@ -2067,10 +2074,12 @@ namespace PAT_Editor
                     }
 
                     command = code.Substring(4, 1);
-                    mipiCode.Command = uint.Parse(command);
+                    mipiCode.Command = uint.Parse(command, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
                     bc = code.Substring(5, 1);
-                    mipiCode.BC = uint.Parse(bc);
+                    mipiCode.BC = uint.Parse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                    if (mipiCode.BC > 0xF)
+                        throw new Exception(string.Format("{0}中的BC - {1}应该是[0,F]之间的整型！", code, bc));
 
                     regID = codes[1];
                     if (regID.Length % 2 == 1)

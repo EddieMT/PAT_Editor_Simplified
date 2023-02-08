@@ -197,30 +197,18 @@ namespace PAT_Editor
             decimal elapsedMicroseconds = 0;
             foreach (MipiCode code in MipiCodes)
             {
-                if (code.MipiCodeType == ReadWrite.Write)
+                if (code.MipiCodeType == ReadWrite.Write || code.MipiCodeType == ReadWrite.ExtendWrite
+                    || code.MipiCodeType == ReadWrite.LongExtendWrite || code.MipiCodeType == ReadWrite.UniversalExtendWrite
+                    || code.MipiCodeType == ReadWrite.MaskWrite || code.MipiCodeType == ReadWrite.ZeroWrite)
                 {
                     lineCount += code.LineCount;
                     elapsedMicroseconds += (decimal)code.LineCount / CLK.TSW.SpeedRateByMHz;
                 }
-                else if (code.MipiCodeType == ReadWrite.Read)
+                else if (code.MipiCodeType == ReadWrite.Read || code.MipiCodeType == ReadWrite.ExtendRead
+                    || code.MipiCodeType == ReadWrite.LongExtendRead || code.MipiCodeType == ReadWrite.UniversalExtendRead)
                 {
                     lineCount += code.LineCount;
                     elapsedMicroseconds += (decimal)code.LineCount / CLK.TSR.SpeedRateByMHz;
-                }
-                else if (code.MipiCodeType == ReadWrite.ExtendWrite)
-                {
-                    lineCount += code.LineCount;
-                    elapsedMicroseconds += (decimal)code.LineCount / CLK.TSW.SpeedRateByMHz;
-                }
-                else if (code.MipiCodeType == ReadWrite.ExtendRead)
-                {
-                    lineCount += code.LineCount;
-                    elapsedMicroseconds += (decimal)code.LineCount / CLK.TSR.SpeedRateByMHz;
-                }
-                else if (code.MipiCodeType == ReadWrite.ZeroWrite)
-                {
-                    lineCount += code.LineCount;
-                    elapsedMicroseconds += (decimal)code.LineCount / CLK.TSW.SpeedRateByMHz;
                 }
                 else if (code.MipiCodeType == ReadWrite.Reset)
                 {
