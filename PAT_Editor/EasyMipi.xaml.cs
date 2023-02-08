@@ -380,16 +380,11 @@ namespace PAT_Editor
                                                     sCF += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Park Bit\n";
                                                 sw.Write(sCF);
                                             }
-                                            else if (mipiCode.MipiCodeType == ReadWrite.ExtendRead || mipiCode.MipiCodeType == ReadWrite.ExtendWrite || mipiCode.MipiCodeType == ReadWrite.MaskWrite)
+                                            else if (mipiCode.MipiCodeType == ReadWrite.ExtendRead || mipiCode.MipiCodeType == ReadWrite.ExtendWrite)
                                             {
                                                 sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:4] + BC[3:0])");
                                                 sValue = Convert.ToString(mipiCode.UserID, 2).PadLeft(4, '0');
-                                                if (mipiCode.MipiCodeType == ReadWrite.ExtendWrite)
-                                                    sValue += "0000";
-                                                else if (mipiCode.MipiCodeType == ReadWrite.ExtendRead)
-                                                    sValue += "0010";
-                                                else
-                                                    sValue += "0001";
+                                                sValue += (mipiCode.MipiCodeType == ReadWrite.ExtendWrite) ? "0000" : "0010";
                                                 sValue += Convert.ToString(mipiCode.BC, 2).PadLeft(4, '0');
                                                 sValue += GetParityBit(sValue);
                                                 string sCF = string.Empty;
@@ -427,7 +422,7 @@ namespace PAT_Editor
                                                 sw.Write(sAddr);
                                                 #endregion
                                             }
-                                            else// if (mipiCode.MipiCodeType == ReadWrite.ZeroWrite)
+                                            else if (mipiCode.MipiCodeType == ReadWrite.ZeroWrite)
                                             {
                                                 sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:7] + Reg Addr[6:0])");
                                                 sValue = Convert.ToString(mipiCode.UserID, 2).PadLeft(4, '0');
@@ -452,11 +447,144 @@ namespace PAT_Editor
                                                     sCF += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Park Bit\n";
                                                 sw.Write(sCF);
                                             }
+                                            else if (mipiCode.MipiCodeType == ReadWrite.MaskWrite)
+                                            {
+                                                sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:4] + BC[3:0])");
+                                                sValue = Convert.ToString(mipiCode.UserID, 2).PadLeft(4, '0');
+                                                sValue += Convert.ToString(mipiCode.Command, 2).PadLeft(4, '0');
+                                                sValue += Convert.ToString(mipiCode.BC, 2).PadLeft(4, '0');
+                                                sValue += GetParityBit(sValue);
+                                                string sCF = string.Empty;
+                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C7 (0001)\n";
+                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C6\n";
+                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C5\n";
+                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C4\n";
+                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC3 (1001)\n";
+                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC2\n";
+                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC1\n";
+                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC0\n";
+                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
+                                                sw.Write(sCF);
+
+                                                #region Reg Addr
+                                                sw.WriteLine("// Reg Addr (8 bits)");
+                                                sValue = Convert.ToString(mipiCode.RegIDs[0], 2).PadLeft(8, '0');
+                                                sValue += GetParityBit(sValue);
+                                                string sAddr = string.Empty;
+                                                sAddr += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A7\n";
+                                                sAddr += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A6\n";
+                                                sAddr += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A5\n";
+                                                sAddr += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A4\n";
+                                                sAddr += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A3\n";
+                                                sAddr += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A2\n";
+                                                sAddr += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A1\n";
+                                                sAddr += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A0\n";
+                                                sAddr += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
+                                                sw.Write(sAddr);
+                                                #endregion
+                                            }
+                                            else if (mipiCode.MipiCodeType == ReadWrite.LongExtendRead || mipiCode.MipiCodeType == ReadWrite.LongExtendWrite)
+                                            {
+                                                sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:4] + BC[3:0])");
+                                                sValue = Convert.ToString(mipiCode.UserID, 2).PadLeft(4, '0');
+                                                sValue += Convert.ToString(mipiCode.Command, 2).PadLeft(5, '0');
+                                                sValue += Convert.ToString(mipiCode.BC, 2).PadLeft(3, '0');
+                                                sValue += GetParityBit(sValue);
+                                                string sCF = string.Empty;
+                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C7 (00110: Write, 00111: Read)\n";
+                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C6\n";
+                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C5\n";
+                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C4\n";
+                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C4\n";
+                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC2\n";
+                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC1\n";
+                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC0\n";
+                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
+                                                sw.Write(sCF);
+
+                                                #region Reg Addr
+                                                sw.WriteLine("// Reg Addr (8 bits)");
+                                                for (int i = 0; i < mipiCode.RegIDs.Count; i++)
+                                                {
+                                                    sValue = Convert.ToString(mipiCode.RegIDs[i], 2).PadLeft(8, '0');
+                                                    sValue += GetParityBit(sValue);
+                                                    string sAddr = string.Empty;
+                                                    sAddr += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A7\n";
+                                                    sAddr += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A6\n";
+                                                    sAddr += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A5\n";
+                                                    sAddr += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A4\n";
+                                                    sAddr += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A3\n";
+                                                    sAddr += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A2\n";
+                                                    sAddr += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A1\n";
+                                                    sAddr += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A0\n";
+                                                    sAddr += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
+                                                    if (mipiCode.MipiCodeType == ReadWrite.LongExtendRead && i == mipiCode.RegIDs.Count - 1)
+                                                        sAddr += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Bus Park\n";
+                                                    sw.Write(sAddr);
+                                                }
+                                                #endregion
+                                            }
+                                            else //if (mipiCode.MipiCodeType == ReadWrite.UniversalExtendRead || mipiCode.MipiCodeType == ReadWrite.UniversalExtendWrite)
+                                            {
+                                                sw.WriteLine("// Command Frame (12 bits, Slave Addr[11:8], + cmd[7:4] + BC[3:0])");
+                                                sValue = Convert.ToString(mipiCode.UserID, 2).PadLeft(4, '0');
+                                                sValue += Convert.ToString(mipiCode.Command, 2).PadLeft(4, '0');
+                                                sValue += Convert.ToString(mipiCode.BC, 2).PadLeft(4, '0');
+                                                sValue += GetParityBit(sValue);
+                                                string sCF = string.Empty;
+                                                sCF += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Slave Addr\n";
+                                                sCF += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C7\n";
+                                                sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C6\n";
+                                                sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C5\n";
+                                                sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C4\n";
+                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC3\n";
+                                                sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC2\n";
+                                                sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC1\n";
+                                                sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC0\n";
+                                                sCF += prefix + BuildData(sValue[12], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
+                                                sw.Write(sCF);
+
+                                                #region Reg Addr
+                                                sw.WriteLine("// Reg Addr (8 bits)");
+                                                for (int i = 0; i < mipiCode.RegIDs.Count; i++)
+                                                {
+                                                    sValue = Convert.ToString(mipiCode.RegIDs[i], 2).PadLeft(8, '0');
+                                                    sValue += GetParityBit(sValue);
+                                                    string sAddr = string.Empty;
+                                                    sAddr += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A7\n";
+                                                    sAddr += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A6\n";
+                                                    sAddr += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A5\n";
+                                                    sAddr += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A4\n";
+                                                    sAddr += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A3\n";
+                                                    sAddr += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A2\n";
+                                                    sAddr += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A1\n";
+                                                    sAddr += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Reg Address A0\n";
+                                                    sAddr += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Parity Bit\n";
+                                                    if (mipiCode.MipiCodeType == ReadWrite.UniversalExtendRead && i == mipiCode.RegIDs.Count - 1)
+                                                        sAddr += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Bus Park\n";
+                                                    sw.Write(sAddr);
+                                                }
+                                                #endregion
+                                            }
                                             #endregion
                                             #region Data
                                             if (mipiCode.MipiCodeType != ReadWrite.ZeroWrite)
                                             // mipiCode.MipiCodeType == ReadWrite.Read || mipiCode.MipiCodeType == ReadWrite.Write
                                             // mipiCode.MipiCodeType == ReadWrite.ExtendRead || mipiCode.MipiCodeType == ReadWrite.ExtendWrite
+                                            // mipiCode.MipiCodeType == ReadWrite.MaskWrite
+                                            // mipiCode.MipiCodeType == ReadWrite.LongExtendRead || mipiCode.MipiCodeType == ReadWrite.LongExtendWrite
+                                            // mipiCode.MipiCodeType == ReadWrite.UniversalExtendRead || mipiCode.MipiCodeType == ReadWrite.UniversalExtendWrite
                                             {
                                                 for (int i = 0; i < mipiCode.Datas.Count; i++)
                                                 {
@@ -464,15 +592,17 @@ namespace PAT_Editor
                                                     sValue = Convert.ToString(mipiCode.Datas[i], 2).PadLeft(8, '0');
                                                     sValue += GetParityBit(sValue);
                                                     string sData = string.Empty;
-                                                    sData += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D7\n";
-                                                    sData += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D6\n";
-                                                    sData += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D5\n";
-                                                    sData += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D4\n";
-                                                    sData += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D3\n";
-                                                    sData += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D2\n";
-                                                    sData += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D1\n";
-                                                    sData += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Data D0\n";
-                                                    sData += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: (mipiCode.MipiCodeType == ReadWrite.Read)) + ";// Parity Bit (to make odd sum Data)\n";
+                                                    bool isRead = mipiCode.MipiCodeType == ReadWrite.Read || mipiCode.MipiCodeType == ReadWrite.ExtendRead 
+                                                        || mipiCode.MipiCodeType == ReadWrite.LongExtendRead || mipiCode.MipiCodeType == ReadWrite.UniversalExtendRead;
+                                                    sData += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D7\n";
+                                                    sData += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D6\n";
+                                                    sData += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D5\n";
+                                                    sData += prefix + BuildData(sValue[3], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D4\n";
+                                                    sData += prefix + BuildData(sValue[4], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D3\n";
+                                                    sData += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D2\n";
+                                                    sData += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D1\n";
+                                                    sData += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D0\n";
+                                                    sData += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Parity Bit (to make odd sum Data)\n";
                                                     sw.Write(sData);
                                                 }
                                             }
