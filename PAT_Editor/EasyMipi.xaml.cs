@@ -504,7 +504,7 @@ namespace PAT_Editor
                                                 sCF += prefix + BuildData(sValue[5], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C6\n";
                                                 sCF += prefix + BuildData(sValue[6], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C5\n";
                                                 sCF += prefix + BuildData(sValue[7], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C4\n";
-                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C4\n";
+                                                sCF += prefix + BuildData(sValue[8], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// Write Command C3\n";
                                                 sCF += prefix + BuildData(sValue[9], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC2\n";
                                                 sCF += prefix + BuildData(sValue[10], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC1\n";
                                                 sCF += prefix + BuildData(sValue[11], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig) + ";// BC0\n";
@@ -1676,7 +1676,7 @@ namespace PAT_Editor
                     }
 
                     command = code.ToUpper().StartsWith("W") ? "010" : "011";
-                    mipiCode.Command = uint.Parse(command);
+                    mipiCode.Command = ParseStringToUInt(command);
 
                     mipiCode.BC = 0;
 
@@ -1739,7 +1739,7 @@ namespace PAT_Editor
                     }
 
                     command = code.ToUpper().StartsWith("EW") ? "0000" : "0010";
-                    mipiCode.Command = uint.Parse(command);
+                    mipiCode.Command = ParseStringToUInt(command);
 
                     bc = code.Substring(3, 1);
                     mipiCode.BC = uint.Parse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
@@ -1880,10 +1880,10 @@ namespace PAT_Editor
                     }
 
                     command = "0001";
-                    mipiCode.Command = uint.Parse(command);
+                    mipiCode.Command = ParseStringToUInt(command);
 
                     bc = "1001";
-                    mipiCode.BC = uint.Parse(bc);
+                    mipiCode.BC = ParseStringToUInt(bc);
 
                     regID = code.Substring(3, 2);
                     if (uint.TryParse(regID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
@@ -1967,7 +1967,7 @@ namespace PAT_Editor
                     }
 
                     command = code.ToUpper().StartsWith("LEW") ? "00110" : "00111";
-                    mipiCode.Command = uint.Parse(command);
+                    mipiCode.Command = ParseStringToUInt(command);
 
                     bc = code.Substring(4, 1);
                     mipiCode.BC = uint.Parse(bc, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
@@ -2163,6 +2163,27 @@ namespace PAT_Editor
                 mipiCodes.Add(mipiCode);
             }
             return mipiCodes;
+        }
+
+        private uint ParseStringToUInt(string str1)
+        {
+            uint res = 0;
+            for (int i = 0; i < str1.Length; i++)
+            {
+                if (str1[i] == '1')
+                {
+                    res += (uint)Math.Pow(2, str1.Length - i - 1);
+                }
+                else if (str1[i] == '0')
+                {
+                    res += 0;
+                }
+                else
+                {
+                    throw new Exception("Invalid binary string!");
+                }
+            }
+            return res;
         }
 
         private string BuildData(char data, Pin pinCLK, Pin pinDATA, SiteConfig siteConfig, char clock = '1', bool isRead = false)
@@ -2941,6 +2962,8 @@ namespace PAT_Editor
                         while ((line = sr.ReadLine()) != null)
                         {
                             if (line == string.Empty)
+                                continue;
+                            if (line.ToUpper().Trim().StartsWith("////"))
                                 continue;
                             else if (line.ToUpper().Trim().StartsWith("//MIPI-CHANNEL"))
                             {
