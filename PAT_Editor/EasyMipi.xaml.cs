@@ -1781,7 +1781,7 @@ namespace PAT_Editor
                             i = i + 2;
                         }
                     }
-                    if (datas.Count > 0xF)
+                    if (datas.Count > (0xF + 1))
                         throw new Exception(string.Format("{0}中的Data - {1}超出最大限制，128位！", code, data));
                     if (datas.Count != mipiCode.BC + 1)
                         throw new Exception(string.Format("{0}中的Data - {1}与BC - {2}位数不匹配！", code, data, bc));
@@ -2022,8 +2022,8 @@ namespace PAT_Editor
                             i = i + 2;
                         }
                     }
-                    if (datas.Count > 0xF)
-                        throw new Exception(string.Format("{0}中的Data - {1}超出最大限制，128位！", code, data));
+                    if (datas.Count > (7 + 1))
+                        throw new Exception(string.Format("{0}中的Data - {1}超出最大限制，64位！", code, data));
                     if (datas.Count != mipiCode.BC + 1)
                         throw new Exception(string.Format("{0}中的Data - {1}与BC - {2}位数不匹配！", code, data, bc));
                     for (int i = 0; i < datas.Count; i++)
