@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "MIPI Tool"
-#define MyAppVersion "2.0.2.2"
+#define MyAppVersion "2.0.2.998"
 #define MyAppPublisher "Merlin Test, Ltd."
 #define MyAppURL "http://www.merlintest.com/"
 #define MyAppExeName "PAT_Editor.exe"

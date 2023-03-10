@@ -595,6 +595,10 @@ namespace PAT_Editor
                                                     string sData = string.Empty;
                                                     bool isRead = mipiCode.MipiCodeType == ReadWrite.Read || mipiCode.MipiCodeType == ReadWrite.ExtendRead 
                                                         || mipiCode.MipiCodeType == ReadWrite.LongExtendRead || mipiCode.MipiCodeType == ReadWrite.UniversalExtendRead;
+                                                    if (isRead)
+                                                    {
+                                                        sData += prefix + BuildData('0', mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data X\n";
+                                                    }
                                                     sData += prefix + BuildData(sValue[0], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D7\n";
                                                     sData += prefix + BuildData(sValue[1], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D6\n";
                                                     sData += prefix + BuildData(sValue[2], mipiStep.CLK, mipiStep.DATA, mipiStep.SiteConfig, isRead: isRead) + ";// Data D5\n";
